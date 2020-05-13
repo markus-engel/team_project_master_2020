@@ -3,6 +3,8 @@ for now I have now Idea why this file is only accesable via the web browser...
 
 
 # to start in InteliJ
+Check that your Java Version is 13 and your installed JavaFX version is 11.
+If not, please update / download the liberies.
 To include the file structure into your InteliJ IDE pls follow the steps below: 
 1. clone repository to your account
 2. open InteliJ and if necessary close all open projects 
