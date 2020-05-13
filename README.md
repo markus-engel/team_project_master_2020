@@ -17,5 +17,6 @@ To include the file structure into your InteliJ IDE pls follow the steps below:
 Pls add comments to the methods and classes you assablish, so everyone can keep track of it. 
 Also, it is easier to delet afterwards so comments then to figure out what was the plan.
 And I would kindly ask to add Blockcomments to the Classes and methodes so we're getting a good documentatin and don't have to run for it afterwards.
-For the documentation pls follow this link: 
+For the documentation pls follow one of the links: 
 http://www.scalingbits.com/java/javakurs1/javadoc
+https://www.java-blog-buch.de/070403-javadoc-klassen-dokumentieren/
