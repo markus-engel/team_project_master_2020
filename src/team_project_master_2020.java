@@ -4,10 +4,9 @@
 
 public class team_project_master_2020 {
 
-
-
     private String test;
     private int age;
+    private boolean imABool;
 
     team_project_master_2020(String name, int age){
         this.test = name;
