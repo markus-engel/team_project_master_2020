@@ -1,17 +1,23 @@
 # team_project_master_2020
 for now I have now Idea why this file is only accesable via the web browser... 
 
-
-# to start in InteliJ
+# first steps
 Check that your Java Version is 13 and your installed JavaFX version is 11.
 If not, please update / download the liberies.
+Be sure that you have intstalled git on your local device and set up your name and email addy,
+if not pls do so. Otherwise a commit or push later will not work propperly. 
+
+
+# to start in InteliJ
 To include the file structure into your InteliJ IDE pls follow the steps below: 
 1. clone repository to your account
 2. open InteliJ and if necessary close all open projects 
-3. if you are on the "Welcome to InteliJ IDEA" screen / window chose 'Get from Version Control'
-4. enter the link of this repository and define your lokal safe folder
-5. press clone 
-6. start working
+3. if you are on the "Welcome to InteliJ IDEA" screen / window 
+4. update your InteliJ to version 2020.x ther
+5. on the welcome screen 3. chose 'Get from Version Control'
+6. enter the link of this repository and define your lokal safe folder
+7. press clone 
+8. start working
 
 # working in the files
 Pls add comments to the methods and classes you assablish, so everyone can keep track of it. 
