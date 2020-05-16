@@ -5,10 +5,10 @@ import java.io.FileReader;
 import java.io.IOException;
 
 
-public class GFA_parser {
+class GFAparser {
 
-    public void readFile() throws IOException {
-        FileReader fr = new FileReader("D:/Master/Sem 2/Teamprojekt/jeon2n3_miniasm.gfa"); // can be changed into not hard coded if needed
+    public static void readFile(String file) throws IOException {
+        FileReader fr = new FileReader(file); // can be changed into not hard coded if needed
         BufferedReader br = new BufferedReader(fr);
         String line = ""; // will hold the current reading line
         String ID, sequence; // will hold the sequence information
@@ -52,7 +52,7 @@ public class GFA_parser {
     }
 
     public static void main(String[] args) throws IOException {
-        GFA_parser parser = new GFA_parser();
-        parser.readFile();
+        GFAparser parser = new GFAparser();
+        parser.readFile("D:/Master/Sem 2/Teamprojekt/jeon2n3_miniasm.gfa");
     }
 }
