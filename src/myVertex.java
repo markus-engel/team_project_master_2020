@@ -11,6 +11,10 @@ public class myVertex {
         this.sequence = sequence;
     }
 
+    public myVertex(String ID){
+        this.ID = ID;
+    }
+
     public String getSequence(){
         return this.sequence;
     }
