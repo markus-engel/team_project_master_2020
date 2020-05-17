@@ -13,7 +13,6 @@ class GFAparser {
         String line = ""; // will hold the current reading line
         String ID, sequence; // will hold the sequence information
         String eSource, eDestination; // will hold the edge information
-        Boolean revCompSource, revCompDest; // can be used later: the file tells if the edges are overlapping with the reverse complement part
         int countS = 0; // could be useful in the future to know how many sequences there are in total
         int countE = 0; // total count edges
 
@@ -31,19 +30,6 @@ class GFAparser {
                 eSource = edgList[1];
                 eDestination = edgList[3];
                 System.out.println("overlapping: " + eSource + " -> " + eDestination);
-
-                // check if the overlapping sequence has to be reversed
-                // alternative: + and - indicators can be safed in a String variable
-                if (edgList[2] == "+") {
-                    revCompSource = false; // if the direction is +, no need for reverse complement
-                } else {
-                    revCompSource = true;
-                }
-                if (edgList[4] == "+") {
-                    revCompSource = false; // if the direction is +, no need for reverse complement
-                } else {
-                    revCompSource = true;
-                }
             }
         }
         System.out.println("total sequence count: " + countS + "\ntotal edge count: " + countE);
