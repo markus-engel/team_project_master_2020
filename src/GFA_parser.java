@@ -32,7 +32,7 @@ class GFAparser {
                 System.out.println("overlapping: " + eSource + " -> " + eDestination);
             }
         }
-        System.out.println("total sequence count: " + countS + "\ntotal edge count: " + countE);
+        //System.out.println("total sequence count: " + countS + "\ntotal edge count: " + countE);
         br.close();
         fr.close();
     }
