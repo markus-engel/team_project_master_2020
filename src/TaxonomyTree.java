@@ -9,30 +9,35 @@ public class TaxonomyTree {
         public static void main( String[] args ) throws IOException
         {
             String filePath = "C:/Users/nnkar/Downloads/taxdmp/nodes.dmp";
-            HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+            HashMap<Integer,Integer> map = new HashMap<Integer, Integer>();
+
 
             String line;
             BufferedReader reader = new BufferedReader(new FileReader(filePath));
-            while ((line = reader.readLine()) != null)
-            {
-                String[] parts = line.split("|", 2);
-                if (parts.length >= 2)
-                {
-                    Int key = parts[0];
-                    String value = parts[1];
-                    map.put(key, value);
-                } else {
-                    System.out.println("ignoring line: " + line);
-                }
-            }
 
-            for (String key : map.keySet())
-            {
-                System.out.println(key + ":" + map.get(key));
-            }
-            reader.close();
-        }
-    }
+            while ((line = reader.readLine()) != null) {
+                line = line.replace("\t", "");
+                line = line.replace("|", ":");
+                String[] parts = line.split(":");
+
+                for (int i=0; i <= 2; i++)
+                {
+                    Integer key = Integer.parseInt(parts[0]);
+                    Integer value = Integer.parseInt(parts[1]);
+                    map.put(key, value);
+                }
+
+                System.out.print(map);
+
+
+
+
+
+
+
+                ;
+            }}}
+
 
 
 
