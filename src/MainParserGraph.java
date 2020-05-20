@@ -1,3 +1,5 @@
+
+
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import edu.uci.ics.jung.graph.util.Pair;
 
@@ -8,13 +10,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /*
-This is my main method to test, constructed by antonia.
+This is my main method to test, constructed by anna and antonia.
+
+Latest update: I am getting  error: package edu.uci.ics.jung.graph does not exist and error cannot find symbol for
+myVertex and myEdge...
 */
 
 
 public class MainParserGraph {
 
-    public static UndirectedSparseGraph readFile(String file) throws IOException {
+    public static UndirectedSparseGraph<myVertex, myEdge> readFile(String file) throws IOException {
         FileReader fr = new FileReader(file); // can be changed into not hard coded if needed
         BufferedReader br = new BufferedReader(fr);
         String line = ""; // will hold the current reading line
@@ -32,9 +37,21 @@ public class MainParserGraph {
                 String[] seqList = line.split("\t"); // holds the sequence ID and the sequence
                 ID = seqList[1];
                 sequence = seqList[2];
+                boolean notInGraph=true;
 
-                myVertex currentVertex = new myVertex(ID, sequence);
-                graph.addVertex(currentVertex);
+
+                //check if new vertex already in graph
+                for (myVertex v: graph.getVertices()){
+                    if (v.getID().equals(ID)){
+                        v.setSequence(sequence);
+                        notInGraph = false;
+                    }
+                }
+
+                //if not in graph, add new vertex to graph
+                if (notInGraph){
+                    graph.addVertex(new myVertex(ID, sequence));
+                }
 
 
             } else if (line.startsWith("L")) { // lines with L are link lines (= edges)
@@ -44,9 +61,27 @@ public class MainParserGraph {
                 eDestination = edgList[3];
                 System.out.println("overlapping: " + eSource + " -> " + eDestination);
 
-                // need to add vertex in addEdge method but the edge is a String ID.
+                //myEdge only defined by the graph its in
                 myEdge currentEdge = new myEdge(graph);
-                graph.addEdge(currentEdge, new Pair<myVertex>(eSource, eDestination));
+                myVertex vSource = null;
+                myVertex vDestination = null;
+
+                //check if source and destination Vertex of Edge already in graph
+                for (myVertex v: graph.getVertices()){
+                    if (v.getID().equals(eSource)){
+                        vSource=v;
+                    }
+                    if (v.getID().equals(eDestination)){
+                        vDestination=v;
+                    }
+                }
+
+                //construct vertex, if not already found in graph
+                if (vSource==null){ new myVertex(eSource);};
+                if (vDestination==null){ new myVertex(eDestination);};
+
+                //add Edge with source and destination Vertex to graph
+                graph.addEdge(currentEdge, new Pair<myVertex>(vSource, vDestination));
             }
         }
         //System.out.println("total sequence count: " + countS + "\ntotal edge count: " + countE);
@@ -58,9 +93,12 @@ public class MainParserGraph {
 
     public static void main(String[] args) throws IOException {
 
-        GFAparser parser = new GFAparser();
-        //UndirectedSparseGraph<myVertex, myEdge> parsedGraph;
-        parsedGraph = parser.readFile("path");
+        //GFAparser parser = new GFAparser();
+
+        UndirectedSparseGraph<myVertex, myEdge> parsedGraph;
+        parsedGraph = readFile(args[0]);
+
+        System.out.println(parsedGraph);
 
     }
 }
