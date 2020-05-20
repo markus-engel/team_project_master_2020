@@ -1,25 +1,21 @@
 
 
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
-import edu.uci.ics.jung.graph.util.Pair;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 /*
-This is my main method to test, constructed by anna and antonia.
-
-Latest update: I am getting  error: package edu.uci.ics.jung.graph does not exist and error cannot find symbol for
-myVertex and myEdge...
+This is the class containing the readFile method to construct a graph from a GFA file.
+Constructed by Anna and Antonia.
 */
 
 
 public class MainParserGraph {
 
-    public static UndirectedSparseGraph<myVertex, myEdge> readFile(String file) throws IOException {
+    public static UndirectedSparseGraph<MyVertex, MyEdge> readFile(String file) throws IOException {
         FileReader fr = new FileReader(file); // can be changed into not hard coded if needed
         BufferedReader br = new BufferedReader(fr);
         String line = ""; // will hold the current reading line
@@ -28,8 +24,8 @@ public class MainParserGraph {
         int countS = 0; // could be useful in the future to know how many sequences there are in total
         int countE = 0; // total count edges
 
-
-        UndirectedSparseGraph<myVertex, myEdge> graph = new UndirectedSparseGraph<myVertex, myEdge>();
+        HashMap<String, MyVertex> vertices = new HashMap<>(); //Hashmap collecting all vertices added to graph, with ID as key, MyVertex as object
+        UndirectedSparseGraph<MyVertex, MyEdge> graph = new UndirectedSparseGraph<MyVertex, MyEdge>(); //UndirectedSparseGraph readfile returns
 
         while (( line = br.readLine() ) != null) {
             if (line.startsWith("S")) { // lines with S are segment lines (= sequences)
@@ -41,7 +37,7 @@ public class MainParserGraph {
 
 
                 //check if new vertex already in graph
-                for (myVertex v: graph.getVertices()){
+                for (MyVertex v: graph.getVertices()){
                     if (v.getID().equals(ID)){
                         v.setSequence(sequence);
                         notInGraph = false;
@@ -50,7 +46,8 @@ public class MainParserGraph {
 
                 //if not in graph, add new vertex to graph
                 if (notInGraph){
-                    graph.addVertex(new myVertex(ID, sequence));
+                    graph.addVertex(new MyVertex(ID, sequence));
+                    vertices.put(ID, new MyVertex(ID, sequence));
                 }
 
 
@@ -59,46 +56,36 @@ public class MainParserGraph {
                 String[] edgList = line.split("\t"); // holds the edges [start node][end node]
                 eSource = edgList[1];
                 eDestination = edgList[3];
-                System.out.println("overlapping: " + eSource + " -> " + eDestination);
+                //System.out.println("overlapping: " + eSource + " -> " + eDestination);
 
-                //myEdge only defined by the graph its in
-                myEdge currentEdge = new myEdge(graph);
-                myVertex vSource = null;
-                myVertex vDestination = null;
 
-                //check if source and destination Vertex of Edge already in graph
-                for (myVertex v: graph.getVertices()){
-                    if (v.getID().equals(eSource)){
-                        vSource=v;
-                    }
-                    if (v.getID().equals(eDestination)){
-                        vDestination=v;
-                    }
-                }
+                MyEdge currentEdge = new MyEdge(graph);      //myEdge only defined by its graph
+                MyVertex vSource;                           //source vertex
+                MyVertex vDestination;                      //destination vertex
 
-                //construct vertex, if not already found in graph
-                if (vSource==null){ new myVertex(eSource);};
-                if (vDestination==null){ new myVertex(eDestination);};
+                //get the vertices of the IDs
+                vSource = vertices.get(eSource);
+                vDestination = vertices.get(eDestination);
+
+                //construct vertex, if not found in Hashmap vertices
+                if (vSource==null){ new MyVertex(eSource);};
+                if (vDestination==null){ new MyVertex(eDestination);};
 
                 //add Edge with source and destination Vertex to graph
-                graph.addEdge(currentEdge, new Pair<myVertex>(vSource, vDestination));
+                graph.addEdge(currentEdge, vSource, vDestination);
             }
         }
-        //System.out.println("total sequence count: " + countS + "\ntotal edge count: " + countE);
         br.close();
         fr.close();
+
         return graph;
     }
 
 
     public static void main(String[] args) throws IOException {
 
-        //GFAparser parser = new GFAparser();
-
-        UndirectedSparseGraph<myVertex, myEdge> parsedGraph;
+        UndirectedSparseGraph<MyVertex, MyEdge> parsedGraph; //this is the graph from the parsed GFA file
         parsedGraph = readFile(args[0]);
-
-        System.out.println(parsedGraph);
 
     }
 }
