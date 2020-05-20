@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /*
-This is my main method to test, constructed by anna and antonia. test
+This is my main method to test, constructed by anna and antonia.
 
 Latest update: I am getting  error: package edu.uci.ics.jung.graph does not exist and error cannot find symbol for
 myVertex and myEdge...
