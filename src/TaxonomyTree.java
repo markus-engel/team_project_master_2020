@@ -18,9 +18,9 @@ public class TaxonomyTree {
         BufferedReader reader = new BufferedReader(new FileReader(nodesShort));
         while ((line = reader.readLine()) != null) {
             String[] parts = line.split("\t");
-            int childId = Integer.parseInt(parts[0]);
+            int childId = Integer.parseInt(parts[0]); //actual read node
             int parentId = Integer.parseInt(parts[1]);
-            String childRank = parts[2];
+            String childRank = parts[2]; // rank of the actual node
 
             Node child;
             // check, if this new child-node already exists as a parent-dummy (no rank nor parent-node yet)
@@ -101,6 +101,7 @@ public class TaxonomyTree {
         }
 
         // Constructor for a dummy-parent (unknown rank)
+        // necessary for reading the file
         public Node(int id, Node child) {
             this.id = id;
             this.addEdgeToChild(child);
@@ -120,7 +121,7 @@ public class TaxonomyTree {
 
         public Edge getEdgeToParent() {
             return edgeToParent;
-        }
+        } // single value
 
         public Node getParent() {
             return edgeToParent.parent;
@@ -128,11 +129,11 @@ public class TaxonomyTree {
 
         public List<Edge> getEdges() {
             return edges;
-        }
+        }  // get list of all edges multiple list
 
         public void addEdgeToParent (Node parent) {
             edgeToParent = new Edge(parent, this);
-        }
+        } // if parent or child is unkown
 
         public void addEdgeToChild (Node child) {
             edges.add(new Edge(this, child));
