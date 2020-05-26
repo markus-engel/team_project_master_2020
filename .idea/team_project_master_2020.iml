@@ -81,7 +81,7 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="JUNG" level="project" />
-    <orderEntry type="library" exported="" name="com.google.guava:guava:18.0" level="project" />
+    <orderEntry type="library" name="com.google.guava:guava:18.0" level="project" />
     <orderEntry type="library" name="net.sf.jung:jung-api:2.1.1" level="project" />
     <orderEntry type="library" name="net.sf.jung:jung-algorithms:2.1.1" level="project" />
     <orderEntry type="library" name="jung-algorithms-2.1.1" level="project" />
@@ -140,8 +140,8 @@
       </library>
     </orderEntry>
     <orderEntry type="library" exported="" name="lib" level="project" />
-    <orderEntry type="library" name="jung" level="project" />
-    <orderEntry type="module-library" exported="">
+    <orderEntry type="library" exported="" name="jung" level="project" />
+    <orderEntry type="module-library">
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../jung-algorithms-2.1.1.jar!/" />
@@ -150,7 +150,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library" exported="">
+    <orderEntry type="module-library">
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../jung-api-2.1.1.jar!/" />
@@ -159,7 +159,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library" exported="">
+    <orderEntry type="module-library">
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../jung-graph-impl-2.1.1.jar!/" />
@@ -168,7 +168,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library" exported="">
+    <orderEntry type="module-library">
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../jung-io-2.1.1.jar!/" />
@@ -177,7 +177,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library" exported="">
+    <orderEntry type="module-library">
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../jung-samples-2.1.1.jar!/" />
@@ -186,13 +186,92 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library" exported="">
+    <orderEntry type="module-library">
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../jung-visualization-2.1.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/Downloads/jung-algorithms-2.1.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/Downloads/jung-api-2.1.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/Downloads/jung-graph-impl-2.1.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/Downloads/jung-io-2.1.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/Downloads/jung-samples-2.1.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/Downloads/jung-visualization-2.1.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/Downloads/openjfx-11.0.2_linux-x64_bin-sdk/javafx-sdk-11.0.2/lib/javafx-swt.jar!/" />
+          <root url="jar://$USER_HOME$/Downloads/openjfx-11.0.2_linux-x64_bin-sdk/javafx-sdk-11.0.2/lib/javafx.base.jar!/" />
+          <root url="jar://$USER_HOME$/Downloads/openjfx-11.0.2_linux-x64_bin-sdk/javafx-sdk-11.0.2/lib/javafx.fxml.jar!/" />
+          <root url="jar://$USER_HOME$/Downloads/openjfx-11.0.2_linux-x64_bin-sdk/javafx-sdk-11.0.2/lib/javafx.swing.jar!/" />
+          <root url="jar://$USER_HOME$/Downloads/openjfx-11.0.2_linux-x64_bin-sdk/javafx-sdk-11.0.2/lib/javafx.web.jar!/" />
+          <root url="jar://$USER_HOME$/Downloads/openjfx-11.0.2_linux-x64_bin-sdk/javafx-sdk-11.0.2/lib/javafx.media.jar!/" />
+          <root url="jar://$USER_HOME$/Downloads/openjfx-11.0.2_linux-x64_bin-sdk/javafx-sdk-11.0.2/lib/javafx.graphics.jar!/" />
+          <root url="jar://$USER_HOME$/Downloads/openjfx-11.0.2_linux-x64_bin-sdk/javafx-sdk-11.0.2/lib/javafx.controls.jar!/" />
+          <root url="file://$USER_HOME$/Downloads" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="file://$USER_HOME$/Downloads/colt-1.2.0/colt/doc/api" />
+          <root url="file://$USER_HOME$/Downloads/commons-collections4-4.4-bin/commons-collections4-4.4/apidocs" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="file://$USER_HOME$/Downloads" />
+          <root url="file://$USER_HOME$/Downloads/colt-1.2.0/colt/src" />
+        </SOURCES>
+        <jarDirectory url="file://$USER_HOME$/Downloads" recursive="false" />
+        <jarDirectory url="file://$USER_HOME$/Downloads" recursive="false" type="SOURCES" />
       </library>
     </orderEntry>
   </component>
