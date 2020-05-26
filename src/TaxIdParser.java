@@ -19,11 +19,14 @@ public class TaxIdParser {
 
         while((line = br.readLine())!= null){
             String[] temp = line.split("\t");
+            if(temp.length!=2){throw new IOException("Please use requested format!");}
+
             String conID = temp[0];
             Integer taxID = Integer.valueOf(temp[1]);
 
             map.put(conID, taxID);
         }
+
         br.close();
 
         for(String s : map.keySet()){
