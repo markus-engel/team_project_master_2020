@@ -1,4 +1,9 @@
 package view;
+
+import java.net.URL;
+import java.util.ResourceBundle;
+
+import com.sun.nio.file.SensitivityWatchEventModifier;
 import javafx.fxml.FXML;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -6,11 +11,15 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
+import javafx.scene.text.Text;
 
 public class View {
 
-    private Stage stage;
+    @FXML
+    private ResourceBundle resources;
+
+    @FXML
+    private URL location;
 
     @FXML
     private BorderPane Pane;
@@ -48,39 +57,35 @@ public class View {
     @FXML
     private TextField OverlapCountTextField;
 
-    public View() {
-        this.Pane = new BorderPane();
-        this.menuBar = new MenuBar();
-        this.fileMenu = new Menu();
-        this.ImportMenuItem = new MenuItem();
-        this.SaveMenuItem = new MenuItem();
-        this.CloseMenuItem = new MenuItem();
-        this.helpMenu = new Menu();
-        this.AboutMenuItem = new MenuItem();
-        this.ResultTextArea = new TextArea();
-        this.FilenameTextfield = new TextField();
-        this.SequenceCountTextField = new TextField();
-        this.OverlapCountTextField = new TextField();
+    @FXML
+    void initialize() {
+        assert Pane != null : "fx:id=\"Pane\" was not injected: check your FXML file 'sample.fxml'.";
+        assert menuBar != null : "fx:id=\"menuBar\" was not injected: check your FXML file 'sample.fxml'.";
+        assert fileMenu != null : "fx:id=\"fileMenu\" was not injected: check your FXML file 'sample.fxml'.";
+        assert ImportMenuItem != null : "fx:id=\"ImportMenuItem\" was not injected: check your FXML file 'sample.fxml'.";
+        assert SaveMenuItem != null : "fx:id=\"SaveMenuItem\" was not injected: check your FXML file 'sample.fxml'.";
+        assert CloseMenuItem != null : "fx:id=\"CloseMenuItem\" was not injected: check your FXML file 'sample.fxml'.";
+        assert helpMenu != null : "fx:id=\"helpMenu\" was not injected: check your FXML file 'sample.fxml'.";
+        assert AboutMenuItem != null : "fx:id=\"AboutMenuItem\" was not injected: check your FXML file 'sample.fxml'.";
+        assert ResultTextArea != null : "fx:id=\"ResultTextArea\" was not injected: check your FXML file 'sample.fxml'.";
+        assert FilenameTextfield != null : "fx:id=\"FilenameTextfield\" was not injected: check your FXML file 'sample.fxml'.";
+        assert SequenceCountTextField != null : "fx:id=\"SequenceCountTextField\" was not injected: check your FXML file 'sample.fxml'.";
+        assert OverlapCountTextField != null : "fx:id=\"OverlapCountTextField\" was not injected: check your FXML file 'sample.fxml'.";
+
     }
 
-    // Getter methods
-    public BorderPane getPane() { return Pane;}
+    // getter and setter Methods. More have to be implemented if needed
+    public MenuItem getImportMenuItem() { return ImportMenuItem; }
 
-    public MenuItem getImportMenuItem(){ return ImportMenuItem;}
+    public TextArea getResultTextArea() {return ResultTextArea;}
 
-    public MenuItem getSaveMenuItem() { return SaveMenuItem;}
+    public TextField getFilenameTextfield() { return FilenameTextfield; }
+    public void setFilenameTextfield(String filename) { FilenameTextfield.setText(filename); }
 
-    public MenuItem getCloseMenuItem() { return CloseMenuItem;}
+    public TextField getSequenceCountTextField() {return SequenceCountTextField;}
+    public void setSequenceCountTextField(int sequenceCount) {SequenceCountTextField.setText(Integer.toString(sequenceCount));}
 
-    public MenuItem getAboutMenuItem(){ return AboutMenuItem;}
-
-    public TextField getFilenameTextfield() { return FilenameTextfield;}
-
-    public TextField getSequenceCountTextField() { return SequenceCountTextField;}
-
-    public TextField getOverlapCountTextField() { return OverlapCountTextField;}
-
-    public Stage getStage() { return stage;}
-
-    public void setStage(Stage stage) { this.stage = stage;}
+    public TextField getOverlapCountTextField() { return OverlapCountTextField; }
+    public void setOverlapCountTextField(int overlapCount) {OverlapCountTextField.setText(Integer.toString(overlapCount));}
 }
+

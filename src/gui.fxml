@@ -10,13 +10,13 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-<fx:root fx:id="Pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" type="BorderPane" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller">
+<BorderPane fx:id="Pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.View">
    <top>
       <MenuBar fx:id="menuBar" BorderPane.alignment="CENTER">
         <menus>
           <Menu fx:id="fileMenu" mnemonicParsing="false" text="File">
             <items>
-                  <MenuItem fx:id="OpenMenuItem" mnemonicParsing="false" text="Open" />
+                  <MenuItem fx:id="ImportMenuItem" mnemonicParsing="false" text="Import" />
                   <MenuItem fx:id="SaveMenuItem" mnemonicParsing="false" text="Save" />
               <MenuItem fx:id="CloseMenuItem" mnemonicParsing="false" text="Close" />
             </items>
@@ -60,4 +60,4 @@
          </children>
       </HBox>
    </center>
-</fx:root>
+</BorderPane>
