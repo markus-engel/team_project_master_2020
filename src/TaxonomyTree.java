@@ -2,8 +2,7 @@ import java.io.*;
 import java.util.*;
 
     /* TODO:
-    // create a short version of names.dmp with only two columns (ID and scientific name)
-    // integrate maybe a map of IDs and scientific names to access the tree via names instead of IDs
+    // parser for names.dmp in line 58
      */
 
 public class TaxonomyTree {
@@ -11,8 +10,12 @@ public class TaxonomyTree {
     HashMap<Integer, Node> tree = new HashMap<>();   // actual tree
 
     TaxonomyTree() throws IOException {
+        parseNodes();
+        parseNames();
+    }
 
-        // Parsing the taxonomic information from nodesShort.dmp to the tree
+    // Node Parser parsing the taxonomic information from nodesShort.dmp to the tree
+    public void parseNodes() throws IOException {
         String line;
         File nodesShort = new File(getClass().getClassLoader().getResource("nodesShort.dmp").getFile());
         BufferedReader reader = new BufferedReader(new FileReader(nodesShort));
@@ -50,6 +53,10 @@ public class TaxonomyTree {
             tree.put(childId, child);
         }
         reader.close();
+    }
+
+    public void parseNames() throws IOException{
+        // TODO
     }
 
     // Method to get the parent-node-id of a node
