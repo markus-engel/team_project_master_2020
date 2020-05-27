@@ -60,7 +60,7 @@ public class View {
         this.ResultTextArea = new TextArea();
         this.FilenameTextfield = new TextField();
         this.SequenceCountTextField = new TextField();
-        this. OverlapCountTextField = new TextField();
+        this.OverlapCountTextField = new TextField();
     }
 
     // Getter methods

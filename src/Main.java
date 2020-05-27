@@ -14,13 +14,9 @@ public class Main extends Application {
         // Import FXML file
         Parent root = FXMLLoader.load(Main.class.getResource("gui.fxml"));
 
-        View view = new View();
-        view.setStage(stage);
-        Model model = new Model();
-
-        Presenter presenter = new Presenter(model, view);
+        Scene scene = new Scene(root);
         stage.setTitle("Test");
-        stage.setScene(new Scene(root, 600, 275));
+        stage.setScene(scene);
         stage.show();
     }
 
