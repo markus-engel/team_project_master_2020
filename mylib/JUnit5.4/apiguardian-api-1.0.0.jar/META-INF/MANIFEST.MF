@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Implementation-Title: apiguardian-api
+Automatic-Module-Name: org.apiguardian.api
+Build-Date: 2017-09-10
+Implementation-Version: 1.0.0
+Built-By: @API Guardian Team
+Specification-Vendor: apiguardian.org
+Specification-Title: apiguardian-api
+Implementation-Vendor: apiguardian.org
+Build-Revision: 75d8a160353c8eff3bdf82a30023d957eb6d2b8a
+Build-Time: 11:51:52.796+0200
+Created-By: 1.8.0_131 (Oracle Corporation 25.131-b11)
+Specification-Version: 1.0.0
+
