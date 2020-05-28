@@ -9,15 +9,15 @@ public class TaxonomyTree {
 
     HashMap<Integer, Node> tree = new HashMap<>();   // actual tree
 
-    TaxonomyTree() throws IOException {
+    TaxonomyTree() throws IOException { // parameter inclusion line 85 args[0]
         parseNodes();
         parseNames();
     }
 
     // Node Parser parsing the taxonomic information from nodesShort.dmp to the tree
-    public void parseNodes() throws IOException {
+    private void parseNodes() throws IOException {
         String line;
-        File nodesShort = new File(getClass().getClassLoader().getResource("nodesShort.dmp").getFile());
+        File nodesShort = new File(getClass().getClassLoader().getResource("nodesShort.dmp").getFile()); // consider arguments implementation for testing
         BufferedReader reader = new BufferedReader(new FileReader(nodesShort));
         while ((line = reader.readLine()) != null) {
             String[] parts = line.split("\t");
@@ -55,7 +55,7 @@ public class TaxonomyTree {
         reader.close();
     }
 
-    public void parseNames() throws IOException{
+    private void parseNames() throws IOException{
         // TODO
     }
 
@@ -82,7 +82,7 @@ public class TaxonomyTree {
     public static void main(String[] args) throws IOException {
 
         // Example test
-        TaxonomyTree t = new TaxonomyTree();
+        TaxonomyTree t = new TaxonomyTree();  // enter file name as parameter mainly for testing
         System.out.println(t.getRank(6));
         System.out.println(t.getParentId(11));
         System.out.println(t.getParentId(11,"order"));
