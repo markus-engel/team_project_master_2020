@@ -2,19 +2,22 @@ import java.io.*;
 import java.util.*;
 
     /* TODO:
-    // create a short version of names.dmp with only two columns (ID and scientific name)
-    // integrate maybe a map of IDs and scientific names to access the tree via names instead of IDs
+    // parser for names.dmp in line 58
      */
 
 public class TaxonomyTree {
 
     HashMap<Integer, Node> tree = new HashMap<>();   // actual tree
 
-    TaxonomyTree() throws IOException {
+    TaxonomyTree() throws IOException { // parameter inclusion line 85 args[0]
+        parseNodes();
+        parseNames();
+    }
 
-        // Parsing the taxonomic information from nodesShort.dmp to the tree
+    // Node Parser parsing the taxonomic information from nodesShort.dmp to the tree
+    private void parseNodes() throws IOException {
         String line;
-        File nodesShort = new File(getClass().getClassLoader().getResource("nodesShort.dmp").getFile());
+        File nodesShort = new File(getClass().getClassLoader().getResource("nodesShort.dmp").getFile()); // consider arguments implementation for testing
         BufferedReader reader = new BufferedReader(new FileReader(nodesShort));
         while ((line = reader.readLine()) != null) {
             String[] parts = line.split("\t");
@@ -52,6 +55,10 @@ public class TaxonomyTree {
         reader.close();
     }
 
+    private void parseNames() throws IOException{
+        // TODO
+    }
+
     // Method to get the parent-node-id of a node
     public int getParentId (int nodeId) {
         return tree.get(nodeId).getParent().getId();
@@ -75,7 +82,7 @@ public class TaxonomyTree {
     public static void main(String[] args) throws IOException {
 
         // Example test
-        TaxonomyTree t = new TaxonomyTree();
+        TaxonomyTree t = new TaxonomyTree();  // enter file name as parameter mainly for testing
         System.out.println(t.getRank(6));
         System.out.println(t.getParentId(11));
         System.out.println(t.getParentId(11,"order"));

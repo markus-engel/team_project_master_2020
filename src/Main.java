@@ -10,18 +10,21 @@ import view.View;
 
 public class Main extends Application {
 
+    @Override
     public void start(Stage stage) throws Exception {
         // Import FXML file
-        Parent root = FXMLLoader.load(Main.class.getResource("gui.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("gui.fxml"));
+        Parent root = loader.load();
+        View view = loader.getController();
+        Model model = new Model();
+        Presenter presenter = new Presenter(model,view);
 
-        Scene scene = new Scene(root);
-        stage.setTitle("Test");
-        stage.setScene(scene);
+        stage.setTitle("Long-read assembly visualization");
+        stage.setScene(new Scene(root, 600,275));
         stage.show();
     }
 
     public static void main(String[] args){
         launch(args);
     }
-
 }
