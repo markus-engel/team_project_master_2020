@@ -1,4 +1,8 @@
+package model.io;
+
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
+import model.graph.MyEdge;
+import model.graph.MyVertex;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -9,7 +13,6 @@ import java.util.HashMap;
 This is the class containing the readFile method to construct a graph from a GFA file.
 Constructed by Anna and Antonia.
 */
-
 
 public class MainParserGraph {
 
@@ -22,7 +25,7 @@ public class MainParserGraph {
         int countS = 0; // could be useful in the future to know how many sequences there are in total
         int countE = 0; // total count edges
 
-        HashMap<String, MyVertex> vertices = new HashMap<>(); //Hashmap collecting all vertices added to graph, with ID as key, MyVertex as object
+        HashMap<String, MyVertex> vertices = new HashMap<>(); //Hashmap collecting all vertices added to graph, with ID as key, model.graph.MyVertex as object
         UndirectedSparseGraph<MyVertex, MyEdge> graph = new UndirectedSparseGraph<MyVertex, MyEdge>(); //UndirectedSparseGraph readfile returns
 
         while (( line = br.readLine() ) != null) {
@@ -47,7 +50,6 @@ public class MainParserGraph {
                     graph.addVertex(new MyVertex(ID, sequence));
                     vertices.put(ID, new MyVertex(ID, sequence));
                 }
-
 
             } else if (line.startsWith("L")) { // lines with L are link lines (= edges)
                 countE++;
@@ -79,7 +81,6 @@ public class MainParserGraph {
 
 
     public static void main(String[] args) throws IOException {
-
         UndirectedSparseGraph<MyVertex, MyEdge> parsedGraph; //this is the graph from the parsed GFA file
         parsedGraph = readFile(args[0]);
 

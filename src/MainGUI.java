@@ -1,3 +1,5 @@
+// MainGUI class of the JavaFX GUI
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -7,7 +9,7 @@ import model.Model;
 import presenter.Presenter;
 import view.View;
 
-public class Main extends Application {
+public class MainGUI extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {

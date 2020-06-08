@@ -1,3 +1,5 @@
+package model.graph;
+
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 
 /*

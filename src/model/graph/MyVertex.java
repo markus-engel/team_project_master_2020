@@ -1,5 +1,6 @@
-import edu.uci.ics.jung.graph.UndirectedSparseGraph;
+package model.graph;
 
+import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 
 /*
 Class defining the vertices used in UndirectedSparseGraph.

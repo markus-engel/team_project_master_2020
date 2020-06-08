@@ -1,8 +1,15 @@
+import model.io.TaxonomyTree;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.io.IOException;
 
 class TaxonomyTreeTest {
+
+    TaxonomyTree T = new TaxonomyTree();
+
+    TaxonomyTreeTest() throws IOException {
+    }
+
 
     @Test
     void getParentId() {

@@ -1,4 +1,5 @@
-// GFA File parser: current variant simply prints the parsed information
+package model.io;// first version. For current version see MainParserGraph
+// this variant simply prints the parsed information
 
 import java.io.BufferedReader;
 import java.io.FileReader;
