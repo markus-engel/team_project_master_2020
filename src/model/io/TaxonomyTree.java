@@ -11,7 +11,7 @@ public class TaxonomyTree {
 
     HashMap<Integer, Node> tree = new HashMap<>();   // actual tree
 
-    TaxonomyTree() throws IOException { // parameter inclusion line 85 args[0]
+    public TaxonomyTree() throws IOException { // parameter inclusion line 85 args[0]
         parseNodes();
         parseNames();
     }

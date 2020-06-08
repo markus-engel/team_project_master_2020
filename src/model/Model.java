@@ -1,25 +1,24 @@
 package model;
 
-import edu.uci.ics.jung.graph.UndirectedSparseGraph;
+import model.io.MainParserGraph;
+import model.io.TaxIdParser;
+import model.io.TaxonomyTree;
+import java.io.IOException;
 
 public class Model {
 
-    private String stringProp = new String("start");
+    // create needed classes to use them in presenter
+    TaxIdParser currentTaxIdParser = new TaxIdParser();
+    MainParserGraph currentParserGraph = new MainParserGraph();
+    TaxonomyTree currentTaxTree = new TaxonomyTree();
 
-    private UndirectedSparseGraph newVSP;
+    public Model() throws IOException {
+    }
 
-    //MainParserGraph
-
+    // example method for model
     public void doSomething() {
         System.out.println("doing something");
     }
 
-    public void changeTheProp(){
-        this.stringProp = "lol";
-    }
-
-    public String getStringProp() {
-        return stringProp;
-    }
 
 }

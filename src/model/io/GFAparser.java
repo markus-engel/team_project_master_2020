@@ -1,5 +1,10 @@
-package model.io;// first version. For current version see MainParserGraph
-// this variant simply prints the parsed information
+package model.io;
+
+/*
+This is the first draft. For current version see MainParserGraph.
+This variant simply prints the parsed information from a gfa file
+From Anna (if you have questions)
+*/
 
 import java.io.BufferedReader;
 import java.io.FileReader;
