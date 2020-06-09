@@ -7,18 +7,21 @@ import java.io.IOException;
 
 public class Model {
 
-    // create needed classes to use them in presenter
-    TaxIdParser currentTaxIdParser = new TaxIdParser();
-    MainParserGraph currentParserGraph = new MainParserGraph();
-    TaxonomyTree currentTaxTree = new TaxonomyTree();
-
     public Model() throws IOException {
     }
+
+    // create needed classes to use them in presenter
+    TaxIdParser currentTaxIdParser = new TaxIdParser();
+    TaxonomyTree currentTaxTree = new TaxonomyTree();
+
+    public void actionParseGraph(String path) throws IOException {
+        MainParserGraph currentParserGraph = new MainParserGraph();
+        currentParserGraph.readFile(path);
+    }
+
 
     // example method for model
     public void doSomething() {
         System.out.println("doing something");
     }
-
-
 }
