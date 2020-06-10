@@ -12,16 +12,6 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="file://$MODULE_DIR$/mylib/JUNG" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-        <jarDirectory url="file://$MODULE_DIR$/mylib/JUNG" recursive="false" />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
           <root url="jar://$MODULE_DIR$/mylib/guava/guava-19.0.jar!/" />
         </CLASSES>
         <JAVADOC />
@@ -29,43 +19,15 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="JUnit5.1">
+      <library>
         <CLASSES>
-          <root url="file://$MODULE_DIR$/mylib/JUnit5.4/apiguardian-api-1.0.0.jar" />
-          <root url="file://$MODULE_DIR$/mylib/JUnit5.4/junit-jupiter-api-5.4.2.jar" />
-          <root url="file://$MODULE_DIR$/mylib/JUnit5.4/junit-jupiter-engine-5.4.2.jar" />
-          <root url="file://$MODULE_DIR$/mylib/JUnit5.4/junit-jupiter-params-5.4.2.jar" />
-          <root url="file://$MODULE_DIR$/mylib/JUnit5.4/junit-platform-commons-1.4.2.jar" />
-          <root url="file://$MODULE_DIR$/mylib/JUnit5.4/junit-platform-engine-1.4.2.jar" />
-          <root url="file://$MODULE_DIR$/mylib/JUnit5.4/opentest4j-1.1.1.jar" />
+          <root url="file://$MODULE_DIR$/mylib/JUNG" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
+        <jarDirectory url="file://$MODULE_DIR$/mylib/JUNG" recursive="false" />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
-      <library name="javafx.11">
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/mylib/javafx.11/javafx-swt.jar" />
-          <root url="file://$MODULE_DIR$/mylib/javafx.11/javafx.base.jar" />
-          <root url="file://$MODULE_DIR$/mylib/javafx.11/javafx.controls.jar" />
-          <root url="file://$MODULE_DIR$/mylib/javafx.11/javafx.fxml.jar" />
-          <root url="file://$MODULE_DIR$/mylib/javafx.11/javafx.graphics.jar" />
-          <root url="file://$MODULE_DIR$/mylib/javafx.11/javafx.media.jar" />
-          <root url="file://$MODULE_DIR$/mylib/javafx.11/javafx.swing.jar" />
-          <root url="file://$MODULE_DIR$/mylib/javafx.11/javafx.web.jar" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="file://$MODULE_DIR$/mylib/javafx.11/src.zip/javafx.base" />
-          <root url="file://$MODULE_DIR$/mylib/javafx.11/src.zip/javafx.controls" />
-          <root url="file://$MODULE_DIR$/mylib/javafx.11/src.zip/javafx.fxml" />
-          <root url="file://$MODULE_DIR$/mylib/javafx.11/src.zip/javafx.graphics" />
-          <root url="file://$MODULE_DIR$/mylib/javafx.11/src.zip/javafx.media" />
-          <root url="file://$MODULE_DIR$/mylib/javafx.11/src.zip/javafx.swing" />
-          <root url="file://$MODULE_DIR$/mylib/javafx.11/src.zip/javafx.web" />
-        </SOURCES>
-      </library>
-    </orderEntry>
+    <orderEntry type="library" name="javafx.11" level="project" />
   </component>
 </module>
