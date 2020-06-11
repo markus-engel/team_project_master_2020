@@ -1,15 +1,25 @@
 package model.io;
 
-import java.io.*;
-import java.util.*;
+/*
+Taxonomic tree with access to the tree structure and the scientific names
+The taxonomic ID of a contig (provided by TaxIdParser) is needed to access information of the tree
+by Nasser and Julia
+Comments for testing by Markus
+ */
 
-    /* TODO:
-    // parser for names.dmp in line 58
-     */
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 public class TaxonomyTree {
 
-    HashMap<Integer, Node> tree = new HashMap<>();   // actual tree
+    // The tree has taxonomic IDs as keys and Nodes as values
+    // The Nodes themselves contain rank, scientific name, as well as Edges to parent and all children in the tree structure
+    HashMap<Integer, Node> tree = new HashMap<>();
 
     public TaxonomyTree() throws IOException { // parameter inclusion line 85 args[0]
         parseNodes();
@@ -19,7 +29,7 @@ public class TaxonomyTree {
     // Node Parser parsing the taxonomic information from nodesShort.dmp to the tree
     private void parseNodes() throws IOException {
         String line;
-        File nodesShort = new File(getClass().getClassLoader().getResource("nodesShort.dmp").getFile()); // consider arguments implementation for testing
+        File nodesShort = new File(getClass().getClassLoader().getResource("model/io/nodesShort.dmp").getFile()); // consider arguments implementation for testing
         BufferedReader reader = new BufferedReader(new FileReader(nodesShort));
         while ((line = reader.readLine()) != null) {
             String[] parts = line.split("\t");
@@ -57,17 +67,31 @@ public class TaxonomyTree {
         reader.close();
     }
 
-    private void parseNames() throws IOException{
-        // TODO
+    // Name Parser parsing the scientific names of the nodes from namesShort.txt to the nodes in the tree
+    private void parseNames() throws IOException {
+        String line;
+        File namesShort = new File(getClass().getClassLoader().getResource("model/io/namesShort.txt").getFile()); // consider arguments implementation for testing
+        BufferedReader reader = new BufferedReader(new FileReader(namesShort));
+        while ((line = reader.readLine()) != null) {
+            String[] parts = line.split("\t");
+            int taxID = Integer.parseInt(parts[0]);
+            String scientificName = parts[1];
+            tree.get(taxID).setScientificName(scientificName);
+        }
     }
 
     // Method to get the parent-node-id of a node
-    public int getParentId (int nodeId) {
+    public int getParentId(int nodeId) {
         return tree.get(nodeId).getParent().getId();
     }
 
+    // Method to get the name of a node's parent
+    public String getParentName(int nodeId) {
+        return tree.get(nodeId).getParent().getScientificName();
+    }
+
     // Method to get the parent-node-id of a specific rank of parent by going from parent to parent, e.g. order of 11
-    public int getParentId (int nodeId, String rank) {
+    public int getParentId(int nodeId, String rank) {
         Node current = tree.get(nodeId);
         while (!current.getRank().equals(rank) & tree.containsKey(current.getId())) {
             current = tree.get(this.getParentId(current.getId()));
@@ -76,8 +100,18 @@ public class TaxonomyTree {
         else return 0;
     }
 
+    // Method to get the parent-node-name of a specific rank of parent by going from parent to parent, e.g. order of 11
+    public String getParentName(int nodeId, String rank) {
+        Node current = tree.get(nodeId);
+        while (!current.getRank().equals(rank) & tree.containsKey(current.getId())) {
+            current = tree.get(this.getParentId(current.getId()));
+        }
+        if (current.getRank().equals(rank)) return current.getScientificName();
+        else return "";
+    }
+
     // Method to get the rank of a node, e.g. "order", "family", "species", ...
-    public String getRank (int nodeId) {
+    public String getRank(int nodeId) {
         return tree.get(nodeId).getRank();
     }
 
@@ -86,18 +120,15 @@ public class TaxonomyTree {
         // Example test
         TaxonomyTree t = new TaxonomyTree();  // enter file name as parameter mainly for testing
         System.out.println(t.getRank(6));
-        System.out.println(t.getParentId(11));
-        System.out.println(t.getParentId(11,"order"));
+        System.out.println(t.getParentName(11));
+        System.out.println(t.getParentId(11, "order"));
         System.out.println(t.getRank(11));
-        System.out.println(t.getParentId(1707));
-        System.out.println(t.getParentId(t.getParentId(1707)));
-        System.out.println(t.getRank(85006));
-
     }
 
     static class Node {
 
         private final int id;
+        private String scientificName;
         private String rank;
         private Edge edgeToParent;
 
@@ -120,6 +151,14 @@ public class TaxonomyTree {
             return id;
         }
 
+        public String getScientificName() {
+            return scientificName;
+        }
+
+        public void setScientificName(String scientificName) {
+            this.scientificName = scientificName;
+        }
+
         public String getRank() {
             return rank;
         }
@@ -140,9 +179,9 @@ public class TaxonomyTree {
             return edges;
         }  // get list of all edges multiple list
 
-        public void addEdgeToParent (Node parent) {
+        public void addEdgeToParent(Node parent) {
             edgeToParent = new Edge(parent, this);
-        } // if parent or child is unkown
+        } // if parent or child is unknown
 
         public void addEdgeToChild (Node child) {
             edges.add(new Edge(this, child));
