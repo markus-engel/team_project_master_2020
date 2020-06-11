@@ -14,9 +14,9 @@ This is the class containing the readFile method to construct a graph from a GFA
 Constructed by Anna and Antonia.
 */
 
-public class MainParserGraph {
+public class GraphParser {
 
-    public static UndirectedSparseGraph<MyVertex, MyEdge> readFile(String file) throws IOException {
+    public UndirectedSparseGraph<MyVertex, MyEdge> readFile(String file) throws IOException {
         FileReader fr = new FileReader(file); // can be changed into not hard coded if needed
         BufferedReader br = new BufferedReader(fr);
         String line = ""; // will hold the current reading line
@@ -77,12 +77,5 @@ public class MainParserGraph {
         fr.close();
 
         return graph;
-    }
-
-
-    public static void main(String[] args) throws IOException {
-        UndirectedSparseGraph<MyVertex, MyEdge> parsedGraph; //this is the graph from the parsed GFA file
-        parsedGraph = readFile(args[0]);
-
     }
 }

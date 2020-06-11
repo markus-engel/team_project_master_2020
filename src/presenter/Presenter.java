@@ -34,7 +34,10 @@ public class Presenter {
 
                 try {
                     // is this how to catch the graph correctly to use it further?
-                    model.actionParseGraph(f.getAbsolutePath());
+                    model.setGraph(model.parseGraph(f.getAbsolutePath()));
+
+                    // Check if gfa file was imported and parsed
+                    //System.out.println(model.getGraph().getVertices());
 
                 } catch (IOException e) {
                     e.printStackTrace();
