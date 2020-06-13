@@ -1,6 +1,8 @@
 package model.io;
 
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import model.graph.MyEdge;
 import model.graph.MyVertex;
 
@@ -12,6 +14,7 @@ import java.util.HashMap;
 /*
 This is the class containing the readFile method to construct a graph from a GFA file.
 Constructed by Anna and Antonia.
+Modified by Anna: change values to Object properties to use them in myVertex
 */
 
 public class GraphParser {
@@ -39,16 +42,22 @@ public class GraphParser {
 
                 //check if new vertex already in graph
                 for (MyVertex v: graph.getVertices()){
-                    if (v.getID().equals(ID)){
-                        v.setSequence(sequence);
+                    if (v.getIDpropProperty().equals(ID)){
+                        v.setSequenceprop(sequence);
                         notInGraph = false;
                     }
                 }
 
+                // make the values of type property to add them in myVertex()
+                StringProperty currentID = new SimpleStringProperty();
+                StringProperty currentSeq = new SimpleStringProperty();
+                currentID.setValue(ID);
+                currentSeq.setValue(sequence);
+
                 //if not in graph, add new vertex to graph
                 if (notInGraph){
-                    graph.addVertex(new MyVertex(ID, sequence));
-                    vertices.put(ID, new MyVertex(ID, sequence));
+                    graph.addVertex(new MyVertex(currentID, currentSeq));
+                    vertices.put(ID, new MyVertex(currentID, currentSeq));
                 }
 
             } else if (line.startsWith("L")) { // lines with L are link lines (= edges)
@@ -65,9 +74,15 @@ public class GraphParser {
                 vSource = vertices.get(eSource);
                 vDestination = vertices.get(eDestination);
 
+                // make the values of type property to add them in myVertex()
+                StringProperty currentSource = new SimpleStringProperty();
+                StringProperty currentDestination = new SimpleStringProperty();
+                currentSource.setValue(eSource);
+                currentDestination.setValue(eDestination);
+
                 //construct vertex, if not found in Hashmap vertices
-                if (vSource==null){ new MyVertex(eSource);};
-                if (vDestination==null){ new MyVertex(eDestination);};
+                if (vSource==null){ new MyVertex(currentSource);};
+                if (vDestination==null){ new MyVertex(currentDestination);};
 
                 //add Edge with source and destination Vertex to graph
                 graph.addEdge(currentEdge, vSource, vDestination);
