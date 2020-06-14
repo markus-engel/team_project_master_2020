@@ -21,18 +21,37 @@ public class TaxonomyTree {
     // The Nodes themselves contain rank, scientific name, as well as Edges to parent and all children in the tree structure
     HashMap<Integer, Node> tree = new HashMap<>();
 
-    public TaxonomyTree() throws IOException { // parameter inclusion line 85 args[0]
-        parseNodes();
-        parseNames();
+//    String fileName = "";
+
+    public TaxonomyTree(String fileNameNode, String fileNames) throws IOException { // parameter inclusion line 85 args[0]
+
+        if (fileNameNode == "" || fileNameNode == "model/io/nodesShort.dmp") {  //ME
+            fileNameNode = "model/io/nodesShort.dmp";   //ME
+        } else {    //ME
+            fileNameNode = fileNameNode;    //ME
+        }
+
+        if (fileNames == "" || fileNames == "model/io/namesShort.txt") {  //ME
+            fileNames = "model/io/namesShort.txt";   //ME
+        } else {    //ME
+            fileNames = fileNames;    //ME
+        }
+
+
+        parseNodes(fileNameNode);
+        parseNames(fileNames);
     }
 
     // Node Parser parsing the taxonomic information from nodesShort.dmp to the tree
-    private void parseNodes() throws IOException {
+    private void parseNodes(String fileNameNode) throws IOException {
         String line;
-        File nodesShort = new File(getClass().getClassLoader().getResource("model/io/nodesShort.dmp").getFile()); // consider arguments implementation for testing
+        File nodesShort = new File(getClass().getClassLoader().getResource(fileNameNode).getFile()); // consider arguments implementation for testing
         BufferedReader reader = new BufferedReader(new FileReader(nodesShort));
         while ((line = reader.readLine()) != null) {
             String[] parts = line.split("\t");
+//            System.out.println(parts[0]);   //ME
+//            System.out.println(parts[1]);   //ME
+//            System.out.println(parts[2]);   //ME
             int childId = Integer.parseInt(parts[0]); //actual read node
             int parentId = Integer.parseInt(parts[1]);
             String childRank = parts[2]; // rank of the actual node
@@ -68,9 +87,9 @@ public class TaxonomyTree {
     }
 
     // Name Parser parsing the scientific names of the nodes from namesShort.txt to the nodes in the tree
-    private void parseNames() throws IOException {
+    private void parseNames(String fileNames) throws IOException {
         String line;
-        File namesShort = new File(getClass().getClassLoader().getResource("model/io/namesShort.txt").getFile()); // consider arguments implementation for testing
+        File namesShort = new File(getClass().getClassLoader().getResource(fileNames).getFile()); // consider arguments implementation for testing
         BufferedReader reader = new BufferedReader(new FileReader(namesShort));
         while ((line = reader.readLine()) != null) {
             String[] parts = line.split("\t");
@@ -115,15 +134,18 @@ public class TaxonomyTree {
         return tree.get(nodeId).getRank();
     }
 
-    public static void main(String[] args) throws IOException {
-
-        // Example test
-        TaxonomyTree t = new TaxonomyTree();  // enter file name as parameter mainly for testing
-        System.out.println(t.getRank(6));
-        System.out.println(t.getParentName(11));
-        System.out.println(t.getParentId(11, "order"));
-        System.out.println(t.getRank(11));
-    }
+//    public static void main(String[] args) throws IOException {
+//
+//        String fileNameNode = "model/io/JUnitTestMarkus.txt";   //ME
+//        String fileNames = "model/io/JUnitTestMarkusNames.txt"; //ME
+//
+//        // Example test
+//        TaxonomyTree t = new TaxonomyTree(fileNameNode, fileNames);  // enter file name as parameter mainly for testing
+//        System.out.println(t.getRank(6));
+//        System.out.println(t.getParentName(11));
+////        System.out.println(t.getParentId(11, "order"));
+//        System.out.println(t.getRank(11));
+//    }
 
     static class Node {
 
@@ -131,7 +153,8 @@ public class TaxonomyTree {
         private String scientificName;
         private String rank;
         private Edge edgeToParent;
-
+    String fileNameNode = "model/io/JUnitTestMarkus.txt";
+    String fileNames = "model/io/JUnitTestMarkusNames.txt";
         // List of all edges to the child-nodes
         private final List<Edge> edges = new LinkedList<>();
 
