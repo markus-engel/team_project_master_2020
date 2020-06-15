@@ -2,6 +2,8 @@ import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.KKLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import model.graph.MyEdge;
 import model.graph.MyVertex;
 
@@ -64,12 +66,15 @@ public class TestingGraph {
 
             UndirectedSparseGraph<MyVertex, MyEdge> graph = new UndirectedSparseGraph<MyVertex, MyEdge>();
 
-            MyVertex firstVector = new MyVertex("first", "ABCD");
-            MyVertex secondVector = new MyVertex("second", "BBBB");
-            MyVertex thirdVector = new MyVertex("third","CCCC");
-            MyVertex fourthVector = new MyVertex("fourth", "DDDD");
-            String[] vectorIds = {"first", "second", "third", "fourth"};
-            String[] vectorSeq = {"A", "B","C"};
+            StringProperty first = new SimpleStringProperty("HAHAHA");
+
+            MyVertex firstVector = new MyVertex(new SimpleStringProperty("first"), new SimpleStringProperty("ABCD"));
+            MyVertex secondVector = new MyVertex(new SimpleStringProperty("second"), new SimpleStringProperty("BBBB"));
+            MyVertex thirdVector = new MyVertex(new SimpleStringProperty("third"),new SimpleStringProperty("CCCC"));
+            MyVertex fourthVector = new MyVertex(new SimpleStringProperty("fourth"), new SimpleStringProperty("DDDD"));
+            //String[] vectorIds = {"first", "second", "third", "fourth"};
+            //String[] vectorSeq = {"A", "B","C"};
+
 
             //ich gebe in Edge jetzt nur den graphen ein, da UndirectedSparseGraph eine Edge aus Obj. und Pair
             // of Vertices/Endpoints erstellt
