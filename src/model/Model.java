@@ -1,14 +1,10 @@
 package model;
 
+import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import model.graph.MyEdge;
 import model.graph.MyVertex;
 import model.io.GraphParser;
-import model.io.TaxIdParser;
-import model.io.TaxonomyTree;
-
 import java.io.IOException;
-
-import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 
 public class Model {
 
@@ -29,9 +25,6 @@ public class Model {
     public void setGraph(UndirectedSparseGraph<MyVertex,MyEdge> graph) { this.graph = graph;}
 
     //TaxIdParser currentTaxIdParser = new TaxIdParser();
-    // should we change the TaxIdParser? Because now its working through its main and there's no method to call
-
     //TaxonomyTree currentTaxTree = new TaxonomyTree();
     //currentTaxTree.getRank(9); // as method call example
-
 }

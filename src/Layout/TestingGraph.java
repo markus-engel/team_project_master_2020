@@ -1,21 +1,11 @@
+package Layout;
+
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.KKLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import model.graph.MyEdge;
-import model.graph.MyVertex;
-
-import java.awt.*;
-import java.awt.geom.Point2D;
-import edu.uci.ics.jung.algorithms.layout.FRLayout;
-import edu.uci.ics.jung.algorithms.layout.KKLayout;
-import edu.uci.ics.jung.algorithms.layout.Layout;
-import edu.uci.ics.jung.graph.UndirectedSparseGraph;
-import edu.uci.ics.jung.graph.util.EdgeType;
-import edu.uci.ics.jung.graph.util.Pair;
-import edu.uci.ics.jung.visualization.VisualizationViewer;
 import model.graph.MyEdge;
 import model.graph.MyVertex;
 

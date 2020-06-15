@@ -2,7 +2,6 @@ package model.io;
 
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import model.graph.MyEdge;
 import model.graph.MyVertex;
 
@@ -48,16 +47,10 @@ public class GraphParser {
                     }
                 }
 
-                // make the values of type property to add them in myVertex()
-                StringProperty currentID = new SimpleStringProperty();
-                StringProperty currentSeq = new SimpleStringProperty();
-                currentID.setValue(ID);
-                currentSeq.setValue(sequence);
-
                 //if not in graph, add new vertex to graph
                 if (notInGraph){
-                    graph.addVertex(new MyVertex(currentID, currentSeq));
-                    vertices.put(ID, new MyVertex(currentID, currentSeq));
+                    graph.addVertex(new MyVertex(new SimpleStringProperty(ID), new SimpleStringProperty(sequence)));
+                    vertices.put(ID, new MyVertex(new SimpleStringProperty(ID), new SimpleStringProperty(sequence)));
                 }
 
             } else if (line.startsWith("L")) { // lines with L are link lines (= edges)
@@ -74,15 +67,9 @@ public class GraphParser {
                 vSource = vertices.get(eSource);
                 vDestination = vertices.get(eDestination);
 
-                // make the values of type property to add them in myVertex()
-                StringProperty currentSource = new SimpleStringProperty();
-                StringProperty currentDestination = new SimpleStringProperty();
-                currentSource.setValue(eSource);
-                currentDestination.setValue(eDestination);
-
                 //construct vertex, if not found in Hashmap vertices
-                if (vSource==null){ new MyVertex(currentSource);};
-                if (vDestination==null){ new MyVertex(currentDestination);};
+                if (vSource==null){ new MyVertex(new SimpleStringProperty(eSource));};
+                if (vDestination==null){ new MyVertex(new SimpleStringProperty(eDestination));};
 
                 //add Edge with source and destination Vertex to graph
                 graph.addEdge(currentEdge, vSource, vDestination);
