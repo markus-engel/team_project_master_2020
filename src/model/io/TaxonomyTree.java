@@ -70,7 +70,7 @@ public class TaxonomyTree {
     // Name Parser parsing the scientific names of the nodes from namesShort.txt to the nodes in the tree
     private void parseNames() throws IOException {
         String line;
-        File namesShort = new File(getClass().getClassLoader().getResource("model/io/namesShort.txt").getFile()); // consider arguments implementation for testing
+        File namesShort = new File(getClass().getClassLoader().getResource("model/io/namesShort.dmp").getFile()); // consider arguments implementation for testing
         BufferedReader reader = new BufferedReader(new FileReader(namesShort));
         while ((line = reader.readLine()) != null) {
             String[] parts = line.split("\t");
@@ -80,39 +80,58 @@ public class TaxonomyTree {
         }
     }
 
-    // Method to get the parent-node-id of a node
-    public int getParentId(int nodeId) {
-        return tree.get(nodeId).getParent().getId();
+    // returns the complete tree -> mostly for testing
+    public HashMap<Integer, Node> getTree() {
+        return tree;
     }
 
-    // Method to get the name of a node's parent
-    public String getParentName(int nodeId) {
-        return tree.get(nodeId).getParent().getScientificName();
-    }
-
-    // Method to get the parent-node-id of a specific rank of parent by going from parent to parent, e.g. order of 11
-    public int getParentId(int nodeId, String rank) {
-        Node current = tree.get(nodeId);
-        while (!current.getRank().equals(rank) & tree.containsKey(current.getId())) {
-            current = tree.get(this.getParentId(current.getId()));
-        }
-        if (current.getRank().equals(rank)) return current.getId();
+    // Method to get the id of a node's ancestor
+    public int getAncestorId(int taxId) {
+        if (tree.containsKey(taxId))
+            return tree.get(taxId).getParent().getId();
         else return 0;
     }
 
-    // Method to get the parent-node-name of a specific rank of parent by going from parent to parent, e.g. order of 11
-    public String getParentName(int nodeId, String rank) {
-        Node current = tree.get(nodeId);
-        while (!current.getRank().equals(rank) & tree.containsKey(current.getId())) {
-            current = tree.get(this.getParentId(current.getId()));
-        }
-        if (current.getRank().equals(rank)) return current.getScientificName();
+    // Method to get the name of a node's ancestor
+    public String getAncestorName(int taxId) {
+        if (tree.containsKey(taxId)) return tree.get(taxId).getParent().getScientificName();
         else return "";
     }
 
-    // Method to get the rank of a node, e.g. "order", "family", "species", ...
-    public String getRank(int nodeId) {
-        return tree.get(nodeId).getRank();
+    // Method to get the id of an ancestor of a specific rank, e.g. id of the order of node 11
+    public int getAncestorId(int taxId, String rank) {
+        if (tree.containsKey(taxId)) {
+            Node current = tree.get(taxId);
+            while (!current.getRank().equals(rank) & tree.containsKey(current.getId())) {
+                current = tree.get(this.getAncestorId(current.getId()));
+            }
+            if (current.getRank().equals(rank)) return current.getId();
+            else return 0;
+        } else return 0;
+    }
+
+    // Method to get the name of an ancestor of a specific rank, e.g. id of the order of node 11
+    public String getAncestorName(int taxId, String rank) {
+        if (tree.containsKey(taxId)) {
+            Node current = tree.get(taxId);
+            while (!current.getRank().equals(rank) & tree.containsKey(current.getId())) {
+                current = tree.get(this.getAncestorId(current.getId()));
+            }
+            if (current.getRank().equals(rank)) return current.getScientificName();
+            else return "";
+        } else return "";
+    }
+
+    // Method to get the scientific name of a node
+    public String getScientificName(int taxId) {
+        if (tree.containsKey(taxId)) return tree.get(taxId).getScientificName();
+        else return "";
+    }
+
+    // Method to get the rank of a node, returns e.g. "order", "family", "species", ...
+    public String getRank(int taxId) {
+        if (tree.containsKey(taxId)) return tree.get(taxId).getRank();
+        else return "";
     }
 
     public static void main(String[] args) throws IOException {
@@ -120,8 +139,11 @@ public class TaxonomyTree {
         // Example test
         TaxonomyTree t = new TaxonomyTree();  // enter file name as parameter mainly for testing
         System.out.println(t.getRank(6));
-        System.out.println(t.getParentName(11));
-        System.out.println(t.getParentId(11, "order"));
+        System.out.println(t.getScientificName(6));
+        System.out.println(t.getAncestorName(11));
+        System.out.println(t.getAncestorName(11, "family"));
+        System.out.println(t.getAncestorId(3)); // 3 does not exist -> returns 0
+        System.out.println(t.getAncestorId(11, "order"));
         System.out.println(t.getRank(11));
     }
 
