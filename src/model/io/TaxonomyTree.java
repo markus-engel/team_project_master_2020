@@ -139,7 +139,7 @@ public class TaxonomyTree {
         else return "";
     }
 
-    public static void main(String[] args) throws IOException {
+/*    public static void main(String[] args) throws IOException {
 
         // Example test
         TaxonomyTree t = new TaxonomyTree();  // enter file name as parameter mainly for testing
@@ -150,7 +150,7 @@ public class TaxonomyTree {
         System.out.println(t.getAncestorId(3)); // 3 does not exist -> returns 0
         System.out.println(t.getAncestorId(11, "order"));
         System.out.println(t.getRank(11));
-    }
+    }*/
 
     static class Node {
 

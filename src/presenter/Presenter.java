@@ -28,18 +28,48 @@ public class Presenter {
                 FileChooser fc = new FileChooser();
                 //fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("GFA Files", "*.gfa"));
                 File f = fc.showOpenDialog(null);
-                if (f!=null) {
+
+                if (f != null) try {
+
                     view.setFilenameTextfield("File: " + f.getAbsolutePath());
-                }
 
-                try {
-                    // is this how to catch the graph correctly to use it further?
-                    model.setGraph(model.parseGraph(f.getAbsolutePath()));
+                    // parse gfa file to graph
+                    model.parseGraph(f.getAbsolutePath());
 
-                    // Check if gfa file was imported and parsed
-                    //System.out.println(model.getGraph().getVertices());
+                    // Check if gfa file was imported and parsed:
+                    //System.out.print(model.getGraph().getVertices());
+
+                    // after the graph is parsed, further optional imports can be enabled:
+                    view.getImportTaxonomyMenuItem().setDisable(false);
+                    view.getImportCoverageMenuItem().setDisable(false);
 
                 } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        view.getImportTaxonomyMenuItem().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                FileChooser fc = new FileChooser();
+                File f = fc.showOpenDialog(null);
+                if (f != null) try {
+                    model.parseTaxId(f.getAbsolutePath());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        view.getImportCoverageMenuItem().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                FileChooser fc = new FileChooser();
+                File f = fc.showOpenDialog(null);
+                if (f != null) try {
+                    model.parseCoverage(f.getAbsolutePath());
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }

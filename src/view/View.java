@@ -40,6 +40,12 @@ public class View {
     private MenuItem CloseMenuItem;
 
     @FXML
+    private MenuItem ImportTaxonomyMenuItem;
+
+    @FXML
+    private MenuItem ImportCoverageMenuItem;
+
+    @FXML
     private Menu helpMenu;
 
     @FXML
@@ -65,6 +71,8 @@ public class View {
         assert ImportMenuItem != null : "fx:id=\"ImportMenuItem\" was not injected: check your FXML file 'sample.fxml'.";
         assert SaveMenuItem != null : "fx:id=\"SaveMenuItem\" was not injected: check your FXML file 'sample.fxml'.";
         assert CloseMenuItem != null : "fx:id=\"CloseMenuItem\" was not injected: check your FXML file 'sample.fxml'.";
+        assert ImportTaxonomyMenuItem != null : "fx:id=\"ImportTaxonomyMenuItem\" was not injected: check your FXML file 'gui.fxml'.";
+        assert ImportCoverageMenuItem != null : "fx:id=\"ImportCoverageMenuItem\" was not injected: check your FXML file 'gui.fxml'.";
         assert helpMenu != null : "fx:id=\"helpMenu\" was not injected: check your FXML file 'sample.fxml'.";
         assert AboutMenuItem != null : "fx:id=\"AboutMenuItem\" was not injected: check your FXML file 'sample.fxml'.";
         assert ResultTextArea != null : "fx:id=\"ResultTextArea\" was not injected: check your FXML file 'sample.fxml'.";
@@ -75,17 +83,41 @@ public class View {
     }
 
     // getter and setter Methods. More have to be implemented if needed
-    public MenuItem getImportMenuItem() { return ImportMenuItem; }
+    public MenuItem getImportMenuItem() {
+        return ImportMenuItem;
+    }
 
-    public TextArea getResultTextArea() {return ResultTextArea;}
+    public MenuItem getImportTaxonomyMenuItem() {
+        return ImportTaxonomyMenuItem;
+    }
 
-    public TextField getFilenameTextfield() { return FilenameTextfield; }
-    public void setFilenameTextfield(String filename) { FilenameTextfield.setText(filename); }
+    public MenuItem getImportCoverageMenuItem() {
+        return ImportCoverageMenuItem;
+    }
 
-    public TextField getSequenceCountTextField() {return SequenceCountTextField;}
-    public void setSequenceCountTextField(int sequenceCount) {SequenceCountTextField.setText(Integer.toString(sequenceCount));}
+    public TextArea getResultTextArea() {
+        return ResultTextArea;
+    }
 
-    public TextField getOverlapCountTextField() { return OverlapCountTextField; }
+    public TextField getFilenameTextfield() {
+        return FilenameTextfield;
+    }
+
+    public void setFilenameTextfield(String filename) {
+        FilenameTextfield.setText(filename);
+    }
+
+    public TextField getSequenceCountTextField() {
+        return SequenceCountTextField;
+    }
+
+    public void setSequenceCountTextField(int sequenceCount) {
+        SequenceCountTextField.setText(Integer.toString(sequenceCount));
+    }
+
+    public TextField getOverlapCountTextField() {
+        return OverlapCountTextField;
+    }
     public void setOverlapCountTextField(int overlapCount) {OverlapCountTextField.setText(Integer.toString(overlapCount));}
 }
 

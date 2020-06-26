@@ -8,6 +8,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.concurrent.Task;
 import model.graph.MyEdge;
 import model.graph.MyVertex;
+import model.io.CoverageParser;
 import model.io.GraphParser;
 import model.io.TaxIdParser;
 import model.io.TaxonomyTree;
@@ -61,11 +62,11 @@ public class Model {
         this.graph = graph;
     }
 
-    // Do we need to return the graph here?
     public void parseTaxId(String path) throws IOException {
         new TaxIdParser(graph, path, currentTaxTree);
     }
-    // TODO: add an option for the user to import a file with taxonomic IDs (only if a graph has been parsed)
 
-    //currentTaxTree.getRank(9); // as method call example
+    public void parseCoverage(String path) {
+        new CoverageParser(path);
+    }
 }

@@ -16,7 +16,6 @@ import java.io.IOException;
 
 public class TaxIdParser {
 
-    //private final HashMap<String, Integer> contigToTaxID = new HashMap<>();
     UndirectedSparseGraph<MyVertex, MyEdge> graph;
     String path;
     TaxonomyTree tree;
@@ -30,16 +29,6 @@ public class TaxIdParser {
 
     // Parser of the taxonomic IDs matching the contig IDs of vertices in the graph
     private void parseTaxIDs(UndirectedSparseGraph<MyVertex, MyEdge> graph, String path, TaxonomyTree tree) throws IOException {
-
-        // Thomas' original code from main method
-        /*if(args.length!=1){throw new IOException("Enter single file with contig ID and taxonomic ID!");}
-
-        File file = new File(args[0]);
-        FileReader fr = new FileReader(file);
-        BufferedReader br = new BufferedReader(fr);
-        */
-
-        //File file = new File(getClass().getClassLoader().getResource("model/io/jeon2n3_miniasm.r2c.txt").getFile());
         BufferedReader br = new BufferedReader(new FileReader(path));
         String line;
         while ((line = br.readLine()) != null) {
@@ -49,35 +38,14 @@ public class TaxIdParser {
             }
 
             String conID = temp[0];
-            Integer taxID = Integer.valueOf(temp[1]);
+            int taxID = Integer.parseInt(temp[1]);
             // Comparing the IDs of the vertices to the contig ID in this line of the file
             for (MyVertex v : graph.getVertices()) {
                 if (v.getIDpropProperty().toString().equals(conID)) {
                     v.addProperty("taxonomy", tree.getTaxNode(taxID));
                 }
             }
-            //contigToTaxID.put(conID, taxID);
         }
         br.close();
     }
 }
-
-/*
-    public HashMap<String, Integer> getContigToTaxID() {
-        return contigToTaxID;
-    }
-
-    // Returns the taxonomic ID of a given contig ID
-    public int getTaxID(String contigID) {
-        return contigToTaxID.get(contigID);
-    }
-
-    // for testing only: Prints all pairs of contig and taxonomic IDs
-    public static void main(String[] args) throws IOException {
-        TaxIdParser taxIDs = new TaxIdParser();
-
-        for (String s : taxIDs.getContigToTaxID().keySet()) {
-            System.out.println("Contig ID: " + s + "\t" + "Taxonomic ID: " + taxIDs.getContigToTaxID().get(s));
-        }
-    }
-}*/
