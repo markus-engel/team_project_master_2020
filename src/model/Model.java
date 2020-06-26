@@ -5,6 +5,7 @@ import javafx.concurrent.Task;
 import model.graph.MyEdge;
 import model.graph.MyVertex;
 import model.io.GraphParser;
+import model.io.TaxIdParser;
 import model.io.TaxonomyTree;
 
 import java.io.IOException;
@@ -31,15 +32,24 @@ public class Model {
     }
 
     // create needed objects of the IO classes to use them in presenter
-    public UndirectedSparseGraph<MyVertex,MyEdge> parseGraph (String path) throws IOException {
+    public UndirectedSparseGraph<MyVertex, MyEdge> parseGraph(String path) throws IOException {
         GraphParser gp = new GraphParser();
         return gp.readFile(path);
     }
 
-    public UndirectedSparseGraph<MyVertex,MyEdge> getGraph(){ return graph;}
+    public UndirectedSparseGraph<MyVertex, MyEdge> getGraph() {
+        return graph;
+    }
 
-    public void setGraph(UndirectedSparseGraph<MyVertex,MyEdge> graph) { this.graph = graph;}
+    public void setGraph(UndirectedSparseGraph<MyVertex, MyEdge> graph) {
+        this.graph = graph;
+    }
 
-    //TaxIdParser currentTaxIdParser = new TaxIdParser();
+    // Do we need to return the graph here?
+    public void parseTaxId(String path) throws IOException {
+        new TaxIdParser(graph, path, currentTaxTree);
+    }
+    // TODO: add an option for the user to import a file with taxonomic IDs (only if a graph has been parsed)
+
     //currentTaxTree.getRank(9); // as method call example
 }

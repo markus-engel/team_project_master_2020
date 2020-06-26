@@ -85,6 +85,11 @@ public class TaxonomyTree {
         return tree;
     }
 
+    // returns the complete Node with the given ID
+    public Node getTaxNode(int taxId) {
+        return tree.get(taxId);
+    }
+
     // Method to get the id of a node's ancestor
     public int getAncestorId(int taxId) {
         if (tree.containsKey(taxId))
