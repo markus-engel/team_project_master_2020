@@ -54,7 +54,6 @@ public class TaxIdParser {
             for (MyVertex v : graph.getVertices()) {
                 if (v.getIDpropProperty().toString().equals(conID)) {
                     v.addProperty("taxonomy", tree.getTaxNode(taxID));
-                    v.addProperty("taxID", taxID);
                 }
             }
             //contigToTaxID.put(conID, taxID);

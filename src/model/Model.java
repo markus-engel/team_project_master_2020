@@ -1,6 +1,10 @@
 package model;
 
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.concurrent.Task;
 import model.graph.MyEdge;
 import model.graph.MyVertex;
@@ -12,12 +16,15 @@ import java.io.IOException;
 
 public class Model {
 
-    private UndirectedSparseGraph<MyVertex, MyEdge> graph;
     TaxonomyTree currentTaxTree;
 
-    public Model() throws IOException {
+    private UndirectedSparseGraph<MyVertex, MyEdge> graph;
+    //private SimpleObjectProperty graph1 = new SimpleObjectProperty(graph);
+    private ObjectProperty<UndirectedSparseGraph<MyVertex, MyEdge>> graphProperty = new SimpleObjectProperty<>();
 
-        // Instantiation of the currentTaxTree in a Task to show the responsive GUI already while parsing the tree
+
+    public Model() throws IOException {
+        // Instantiation of the currentTaxTree in a task to show the responsive GUI already while parsing the tree
         Task<Void> taskTaxonomyTree = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
@@ -26,15 +33,24 @@ public class Model {
                 return null;
             }
         };
-        new Thread(taskTaxonomyTree).start();
 
+        new Thread(taskTaxonomyTree).start();
         graph = new UndirectedSparseGraph<MyVertex, MyEdge>();
+
+        // either new method listener or:
+        // InvalidationListener listener = null;
+        graphProperty.addListener(new InvalidationListener() {
+            @Override
+            public void invalidated(Observable observable) {
+                graphProperty.setValue(graph);
+            }
+        });
     }
 
     // create needed objects of the IO classes to use them in presenter
-    public UndirectedSparseGraph<MyVertex, MyEdge> parseGraph(String path) throws IOException {
+    public void parseGraph(String path) throws IOException {
         GraphParser gp = new GraphParser();
-        return gp.readFile(path);
+        this.graph = gp.readFile(path);
     }
 
     public UndirectedSparseGraph<MyVertex, MyEdge> getGraph() {

@@ -68,7 +68,7 @@ public class MyVertex {
         furtherProperties.put(propertyName, propertyValue);
     }
 
-    // Get a specific property of the vertex via the property name, e.g. "taxId"
+    // Get a specific property of the vertex via the property name, e.g. "taxonomy"
     public Object getProperty(String propertyName) {
         return furtherProperties.getOrDefault(propertyName, null);
     }
