@@ -47,9 +47,9 @@ public class Model {
     }
 
     // create needed objects of the IO classes to use them in presenter
-    public UndirectedSparseGraph<MyVertex,MyEdge> parseGraph (String path) throws IOException {
+    public void parseGraph (String path) throws IOException {
         GraphParser gp = new GraphParser();
-        return gp.readFile(path);
+        this.graph = gp.readFile(path);
     }
 
     public UndirectedSparseGraph<MyVertex,MyEdge> getGraph(){ return graph;}

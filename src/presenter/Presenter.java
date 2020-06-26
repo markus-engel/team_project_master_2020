@@ -5,6 +5,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.stage.FileChooser;
 import model.Model;
+import model.graph.MyVertex;
 import view.View;
 
 import java.io.File;
@@ -33,11 +34,12 @@ public class Presenter {
                 }
 
                 try {
-                    // is this how to catch the graph correctly to use it further?
-                    model.setGraph(model.parseGraph(f.getAbsolutePath()));
+                    // parse gfa file to graph
+                    model.parseGraph(f.getAbsolutePath());
 
-                    // Check if gfa file was imported and parsed
-                    //System.out.println(model.getGraph().getVertices());
+                    // Check if gfa file was imported and parsed:
+                    //System.out.print(model.getGraph().getVertices());
+
 
                 } catch (IOException e) {
                     e.printStackTrace();
