@@ -1,27 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="Pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.View">
+<BorderPane fx:id="Pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.View">
    <top>
       <MenuBar fx:id="menuBar" BorderPane.alignment="CENTER">
         <menus>
           <Menu fx:id="fileMenu" mnemonicParsing="false" text="File">
             <items>
-                <MenuItem fx:id="ImportMenuItem" mnemonicParsing="false" text="Import"/>
-                <MenuItem fx:id="SaveMenuItem" mnemonicParsing="false" text="Save"/>
-                <MenuItem fx:id="CloseMenuItem" mnemonicParsing="false" text="Close"/>
-                <MenuItem fx:id="ImportTaxonomyMenuItem" disable="true" mnemonicParsing="false"
-                          text="Import taxonomy IDs"/>
-                <MenuItem fx:id="ImportCoverageMenuItem" disable="true" mnemonicParsing="false" text="Import coverage"/>
+                <MenuItem fx:id="ImportMenuItem" mnemonicParsing="false" text="Import" />
+                <MenuItem fx:id="ImportTaxonomyMenuItem" disable="true" mnemonicParsing="false" text="Import taxonomy IDs" />
+                <MenuItem fx:id="ImportCoverageMenuItem" disable="true" mnemonicParsing="false" text="Import coverage" />
+                <MenuItem fx:id="SaveMenuItem" mnemonicParsing="false" text="Save" />
+                <MenuItem fx:id="CloseMenuItem" mnemonicParsing="false" text="Close" />
             </items>
           </Menu>
           <Menu fx:id="helpMenu" mnemonicParsing="false" text="Help">
@@ -32,16 +30,6 @@
         </menus>
       </MenuBar>
    </top>
-   <bottom>
-      <TextArea fx:id="ResultTextArea" editable="false" prefHeight="350.0" prefWidth="600.0" promptText="Result" BorderPane.alignment="CENTER">
-         <font>
-            <Font name="Candara" size="12.0" />
-         </font>
-         <cursor>
-            <Cursor fx:constant="DEFAULT" />
-         </cursor>
-      </TextArea>
-   </bottom>
    <center>
       <HBox prefHeight="59.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <children>
@@ -50,7 +38,7 @@
                   <Font name="Candara" size="10.0" />
                </font>
             </TextField>
-            <TextField fx:id="SequenceCountTextField" editable="false" prefHeight="27.0" prefWidth="150.0" text="Sequences:">
+            <TextField fx:id="SequenceCountTextField" editable="false" prefHeight="27.0" prefWidth="179.0" text="Sequences:">
                <font>
                   <Font name="Candara" size="10.0" />
                </font>
@@ -63,4 +51,7 @@
          </children>
       </HBox>
    </center>
+   <bottom>
+      <Pane prefHeight="545.0" prefWidth="1000.0" BorderPane.alignment="CENTER" />
+   </bottom>
 </BorderPane>
