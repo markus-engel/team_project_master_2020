@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="Pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.View">
+<BorderPane fx:id="Pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.View">
    <top>
       <MenuBar fx:id="menuBar" BorderPane.alignment="CENTER">
         <menus>
@@ -27,6 +27,11 @@
               <MenuItem fx:id="AboutMenuItem" mnemonicParsing="false" text="About" />
             </items>
           </Menu>
+            <Menu fx:id="PlotMenu" mnemonicParsing="false" text="Plot">
+              <items>
+                <MenuItem fx:id="CoverageGCMenu" mnemonicParsing="false" text="Coverage-GC" />
+              </items>
+            </Menu>
         </menus>
       </MenuBar>
    </top>
@@ -38,7 +43,7 @@
                   <Font name="Candara" size="10.0" />
                </font>
             </TextField>
-            <TextField fx:id="SequenceCountTextField" editable="false" prefHeight="27.0" prefWidth="179.0" text="Sequences:">
+            <TextField fx:id="SequenceCountTextField" editable="false" prefHeight="27.0" prefWidth="164.0" text="Sequences:">
                <font>
                   <Font name="Candara" size="10.0" />
                </font>

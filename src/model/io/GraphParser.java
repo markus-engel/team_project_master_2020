@@ -24,8 +24,9 @@ public class GraphParser {
         String line = ""; // will hold the current reading line
         String ID, sequence; // will hold the sequence information
         String eSource, eDestination; // will hold the edge information
-        int countS = 0; // could be useful in the future to know how many sequences there are in total
-        int countE = 0; // total count edges
+        int countS = 0; // could be useful in the future to know how many sequences & edges there are in total
+        int countE = 0;
+        double finalGC;
 
         HashMap<String, MyVertex> vertices = new HashMap<>(); //Hashmap collecting all vertices added to graph, with ID as key, model.graph.MyVertex as object
         UndirectedSparseGraph<MyVertex, MyEdge> graph = new UndirectedSparseGraph<MyVertex, MyEdge>(); //UndirectedSparseGraph readfile returns
@@ -37,7 +38,15 @@ public class GraphParser {
                 ID = seqList[1];
                 sequence = seqList[2];
                 boolean notInGraph=true;
+                int countGC = 0;
 
+                // calculate the GC content of each sequence
+                for (int i = 0; i < sequence.length(); i++) {
+                    if(sequence.charAt(i)=='C'||sequence.charAt(i)=='G'||sequence.charAt(i)=='g'||sequence.charAt(i)=='c') {
+                    countGC++;
+                    }
+                }
+                finalGC = countGC / sequence.length();
 
                 //check if new vertex already in graph
                 for (MyVertex v: graph.getVertices()){
@@ -52,6 +61,13 @@ public class GraphParser {
                     graph.addVertex(new MyVertex(new SimpleStringProperty(ID), new SimpleStringProperty(sequence)));
                     vertices.put(ID, new MyVertex(new SimpleStringProperty(ID), new SimpleStringProperty(sequence)));
                 }
+
+                for (MyVertex v : graph.getVertices()) {
+                    if (v.getIDpropProperty().toString().equals(ID)) {
+                        v.addProperty(ContigProperty.GC, finalGC);
+                    }
+                }
+
 
             } else if (line.startsWith("L")) { // lines with L are link lines (= edges)
                 countE++;

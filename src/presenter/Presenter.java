@@ -62,6 +62,7 @@ public class Presenter {
             }
         });
 
+
         view.getImportCoverageMenuItem().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {

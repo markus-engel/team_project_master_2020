@@ -11,7 +11,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 
-class GFAparser {
+class GFAparserOld {
 
     public static void readFile(String file) throws IOException {
         FileReader fr = new FileReader(file); // can be changed into not hard coded if needed
@@ -44,7 +44,7 @@ class GFAparser {
     }
 
     public static void main(String[] args) throws IOException {
-        GFAparser parser = new GFAparser();
+        GFAparserOld parser = new GFAparserOld();
         parser.readFile("D:/Master/Sem 2/Teamprojekt/jeon2n3_miniasm.gfa");
     }
 }

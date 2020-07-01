@@ -1,13 +1,14 @@
 package view;
 
-import java.net.URL;
-import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
+
+import java.net.URL;
+import java.util.ResourceBundle;
 
 public class View {
 
@@ -55,6 +56,13 @@ public class View {
 
     @FXML
     private TextField OverlapCountTextField;
+
+    @FXML
+    private Menu PlotMenu;
+
+    @FXML
+    private MenuItem CoverageGCMenu;
+
 
     // getter and setter Methods. More have to be implemented if needed
     public MenuItem getImportMenuItem() {
