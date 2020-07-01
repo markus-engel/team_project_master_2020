@@ -16,6 +16,10 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import model.graph.MyVertex;
 
+/*
+constructed by Antonia and Jonas.
+ */
+
 public class ViewVertex extends Group {
 
     private StringProperty ID;

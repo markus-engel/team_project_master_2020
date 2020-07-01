@@ -5,6 +5,10 @@ import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 
+/*
+constructed by Antonia and Jonas.
+ */
+
 public class ViewEdge extends Group {
 
     Line line;

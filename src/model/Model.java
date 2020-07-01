@@ -55,8 +55,7 @@ public class Model {
 
     // create needed objects of the IO classes to use them in presenter
     public void parseGraph(String path) throws IOException {
-        GraphParser gp = new GraphParser();
-        this.graph = gp.readFile(path);
+        this.graph = GraphParser.readFile(path);
         initializeLayout(graph);
     }
 

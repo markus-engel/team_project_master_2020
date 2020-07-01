@@ -18,7 +18,7 @@ Modified by Anna: change values to Object properties to use them in myVertex
 
 public class GraphParser {
 
-    public UndirectedSparseGraph<MyVertex, MyEdge> readFile(String file) throws IOException {
+    public static UndirectedSparseGraph<MyVertex, MyEdge> readFile(String file) throws IOException {
         FileReader fr = new FileReader(file); // can be changed into not hard coded if needed
         BufferedReader br = new BufferedReader(fr);
         String line = ""; // will hold the current reading line
