@@ -62,6 +62,7 @@ public class GraphParser {
                     vertices.put(ID, new MyVertex(new SimpleStringProperty(ID), new SimpleStringProperty(sequence)));
                 }
 
+                // add GC content as a property to each vertex
                 for (MyVertex v : graph.getVertices()) {
                     if (v.getIDpropProperty().toString().equals(ID)) {
                         v.addProperty(ContigProperty.GC, finalGC);
