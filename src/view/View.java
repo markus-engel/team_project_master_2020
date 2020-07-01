@@ -1,16 +1,25 @@
 package view;
 
 import javafx.fxml.FXML;
+import javafx.scene.Group;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class View {
+
+    @FXML
+    public Group vertices;
+
+    @FXML
+    private Pane pane;
 
     @FXML
     private ResourceBundle resources;
@@ -97,5 +106,25 @@ public class View {
         return OverlapCountTextField;
     }
     public void setOverlapCountTextField(int overlapCount) {OverlapCountTextField.setText(Integer.toString(overlapCount));}
+
+
+
+    public void addVertex(ViewVertex vv){
+
+        //not good way, should do this in FXML
+        if(vertices==null){
+            vertices = new Group();
+        }
+        vertices.getChildren().add(vv);
+        pane.getChildren().add(vv);
+
+
+        //add bindings--> where??
+    }
+
+    public void addEdge(ViewEdge viewEdge){
+        pane.getChildren().add(viewEdge);
+    }
+
 }
 

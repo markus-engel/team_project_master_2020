@@ -36,9 +36,9 @@ public class TestingLayout extends Application {
     public void start(Stage primaryStage) throws IOException {
         //BorderPane root = new BorderPane();
 
-        graph = TestingGraph.makeGraph();
+        //graph = TestingGraph.makeGraph();
 
-        //graph = GraphParser.readFile("/Users/antonia/IdeaProjects/2020teamproject/src/jeon2n3_miniasm.gfa");
+        graph = GraphParser.readFile("/Users/antonia/IdeaProjects/2020teamproject/src/jeon2n3_miniasm.gfa");
 
         //Scene scene = new Scene(root, 1024, 768);
         //scene.setFill(Paint.valueOf("white"));
@@ -63,6 +63,13 @@ public class TestingLayout extends Application {
         layout.setSize(new Dimension(950,650 ));
         layoutKK.setSize(new Dimension(950,650));
         circle.setSize(new Dimension(950,650));
+        layout.setMaxIterations(10000);
+        layout.setRepulsionMultiplier(50);
+        layout.setAttractionMultiplier(10);
+
+
+
+
 
         double colour= 0;
 
@@ -76,17 +83,18 @@ public class TestingLayout extends Application {
                 Point2D endLine =layout.apply(v2);
                 graphics_context.strokeLine(layout.getX(v1), layout.getY(v1), layout.getX(v2), layout.getY(v2));
             }
-
-
+            
             graphics_context.setFill(Color.RED);
             graphics_context.fillOval(layout.getX(v1)-5, layout.getY(v1)-5, 10, 10);
             graphics_context.fillText(v1.getIDprop(),layout.getX(v1)+10,layout.getY(v1));
+
 
             colour=colour+0.15;
         }
 
         //Node view = new Rectangle();
         Group group = new Group(canvas);
+
 
         Scene scene = new Scene(group, 1030, 750);
         // scene.setFill(Paint.valueOf("white"));

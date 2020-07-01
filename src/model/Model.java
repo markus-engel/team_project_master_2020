@@ -20,6 +20,7 @@ public class Model {
     TaxonomyTree currentTaxTree;
 
     private UndirectedSparseGraph<MyVertex, MyEdge> graph;
+    //private SimpleObjectProperty graph1 = new SimpleObjectProperty(graph);
     private ObjectProperty<UndirectedSparseGraph<MyVertex, MyEdge>> graphProperty = new SimpleObjectProperty<>();
 
 
