@@ -68,7 +68,7 @@ public class TestingGraph {
 
             //ich gebe in Edge jetzt nur den graphen ein, da UndirectedSparseGraph eine Edge aus Obj. und Pair
             // of Vertices/Endpoints erstellt
-            MyEdge myEdge = new MyEdge(graph);
+            //MyEdge myEdge = new MyEdge(graph);
 
             //for (String ID:vectorIds){
             //MyVertex currentVector = new MyVertex(ID);
