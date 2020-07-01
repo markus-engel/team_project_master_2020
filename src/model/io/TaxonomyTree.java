@@ -85,6 +85,11 @@ public class TaxonomyTree {
         return tree;
     }
 
+    // returns the complete Node with the given ID
+    public Node getTaxNode(int taxId) {
+        return tree.get(taxId);
+    }
+
     // Method to get the id of a node's ancestor
     public int getAncestorId(int taxId) {
         if (tree.containsKey(taxId))
@@ -134,7 +139,7 @@ public class TaxonomyTree {
         else return "";
     }
 
-    public static void main(String[] args) throws IOException {
+/*    public static void main(String[] args) throws IOException {
 
         // Example test
         TaxonomyTree t = new TaxonomyTree();  // enter file name as parameter mainly for testing
@@ -145,7 +150,7 @@ public class TaxonomyTree {
         System.out.println(t.getAncestorId(3)); // 3 does not exist -> returns 0
         System.out.println(t.getAncestorId(11, "order"));
         System.out.println(t.getRank(11));
-    }
+    }*/
 
     static class Node {
 
