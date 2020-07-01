@@ -11,8 +11,9 @@ constructed by Antonia and Jonas.
 
 public class ViewEdge extends Group {
 
-    Line line;
-
+    private Line line;
+    // V1 and V2 also classvariables?
+    
     public ViewEdge(ViewVertex vv1, ViewVertex vv2){
         this.line = new Line(vv1.getShape().getCenterX(), vv1.getShape().getCenterY(), vv2.getShape().getCenterX(), vv2.getShape().getCenterY());
         line.setFill(Color.BLACK);

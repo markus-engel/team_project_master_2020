@@ -51,7 +51,7 @@ public class Model {
         });
     }
 
-    // create needed objects of the IO classes to use them in presenter
+    // create necessary objects of the IO classes to use them in presenter
     public void parseGraph(String path) throws IOException {
         this.graph = GraphParser.readFile(path);
         initializeLayout(graph);
@@ -60,6 +60,8 @@ public class Model {
     public UndirectedSparseGraph<MyVertex, MyEdge> getGraph() {
         return graph;
     }
+
+
 
     public void parseTaxId(String path) throws IOException {
         new TaxIdParser(graph, path, currentTaxTree);
@@ -76,7 +78,7 @@ public class Model {
     private void initializeLayout(UndirectedSparseGraph<MyVertex, MyEdge> graph){
         this.layout = new FRLayout<>(graph);
         this.layout.initialize();
-        this.layout.setSize(new Dimension(500, 300));
+        this.layout.setSize(new Dimension(1000, 550));
 
         for (int i=0; i<50;i++){
             this.layout.step();

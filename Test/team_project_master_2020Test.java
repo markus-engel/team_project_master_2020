@@ -1,10 +1,9 @@
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
+import previousWork.team_project_master_2020;
 
 class team_project_master_2020Test {
     
-    team_project_master_2020 t2 = new team_project_master_2020("test", 3);
+    /*team_project_master_2020 t2 = new team_project_master_2020("test", 3);
 
     @Test
     void changeName() {
@@ -16,5 +15,5 @@ class team_project_master_2020Test {
 
     @Test
     void print() {
-    }
+    } */
 }

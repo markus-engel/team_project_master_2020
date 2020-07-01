@@ -39,16 +39,13 @@ public class Presenter {
                 File f = fc.showOpenDialog(null);
 
                 if (f != null) try {
-
                     view.setFilenameTextfield("File: " + f.getAbsolutePath());
-
 
                     // parse gfa file to graph
                     model.parseGraph(f.getAbsolutePath());
                     visualizeGraph();
-
-                    // Check if gfa file was imported and parsed:
-                    //System.out.print(model.getGraph().getVertices());
+                    view.setSequenceCountTextField(model.getGraph().getVertexCount());
+                    view.setOverlapCountTextField(model.getGraph().getEdgeCount());
 
                     // after the graph is parsed, further optional imports can be enabled:
                     view.getImportTaxonomyMenuItem().setDisable(false);
@@ -112,13 +109,13 @@ public class Presenter {
 
         for (MyVertex v1: model.getGraph().getVertices()){
 
-            ViewVertex vv1 = new ViewVertex(v1.getIDprop(), 10, model.getLayout().apply(v1).getX(),model.getLayout().apply(v1).getY());
+            ViewVertex vv1 = new ViewVertex(v1.getIDprop(), 3, model.getLayout().apply(v1).getX(),model.getLayout().apply(v1).getY());
 
             view.addVertex(vv1);
 
             //adding Edges through neighbors
             for (MyVertex v2: model.getGraph().getPredecessors(v1)){
-                ViewVertex vv2 = new ViewVertex(v2.getIDprop(), 10, model.getLayout().apply(v2).getX(),model.getLayout().apply(v2).getY());
+                ViewVertex vv2 = new ViewVertex(v2.getIDprop(), 3, model.getLayout().apply(v2).getX(),model.getLayout().apply(v2).getY());
 
                 ViewEdge viewEdge = new ViewEdge(vv1, vv2);
 

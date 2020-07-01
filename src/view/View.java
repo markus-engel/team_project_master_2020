@@ -108,14 +108,18 @@ public class View {
         return SequenceCountTextField;
     }
 
+    // Number of Vertices
     public void setSequenceCountTextField(int sequenceCount) {
-        SequenceCountTextField.setText(Integer.toString(sequenceCount));
+        SequenceCountTextField.setText("Sequences: " + sequenceCount);
     }
 
     public TextField getOverlapCountTextField() {
         return OverlapCountTextField;
     }
-    public void setOverlapCountTextField(int overlapCount) {OverlapCountTextField.setText(Integer.toString(overlapCount));}
+    // Number of Edges
+    public void setOverlapCountTextField(int overlapCount) {
+        OverlapCountTextField.setText("Overlaps: " + overlapCount);
+    }
 
 
 
@@ -128,8 +132,6 @@ public class View {
         vertices.getChildren().add(vv);
         pane.getChildren().add(vv);
 
-
-        //add bindings--> where??
     }
 
     public void addEdge(ViewEdge viewEdge){
