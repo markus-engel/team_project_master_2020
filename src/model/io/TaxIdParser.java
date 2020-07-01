@@ -42,7 +42,7 @@ public class TaxIdParser {
             // Comparing the IDs of the vertices to the contig ID in this line of the file
             for (MyVertex v : graph.getVertices()) {
                 if (v.getIDpropProperty().toString().equals(conID)) {
-                    v.addProperty("taxonomy", tree.getTaxNode(taxID));
+                    v.addProperty(ContigProperty.TAXONOMY, tree.getTaxNode(taxID));
                 }
             }
         }

@@ -66,7 +66,7 @@ public class Model {
         new TaxIdParser(graph, path, currentTaxTree);
     }
 
-    public void parseCoverage(String path) {
-        new CoverageParser(path);
+    public void parseCoverage(String path) throws IOException {
+        new CoverageParser(graph, path);
     }
 }

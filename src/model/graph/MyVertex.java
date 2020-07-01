@@ -1,29 +1,24 @@
 package model.graph;
 
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
-import javafx.beans.InvalidationListener;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableMap;
-
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
+import model.io.ContigProperty;
 
 /*
 Class defining the vertices used in UndirectedSparseGraph.
 Constructed by Antonia.
 Modified by Anna: Object properties with getters & setters
-Modified by Julia: further optional properties storable in a map "furtherProperties"
+Modified by Julia: further optional ContigProperties storable in a map "furtherProperties"
  */
 
 public class MyVertex {
     StringProperty IDprop = new SimpleStringProperty(this, "ID", "");
     StringProperty sequenceprop = new SimpleStringProperty(this, "Sequence", "");
     private UndirectedSparseGraph<MyVertex, MyEdge> graph;          //graph of the Vertex
-    ObservableMap<String, Object> furtherProperties = FXCollections.observableHashMap();
+    ObservableMap<ContigProperty, Object> furtherProperties = FXCollections.observableHashMap();
 
     public MyVertex(StringProperty ID, StringProperty sequence){
         this.IDprop = ID;
@@ -63,13 +58,14 @@ public class MyVertex {
         this.sequenceprop.set(Sequenceprop);
     }
 
-    // Add new properties, like a taxId, to the vertex (called by parsers)
-    public void addProperty(String propertyName, Object propertyValue) {
+    // Add new properties, like ContigProperty.COVERAGE, to the vertex (called by parsers)
+    public void addProperty(ContigProperty propertyName, Object propertyValue) {
         furtherProperties.put(propertyName, propertyValue);
     }
 
-    // Get a specific property of the vertex via the property name, e.g. "taxonomy"
-    public Object getProperty(String propertyName) {
+    // Get a specific property of the vertex via the property name,
+    // e.g. "getProperty(ContigProperty.TAXONOMY)" returns the Node from the taxonomic tree, to which this contig belongs
+    public Object getProperty(ContigProperty propertyName) {
         return furtherProperties.getOrDefault(propertyName, null);
     }
 
