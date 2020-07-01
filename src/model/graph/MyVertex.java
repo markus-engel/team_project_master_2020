@@ -58,6 +58,10 @@ public class MyVertex {
         this.sequenceprop.set(Sequenceprop);
     }
 
+    public void setSequenceprop(StringProperty sequenceprop) {
+        this.sequenceprop = sequenceprop;
+    }
+
     // Add new properties, like ContigProperty.COVERAGE, to the vertex (called by parsers)
     public void addProperty(ContigProperty propertyName, Object propertyValue) {
         furtherProperties.put(propertyName, propertyValue);

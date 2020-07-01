@@ -3,8 +3,13 @@ package presenter;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.Node;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import model.Model;
 import model.graph.MyVertex;
 import view.View;
@@ -77,6 +82,23 @@ public class Presenter {
                 if (f != null) try {
                     model.parseCoverage(f.getAbsolutePath());
                 } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        view.getCoverageGCMenu().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                try {
+                    Stage dialog = new Stage();
+                    Parent root = FXMLLoader.load(getClass().getResource("../plot.fxml"));
+                    dialog.setTitle("Plots");
+                    dialog.setScene(new Scene(root));
+                    dialog.initModality(Modality.APPLICATION_MODAL);
+                    //dialog.initOwner(); ?
+                    dialog.show();
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }

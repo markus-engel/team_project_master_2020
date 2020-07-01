@@ -2,10 +2,7 @@ package view;
 
 import javafx.fxml.FXML;
 import javafx.scene.Group;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
@@ -73,6 +70,15 @@ public class View {
     private MenuItem CoverageGCMenu;
 
 
+    @FXML
+    private TabPane tabPanePlots;
+
+    @FXML
+    private Tab tabGcCoverage;
+
+    @FXML
+    private Tab tabElse;
+
     // getter and setter Methods. More have to be implemented if needed
     public MenuItem getImportMenuItem() {
         return ImportMenuItem;
@@ -84,6 +90,10 @@ public class View {
 
     public MenuItem getImportCoverageMenuItem() {
         return ImportCoverageMenuItem;
+    }
+
+    public MenuItem getCoverageGCMenu() {
+        return CoverageGCMenu;
     }
 
     public TextField getFilenameTextfield() {
