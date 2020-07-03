@@ -38,8 +38,21 @@ public class Model {
             }
         };
 
-        new Thread(taskTaxonomyTree).start();
-        graph = new UndirectedSparseGraph<MyVertex, MyEdge>();
+        Thread treeBackgroundTask = new Thread(taskTaxonomyTree);
+        treeBackgroundTask.setDaemon(true);
+        treeBackgroundTask.start();
+
+        Task<Void> loadGraph = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                graph = new UndirectedSparseGraph<MyVertex, MyEdge>();
+                System.out.println("Graph loaded");
+                return null;
+            }
+        };
+        Thread loadGraphTask = new Thread(loadGraph);
+        loadGraphTask.setDaemon(true);
+        loadGraphTask.start();
 
         // either new method listener or:
         // InvalidationListener listener = null;
