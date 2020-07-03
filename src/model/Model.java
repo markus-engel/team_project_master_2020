@@ -33,7 +33,7 @@ public class Model {
             @Override
             protected Void call() throws Exception {
                 currentTaxTree = new TaxonomyTree();
-                System.out.println("Taxonomy tree is loaded");
+                System.out.println("Taxonomy tree is prepared");
                 return null;
             }
         };
@@ -46,7 +46,7 @@ public class Model {
             @Override
             protected Void call() throws Exception {
                 graph = new UndirectedSparseGraph<MyVertex, MyEdge>();
-                System.out.println("Graph loaded");
+                System.out.println("Graph prepared");
                 return null;
             }
         };
