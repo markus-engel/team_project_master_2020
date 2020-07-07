@@ -9,57 +9,63 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.Group?>
 
-<BorderPane fx:id="Pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.View">
-   <top>
-      <MenuBar fx:id="menuBar" BorderPane.alignment="CENTER">
-        <menus>
-          <Menu fx:id="fileMenu" mnemonicParsing="false" text="File">
-            <items>
-                <MenuItem fx:id="ImportMenuItem" mnemonicParsing="false" text="Import" />
-                <MenuItem fx:id="ImportTaxonomyMenuItem" disable="true" mnemonicParsing="false" text="Import taxonomy IDs" />
-                <MenuItem fx:id="ImportCoverageMenuItem" disable="true" mnemonicParsing="false" text="Import coverage" />
-                <MenuItem fx:id="SaveMenuItem" mnemonicParsing="false" text="Save" />
-                <MenuItem fx:id="CloseMenuItem" mnemonicParsing="false" text="Close" />
-            </items>
-          </Menu>
-          <Menu fx:id="helpMenu" mnemonicParsing="false" text="Help">
-            <items>
-              <MenuItem fx:id="AboutMenuItem" mnemonicParsing="false" text="About" />
-            </items>
-          </Menu>
-            <Menu fx:id="PlotMenu" mnemonicParsing="false" text="Plot">
-              <items>
-                <MenuItem fx:id="CoverageGCMenu" mnemonicParsing="false" text="Coverage-GC" />
-              </items>
-            </Menu>
-        </menus>
-      </MenuBar>
-   </top>
-   <center>
-      <HBox prefHeight="59.0" prefWidth="600.0" BorderPane.alignment="CENTER">
-         <children>
-            <TextField fx:id="FilenameTextfield" editable="false" prefHeight="27.0" prefWidth="300.0" text="File:">
-               <font>
-                  <Font name="Candara" size="10.0" />
-               </font>
-            </TextField>
-            <TextField fx:id="SequenceCountTextField" editable="false" prefHeight="27.0" prefWidth="164.0" text="Sequences:">
-               <font>
-                  <Font name="Candara" size="10.0" />
-               </font>
-            </TextField>
-            <TextField fx:id="OverlapCountTextField" editable="false" prefHeight="27.0" prefWidth="150.0" text="Overlaps:">
-               <font>
-                  <Font name="Cambria" size="10.0" />
-               </font>
-            </TextField>
-         </children>
-      </HBox>
-   </center>
-   <bottom>
-       <Pane fx:id="pane" prefHeight="545.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
-           <Group fx:id="vertices" >
-           </Group>
-       </Pane>
-   </bottom>
+<BorderPane fx:id="Pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+            prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.171"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.View">
+    <top>
+        <MenuBar fx:id="menuBar" BorderPane.alignment="CENTER">
+            <menus>
+                <Menu fx:id="fileMenu" mnemonicParsing="false" text="File">
+                    <items>
+                        <MenuItem fx:id="ImportMenuItem" mnemonicParsing="false" text="Import"/>
+                        <MenuItem fx:id="ImportTaxonomyMenuItem" disable="true" mnemonicParsing="false"
+                                  text="Import taxonomy IDs"/>
+                        <MenuItem fx:id="ImportCoverageMenuItem" disable="true" mnemonicParsing="false"
+                                  text="Import coverage"/>
+                        <MenuItem fx:id="SaveMenuItem" mnemonicParsing="false" text="Save"/>
+                        <MenuItem fx:id="CloseMenuItem" mnemonicParsing="false" text="Close"/>
+                    </items>
+                </Menu>
+                <Menu fx:id="helpMenu" mnemonicParsing="false" text="Help">
+                    <items>
+                        <MenuItem fx:id="AboutMenuItem" mnemonicParsing="false" text="About"/>
+                    </items>
+                </Menu>
+                <Menu fx:id="PlotMenu" mnemonicParsing="false" text="Plot">
+                    <items>
+                        <MenuItem fx:id="CoverageGCMenu" mnemonicParsing="false" text="Coverage-GC"/>
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+    </top>
+    <center>
+        <Pane fx:id="pane" prefHeight="545.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
+            <Group fx:id="vertices">
+            </Group>
+        </Pane>
+    </center>
+    <bottom>
+        <HBox prefHeight="27.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+            <children>
+                <TextField fx:id="FilenameTextfield" editable="false" prefHeight="27.0" prefWidth="300.0" text="File:">
+                    <font>
+                        <Font name="Candara" size="10.0"/>
+                    </font>
+                </TextField>
+                <TextField fx:id="SequenceCountTextField" editable="false" prefHeight="27.0" prefWidth="164.0"
+                           text="Sequences:">
+                    <font>
+                        <Font name="Candara" size="10.0"/>
+                    </font>
+                </TextField>
+                <TextField fx:id="OverlapCountTextField" editable="false" prefHeight="27.0" prefWidth="150.0"
+                           text="Overlaps:">
+                    <font>
+                        <Font name="Cambria" size="10.0"/>
+                    </font>
+                </TextField>
+            </children>
+        </HBox>
+    </bottom>
 </BorderPane>

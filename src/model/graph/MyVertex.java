@@ -17,7 +17,6 @@ Modified by Julia: further optional ContigProperties storable in a map "furtherP
 public class MyVertex {
     StringProperty IDprop = new SimpleStringProperty(this, "ID", "");
     StringProperty sequenceprop = new SimpleStringProperty(this, "Sequence", "");
-    private UndirectedSparseGraph<MyVertex, MyEdge> graph;          //graph of the Vertex
     ObservableMap<ContigProperty, Object> furtherProperties = FXCollections.observableHashMap();
 
     public MyVertex(StringProperty ID, StringProperty sequence){
@@ -72,16 +71,6 @@ public class MyVertex {
     public Object getProperty(ContigProperty propertyName) {
         return furtherProperties.getOrDefault(propertyName, null);
     }
-
-    public UndirectedSparseGraph<MyVertex, MyEdge> getGraph() {
-        return this.graph;
-    }
-
-    public void setGraph(UndirectedSparseGraph<MyVertex, MyEdge> graph) {
-        this.graph = graph;
-    }
-
-
     @Override // is this right? the other option is tp return the property but the conversion lasted so long
     public String toString() {
         return String.valueOf(this.IDprop);

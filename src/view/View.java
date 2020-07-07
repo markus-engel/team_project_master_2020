@@ -122,7 +122,6 @@ public class View {
     }
 
 
-
     public void addVertex(ViewVertex vv){
 
         //not good way, should do this in FXML
@@ -131,7 +130,6 @@ public class View {
         }
         vertices.getChildren().add(vv);
         pane.getChildren().add(vv);
-
     }
 
     public void addEdge(ViewEdge viewEdge){
