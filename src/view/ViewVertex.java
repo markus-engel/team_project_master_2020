@@ -5,16 +5,11 @@ Created by Antonia.
 Visualizes Vertex.
  */
 
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.Group;
-import javafx.scene.Node;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
-import model.graph.MyVertex;
 
 /*
 constructed by Antonia and Jonas.
@@ -23,19 +18,25 @@ constructed by Antonia and Jonas.
 public class ViewVertex extends Group {
 
     private StringProperty ID;
-    private Circle shape;
+    private Circle circle;
 
 
     public ViewVertex(String ID, int size, double x, double y){
         this.ID = new SimpleStringProperty(ID);
-        this.shape = new Circle(x, y, size);
-        shape.setFill(Color.CORAL);
+        this.circle = new Circle(x, y, size);
+        circle.setFill(Color.CORAL);
 
-        this.getChildren().add(shape);
+        this.getChildren().add(circle);
     }
 
-    public Circle getShape() {
-        return shape;
+
+    public Circle getCircle() {
+        return circle;
+    }
+
+    public void setCoords(int x, int y){
+        this.circle.setCenterX(x);
+        this.circle.setCenterY(y);
     }
 
     public String getID() {

@@ -8,6 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -117,20 +118,20 @@ public class Presenter {
                 }
             }
         });
+
+
     }
 
-
-
-
-    public void visualizeGraph(){
+    private void visualizeGraph(){
 
         //add view vertices
         for (MyVertex v1: model.getGraph().getVertices()){
-
+            // Save v1 in collection to check, it has already been created to avoid redundancies in loop below?
             ViewVertex vv = new ViewVertex(v1.getIDprop(), 5, model.getLayout().apply(v1).getX(),model.getLayout().apply(v1).getY());
 
             view.addVertex(vv);
             viewVertices.put(v1.getIDprop(),vv);
+            makeDraggable(vv);
         }
 
         //add view edges
@@ -138,6 +139,16 @@ public class Presenter {
             ViewEdge ve = new ViewEdge(viewVertices.get(edge.getFirst().getIDprop()),viewVertices.get(edge.getSecond().getIDprop()));
             view.addEdge(ve);
         }
+    }
+
+    private void makeDraggable(ViewVertex viewVertex){
+        viewVertex.setOnMouseDragged(event -> {
+            int x = (int)Math.ceil(event.getX());
+            int y = (int)Math.ceil(event.getY());
+
+            viewVertex.setCoords(x,y);
+            viewVertex.toFront();
+        });
     }
 
 }
