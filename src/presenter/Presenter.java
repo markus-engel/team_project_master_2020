@@ -11,17 +11,21 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.Model;
+import model.graph.MyEdge;
 import model.graph.MyVertex;
+import model.io.TaxonomyTree;
 import view.View;
 import view.ViewEdge;
 import view.ViewVertex;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 
 public class Presenter {
     Model model;
     View view;
+    HashMap<String, view.ViewVertex> viewVertices = new HashMap<>();  //Hashmap of view vertex objects
 
     public Presenter(Model model, View view){
         this.model = model;
@@ -110,20 +114,19 @@ public class Presenter {
 
     public void visualizeGraph(){
 
+        //add view vertices
         for (MyVertex v1: model.getGraph().getVertices()){
 
-            ViewVertex vv1 = new ViewVertex(v1.getIDprop(), 10, model.getLayout().apply(v1).getX(),model.getLayout().apply(v1).getY());
+            ViewVertex vv = new ViewVertex(v1.getIDprop(), 5, model.getLayout().apply(v1).getX(),model.getLayout().apply(v1).getY());
 
-            view.addVertex(vv1);
+            view.addVertex(vv);
+            viewVertices.put(v1.getIDprop(),vv);
+        }
 
-            //adding Edges through neighbors
-            for (MyVertex v2: model.getGraph().getPredecessors(v1)){
-                ViewVertex vv2 = new ViewVertex(v2.getIDprop(), 10, model.getLayout().apply(v2).getX(),model.getLayout().apply(v2).getY());
-
-                ViewEdge viewEdge = new ViewEdge(vv1, vv2);
-
-                view.addEdge(viewEdge);
-            }
+        //add view edges
+        for (MyEdge edge: model.getGraph().getEdges()){
+            ViewEdge ve = new ViewEdge(viewVertices.get(edge.getFirst().getIDprop()),viewVertices.get(edge.getSecond().getIDprop()));
+            view.addEdge(ve);
         }
     }
 

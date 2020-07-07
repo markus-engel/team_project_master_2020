@@ -2,6 +2,7 @@ package model.io;
 
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import edu.uci.ics.jung.graph.event.GraphEvent;
+import edu.uci.ics.jung.graph.util.Pair;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import model.graph.MyEdge;
@@ -73,9 +74,10 @@ public class GraphParser {
                 eSource = edgList[1];
                 eDestination = edgList[3];
 
-                MyEdge currentEdge = new MyEdge(graph);      //myEdge only defined by its graph
+
                 MyVertex vSource = getVertexFromMapOrNew(eSource, vertices);     //source vertex
                 MyVertex vDestination = getVertexFromMapOrNew(eDestination, vertices);     //destination vertex
+                MyEdge currentEdge = new MyEdge(graph,new Pair<>(vSource, vDestination));      //myEdge only defined by its graph
 
                 /*//get the vertices of the IDs
                 vSource = vertices.get(eSource);
