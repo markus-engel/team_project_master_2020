@@ -1,6 +1,7 @@
 // combines view & model
 package presenter;
 
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -38,21 +39,33 @@ public class Presenter {
                 //fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("GFA Files", "*.gfa"));
                 File f = fc.showOpenDialog(null);
 
-                if (f != null) try {
+                if (f != null) {
+
                     view.setFilenameTextfield("File: " + f.getAbsolutePath());
 
+
                     // parse gfa file to graph
-                    model.parseGraph(f.getAbsolutePath());
-                    visualizeGraph();
-                    view.setSequenceCountTextField(model.getGraph().getVertexCount());
-                    view.setOverlapCountTextField(model.getGraph().getEdgeCount());
+                    Task<Void> parseGraphTask = new Task<Void>() {
+                        @Override
+                        protected Void call() throws Exception {
+                            model.parseGraph(f.getAbsolutePath());
+                            return null;
+                        }
+                    };
+                    parseGraphTask.setOnSucceeded(e -> visualizeGraph());
+
+                    Thread parseGraphThread = new Thread(parseGraphTask);
+                    parseGraphThread.setDaemon(true);
+                    parseGraphThread.start();
+
+
+                    // Check if gfa file was imported and parsed:
+                    //System.out.print(model.getGraph().getVertices());
 
                     // after the graph is parsed, further optional imports can be enabled:
                     view.getImportTaxonomyMenuItem().setDisable(false);
                     view.getImportCoverageMenuItem().setDisable(false);
 
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
             }
         });
@@ -109,13 +122,13 @@ public class Presenter {
 
         for (MyVertex v1: model.getGraph().getVertices()){
 
-            ViewVertex vv1 = new ViewVertex(v1.getIDprop(), 3, model.getLayout().apply(v1).getX(),model.getLayout().apply(v1).getY());
+            ViewVertex vv1 = new ViewVertex(v1.getIDprop(), 10, model.getLayout().apply(v1).getX(),model.getLayout().apply(v1).getY());
 
             view.addVertex(vv1);
 
             //adding Edges through neighbors
             for (MyVertex v2: model.getGraph().getPredecessors(v1)){
-                ViewVertex vv2 = new ViewVertex(v2.getIDprop(), 3, model.getLayout().apply(v2).getX(),model.getLayout().apply(v2).getY());
+                ViewVertex vv2 = new ViewVertex(v2.getIDprop(), 10, model.getLayout().apply(v2).getX(),model.getLayout().apply(v2).getY());
 
                 ViewEdge viewEdge = new ViewEdge(vv1, vv2);
 
