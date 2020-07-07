@@ -1,6 +1,7 @@
 // combines view & model
 package presenter;
 
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -42,14 +43,25 @@ public class Presenter {
                 //fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("GFA Files", "*.gfa"));
                 File f = fc.showOpenDialog(null);
 
-                if (f != null) try {
+                if (f != null) {
 
                     view.setFilenameTextfield("File: " + f.getAbsolutePath());
 
 
                     // parse gfa file to graph
-                    model.parseGraph(f.getAbsolutePath());
-                    visualizeGraph();
+                    Task<Void> parseGraphTask = new Task<Void>() {
+                        @Override
+                        protected Void call() throws Exception {
+                            model.parseGraph(f.getAbsolutePath());
+                            return null;
+                        }
+                    };
+                    parseGraphTask.setOnSucceeded(e -> visualizeGraph());
+
+                    Thread parseGraphThread = new Thread(parseGraphTask);
+                    parseGraphThread.setDaemon(true);
+                    parseGraphThread.start();
+
 
                     // Check if gfa file was imported and parsed:
                     //System.out.print(model.getGraph().getVertices());
@@ -58,8 +70,6 @@ public class Presenter {
                     view.getImportTaxonomyMenuItem().setDisable(false);
                     view.getImportCoverageMenuItem().setDisable(false);
 
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
             }
         });
