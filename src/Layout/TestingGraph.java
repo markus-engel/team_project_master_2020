@@ -4,6 +4,7 @@ import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.KKLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
+import edu.uci.ics.jung.graph.util.Pair;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import model.graph.MyEdge;
@@ -80,12 +81,10 @@ public class TestingGraph {
             graph.addVertex(thirdVector);
             graph.addVertex(fourthVector);
 
-            graph.addEdge(new MyEdge(graph), firstVector, secondVector);
-            graph.addEdge(new MyEdge(graph),firstVector, thirdVector);
-            graph.addEdge(new MyEdge(graph), firstVector, fourthVector);
-            graph.addEdge(new MyEdge(graph), secondVector, thirdVector);
-
-
+            graph.addEdge(new MyEdge(graph, new Pair<>(firstVector, secondVector)), firstVector, secondVector);
+            graph.addEdge(new MyEdge(graph, new Pair<>(firstVector, secondVector)),firstVector, thirdVector);
+            graph.addEdge(new MyEdge(graph, new Pair<>(firstVector, fourthVector)), firstVector, fourthVector);
+            graph.addEdge(new MyEdge(graph, new Pair<>(secondVector, thirdVector)), secondVector, thirdVector);
 
             return graph;
 

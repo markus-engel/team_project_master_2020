@@ -2,6 +2,8 @@ package model;
 
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
+import edu.uci.ics.jung.algorithms.layout.util.VisRunner;
+import edu.uci.ics.jung.algorithms.util.IterativeContext;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
@@ -64,17 +66,15 @@ public class Model {
         });
     }
 
-    // create necessary objects of the IO classes to use them in presenter
+    // create needed objects of the IO classes to use them in presenter
     public void parseGraph(String path) throws IOException {
         this.graph = GraphParser.readFile(path);
-        initializeLayout(graph);
+        initializeLayout(graph, new Dimension(900, 550));
     }
 
     public UndirectedSparseGraph<MyVertex, MyEdge> getGraph() {
         return graph;
     }
-
-
 
     public void parseTaxId(String path) throws IOException {
         new TaxIdParser(graph, path, currentTaxTree);
@@ -88,13 +88,14 @@ public class Model {
         return this.layout;
     }
 
-    private void initializeLayout(UndirectedSparseGraph<MyVertex, MyEdge> graph){
+    private void initializeLayout(UndirectedSparseGraph<MyVertex, MyEdge> graph, Dimension dimension){
         this.layout = new FRLayout<>(graph);
         this.layout.initialize();
-        this.layout.setSize(new Dimension(1000, 550));
+        this.layout.setSize(dimension);
 
-        for (int i=0; i<50;i++){
-            this.layout.step();
-        }
+        VisRunner relaxer = new VisRunner((IterativeContext) layout);
+        relaxer.prerelax();
+        relaxer.relax();
+        relaxer.run();
     }
 }
