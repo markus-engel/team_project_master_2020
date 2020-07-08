@@ -9,6 +9,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.Group?>
 
+<?import javafx.scene.control.ScrollPane?>
 <BorderPane fx:id="Pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
             prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.171"
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.View">
@@ -40,10 +41,10 @@
         </MenuBar>
     </top>
     <center>
-        <Pane fx:id="pane" prefHeight="545.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
+        <ScrollPane fx:id="scrollPane" pannable="true" prefHeight="545.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
             <Group fx:id="vertices">
             </Group>
-        </Pane>
+        </ScrollPane>
     </center>
     <bottom>
         <HBox prefHeight="27.0" prefWidth="600.0" BorderPane.alignment="CENTER">

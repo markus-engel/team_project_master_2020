@@ -1,11 +1,13 @@
 package view;
 
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.text.Text;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -16,6 +18,8 @@ public class View {
     public Group vertices;
 
     @FXML
+    private ScrollPane scrollPane;
+
     private Pane pane;
 
     @FXML
@@ -116,25 +120,56 @@ public class View {
     public TextField getOverlapCountTextField() {
         return OverlapCountTextField;
     }
+
     // Number of Edges
     public void setOverlapCountTextField(int overlapCount) {
         OverlapCountTextField.setText("Overlaps: " + overlapCount);
     }
 
-
-    public void addVertex(ViewVertex vv){
+    public void addVertex(ViewVertex vv) {
 
         //not good way, should do this in FXML
-        if(vertices==null){
+        if (vertices == null) {
             vertices = new Group();
         }
         vertices.getChildren().add(vv);
-        pane.getChildren().add(vv);
+        //pane.getChildren().add(vv);
     }
 
-    public void addEdge(ViewEdge viewEdge){
-        pane.getChildren().add(viewEdge);
+    public void addEdge(ViewEdge viewEdge) {
+        if (vertices == null) {
+            vertices = new Group();
+        }
+        vertices.getChildren().add(viewEdge);
+        //pane.getChildren().add(viewEdge);
     }
 
+    public void setScrollPane() {
+        scrollPane.setContent(this.vertices);
+        EventHandler<ScrollEvent> zoom = new EventHandler<ScrollEvent>() {
+            @Override
+            public void handle(ScrollEvent scrollEvent) {
+                if (scrollEvent.getDeltaY() == 0) {
+                    return;
+                }
+
+                double scaleFactor = (scrollEvent.getDeltaY() > 0) ? 1.2 : 1 / 1.2; //scaleFactor -> final
+
+                vertices.setScaleX(vertices.getScaleX() * scaleFactor);
+                vertices.setScaleY(vertices.getScaleY() * scaleFactor);
+            }
+        };
+        scrollPane.setOnKeyPressed(pressedEvent -> {
+            if (pressedEvent.isControlDown()) {
+                System.out.print("yes");
+                scrollPane.setOnScroll(zoom);
+            }
+            pressedEvent.consume();
+        });
+        scrollPane.setOnKeyReleased(releasedEvent -> {
+            System.out.print("nop");
+            scrollPane.removeEventHandler(ScrollEvent.SCROLL,zoom);
+
+        });
+    }
 }
-

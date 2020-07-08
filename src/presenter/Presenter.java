@@ -63,6 +63,7 @@ public class Presenter {
                     parseGraphThread.setDaemon(true);
                     parseGraphThread.start();
 
+                    view.setScrollPane();
 
                     // Check if gfa file was imported and parsed:
                     //System.out.print(model.getGraph().getVertices());
