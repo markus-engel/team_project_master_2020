@@ -17,12 +17,10 @@ import java.util.HashMap;
 This is the class containing the readFile method to construct a graph from a GFA file.
 Constructed by Anna and Antonia.
 Modified by Anna: change values to Object properties to use them in myVertex
+Modified by Julia: one bug fixed
 */
 
 public class GraphParser {
-
-    static int countNewVertexLineL = 0;
-
     public static UndirectedSparseGraph<MyVertex, MyEdge> readFile(String file) throws IOException {
         FileReader fr = new FileReader(file); // can be changed into not hard coded if needed
         BufferedReader br = new BufferedReader(fr);
@@ -31,10 +29,6 @@ public class GraphParser {
         String eSource, eDestination; // will hold the edge information
         int countS = 0; // could be useful in the future to know how many sequences & edges there are in total
         int countE = 0;
-        int countDoubleVisitsMap = 0;
-        int countDoubleVisitsGraph = 0;
-        int countNewVertexLineS = 0;
-        Integer countNewVertexLineL = 0;
 
         HashMap<String, MyVertex> vertices = new HashMap<>(); //Hashmap collecting all vertices added to graph, with ID as key, model.graph.MyVertex as object
         UndirectedSparseGraph<MyVertex, MyEdge> graph = new UndirectedSparseGraph<>(); //UndirectedSparseGraph readfile returns
@@ -49,12 +43,10 @@ public class GraphParser {
 
                 // Add sequence and GC-content to existing vertex
                 if (vertices.containsKey(ID)) {
-                    countDoubleVisitsMap++;
                     for (MyVertex v : graph.getVertices()) {
-                        if (v.getIDpropProperty().toString().equals(ID)) {
+                        if (v.getIDprop().equals(ID)) {
                             v.setSequenceprop(new SimpleStringProperty(sequence));
                             v.addProperty(ContigProperty.GC, finalGC);
-                            countDoubleVisitsGraph++;
                         }
                     }
                 }
@@ -65,7 +57,6 @@ public class GraphParser {
                     newVertex.addProperty(ContigProperty.GC, finalGC);
                     graph.addVertex(newVertex);
                     vertices.put(ID, newVertex);
-                    countNewVertexLineS++;
                 }
 
             } else if (line.startsWith("L")) { // lines with L are link lines (= edges)
@@ -97,12 +88,10 @@ public class GraphParser {
         br.close();
         fr.close();
 
-        System.out.println("Lines \"S\": " + countS);
+        /*System.out.println("Lines \"S\": " + countS);
         System.out.println("Lines \"L\": " + countE);
-        System.out.println("new Vertex due to line S: " + countNewVertexLineS);
-        System.out.println("new vertex due to line L: " + countNewVertexLineL);
         System.out.println("Vertices in the graph: " + graph.getVertices().size());
-        System.out.println("Edges in the graph: " + graph.getEdges().size());
+        System.out.println("Edges in the graph: " + graph.getEdges().size());*/
 
         return graph;
     }
@@ -118,7 +107,6 @@ public class GraphParser {
     }
 
     public static MyVertex getVertexFromMapOrNew(String vertexID, HashMap<String, MyVertex> vertices) {
-        if (!vertices.containsKey(vertexID)) countNewVertexLineL++;
         return vertices.getOrDefault(vertexID, new MyVertex(new SimpleStringProperty(vertexID)));
     }
 }

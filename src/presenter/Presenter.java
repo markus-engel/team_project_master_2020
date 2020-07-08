@@ -8,6 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.Node;
+import javafx.scene.chart.ScatterChart;
 import javafx.scene.control.Label;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
@@ -15,9 +16,11 @@ import javafx.stage.Stage;
 import model.Model;
 import model.graph.MyEdge;
 import model.graph.MyVertex;
+import model.io.PlotContigGC;
 import model.io.TaxonomyTree;
 import view.View;
 import view.ViewEdge;
+import view.ViewPlot;
 import view.ViewVertex;
 
 import java.io.File;
@@ -57,7 +60,11 @@ public class Presenter {
                             return null;
                         }
                     };
-                    parseGraphTask.setOnSucceeded(e -> visualizeGraph());
+                    parseGraphTask.setOnSucceeded(e -> {
+                        visualizeGraph();
+                        view.getImportTaxonomyMenuItem().setDisable(false);
+                        view.getImportCoverageMenuItem().setDisable(false);
+                    });
 
                     Thread parseGraphThread = new Thread(parseGraphTask);
                     parseGraphThread.setDaemon(true);
@@ -66,11 +73,6 @@ public class Presenter {
 
                     // Check if gfa file was imported and parsed:
                     //System.out.print(model.getGraph().getVertices());
-
-                    // after the graph is parsed, further optional imports can be enabled:
-                    view.getImportTaxonomyMenuItem().setDisable(false);
-                    view.getImportCoverageMenuItem().setDisable(false);
-
                 }
             }
         });
@@ -96,6 +98,7 @@ public class Presenter {
                 File f = fc.showOpenDialog(null);
                 if (f != null) try {
                     model.parseCoverage(f.getAbsolutePath());
+                    view.getCoverageGCMenu().setDisable(false);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -106,13 +109,18 @@ public class Presenter {
             @Override
             public void handle(ActionEvent actionEvent) {
                 try {
-                    Stage dialog = new Stage();
-                    Parent root = FXMLLoader.load(getClass().getResource("../plot.fxml"));
-                    dialog.setTitle("Plots");
-                    dialog.setScene(new Scene(root));
-                    dialog.initModality(Modality.APPLICATION_MODAL);
-                    //dialog.initOwner(); ?
-                    dialog.show();
+                    //Stage plotWindow = new Stage();
+                    FXMLLoader loaderPlot = new FXMLLoader(getClass().getResource("../plot.fxml"));
+                    ViewPlot rootPlot = loaderPlot.load();
+                    //ViewPlot viewPlot = new ViewPlot(view);
+                    PresenterPlot presenterPlot = new PresenterPlot(model, rootPlot);
+                    //plotWindow.setTitle("Plots");
+                    //plotWindow.setScene(new Scene(rootPlot));
+                    //plotWindow.initModality(Modality.APPLICATION_MODAL);
+                    rootPlot.setGcPlot(PlotContigGC.plotContigGC(model.getGraph()));
+                    //dialog.initOwner(root.getScene); ?
+                    //model.plotContigGC(plotWindow);
+                    //plotWindow.show();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

@@ -13,22 +13,22 @@ import model.graph.MyVertex;
 
 import java.io.IOException;
 
-class PlotContigGC {
+public class PlotContigGC {
 
     public PlotContigGC(UndirectedSparseGraph<MyVertex, MyEdge> graph, Stage stage) throws IOException {
-        plotContigGC(graph, stage);
+        plotContigGC(graph);
     }
 
-    public void plotContigGC (UndirectedSparseGraph<MyVertex, MyEdge> graph, Stage stage) {
+    static public ScatterChart plotContigGC(UndirectedSparseGraph<MyVertex, MyEdge> graph) {
         double coverage = 0;
         double gc = 0;
 
-        NumberAxis yaxis = new NumberAxis(0.0,2000.0, 200);
-        NumberAxis xaxis = new NumberAxis(0.0,1.0,0.2);
+        NumberAxis yaxis = new NumberAxis(0.0, 2000.0, 200);
+        NumberAxis xaxis = new NumberAxis(0.0, 1.0, 0.2);
         yaxis.setLabel("Coverage");
         xaxis.setLabel("GC content");
 
-        ScatterChart sChart = new ScatterChart(xaxis,yaxis);
+        ScatterChart sChart = new ScatterChart(xaxis, yaxis);
         sChart.setTitle("Coverage-GC content plot");
 
         XYChart.Series series = new XYChart.Series();
@@ -40,11 +40,12 @@ class PlotContigGC {
         }
 
         sChart.getData().add(series);
-        Group root = new Group();
+        /*Group root = new Group();
         root.getChildren().add(sChart);
         Scene scenePLot = new Scene(root,500,800);
         stage.setScene(scenePLot);
-        stage.show();
+        stage.show();*/
+        return sChart;
     }
 
 }

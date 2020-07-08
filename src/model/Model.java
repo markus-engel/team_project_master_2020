@@ -10,12 +10,11 @@ import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.concurrent.Task;
+import javafx.scene.chart.ScatterChart;
+import javafx.stage.Stage;
 import model.graph.MyEdge;
 import model.graph.MyVertex;
-import model.io.CoverageParser;
-import model.io.GraphParser;
-import model.io.TaxIdParser;
-import model.io.TaxonomyTree;
+import model.io.*;
 
 import java.awt.*;
 import java.io.IOException;
@@ -84,11 +83,15 @@ public class Model {
         new CoverageParser(graph, path);
     }
 
+    public ScatterChart<Number, Number> plotContigGC() throws IOException {
+        return PlotContigGC.plotContigGC(graph);
+    }
+
     public Layout<MyVertex, MyEdge> getLayout() {
         return this.layout;
     }
 
-    private void initializeLayout(UndirectedSparseGraph<MyVertex, MyEdge> graph, Dimension dimension){
+    private void initializeLayout(UndirectedSparseGraph<MyVertex, MyEdge> graph, Dimension dimension) {
         this.layout = new FRLayout<>(graph);
         this.layout.initialize();
         this.layout.setSize(dimension);
