@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.chart.CategoryAxis?>
-<?import javafx.scene.chart.NumberAxis?>
-<?import javafx.scene.chart.ScatterChart?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -14,16 +11,6 @@
     <Tab fx:id="tabGcCoverage" text="GC-content vs. Coverage">
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-          <children>
-            <ScatterChart fx:id="gcCoveragePlot">
-              <xAxis>
-                <CategoryAxis side="BOTTOM"/>
-              </xAxis>
-              <yAxis>
-                <NumberAxis side="LEFT"/>
-              </yAxis>
-            </ScatterChart>
-          </children>
         </AnchorPane>
       </content>
     </Tab>

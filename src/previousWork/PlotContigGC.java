@@ -1,5 +1,5 @@
 // Java FX Scatter Chart Application by Anna
-package model.io;
+package previousWork;
 
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import javafx.scene.Group;
@@ -10,6 +10,7 @@ import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
 import model.graph.MyEdge;
 import model.graph.MyVertex;
+import model.io.ContigProperty;
 
 import java.io.IOException;
 

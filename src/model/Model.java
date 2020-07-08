@@ -83,10 +83,6 @@ public class Model {
         new CoverageParser(graph, path);
     }
 
-    public ScatterChart<Number, Number> plotContigGC() throws IOException {
-        return PlotContigGC.plotContigGC(graph);
-    }
-
     public Layout<MyVertex, MyEdge> getLayout() {
         return this.layout;
     }

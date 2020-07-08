@@ -7,17 +7,12 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.Node;
-import javafx.scene.chart.ScatterChart;
-import javafx.scene.control.Label;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.Model;
 import model.graph.MyEdge;
 import model.graph.MyVertex;
-import model.io.PlotContigGC;
-import model.io.TaxonomyTree;
 import view.View;
 import view.ViewEdge;
 import view.ViewPlot;
@@ -109,25 +104,21 @@ public class Presenter {
             @Override
             public void handle(ActionEvent actionEvent) {
                 try {
-                    //Stage plotWindow = new Stage();
+                    // Open new window for Coverage-GC plots with plot.fxml
+                    Stage plotWindow = new Stage();
                     FXMLLoader loaderPlot = new FXMLLoader(getClass().getResource("../plot.fxml"));
-                    ViewPlot rootPlot = loaderPlot.load();
-                    //ViewPlot viewPlot = new ViewPlot(view);
-                    PresenterPlot presenterPlot = new PresenterPlot(model, rootPlot);
-                    //plotWindow.setTitle("Plots");
-                    //plotWindow.setScene(new Scene(rootPlot));
-                    //plotWindow.initModality(Modality.APPLICATION_MODAL);
-                    rootPlot.setGcPlot(PlotContigGC.plotContigGC(model.getGraph()));
-                    //dialog.initOwner(root.getScene); ?
-                    //model.plotContigGC(plotWindow);
-                    //plotWindow.show();
+                    Parent root = loaderPlot.load();
+                    ViewPlot viewplot = loaderPlot.getController();
+                    PresenterPlot presenterPlot = new PresenterPlot(model, viewplot);
+                    plotWindow.setTitle("Plots");
+                    plotWindow.setScene(new Scene(root));
+                    plotWindow.initModality(Modality.APPLICATION_MODAL);
+                    plotWindow.show();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         });
-
-
     }
 
     private void visualizeGraph(){
