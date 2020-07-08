@@ -34,7 +34,7 @@
                 </Menu>
                 <Menu fx:id="PlotMenu" mnemonicParsing="false" text="Plot">
                     <items>
-                        <MenuItem fx:id="CoverageGCMenu" mnemonicParsing="false" text="Coverage-GC"/>
+                        <MenuItem fx:id="CoverageGCMenu" disable="true" mnemonicParsing="false" text="Coverage-GC"/>
                     </items>
                 </Menu>
             </menus>

@@ -73,16 +73,6 @@ public class View {
     @FXML
     private MenuItem CoverageGCMenu;
 
-
-    @FXML
-    private TabPane tabPanePlots;
-
-    @FXML
-    private Tab tabGcCoverage;
-
-    @FXML
-    private Tab tabElse;
-
     // getter and setter Methods. More have to be implemented if needed
     public MenuItem getImportMenuItem() {
         return ImportMenuItem;
