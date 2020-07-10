@@ -69,7 +69,7 @@ public class Model {
     // create needed objects of the IO classes to use them in presenter
     public void parseGraph(String path) throws IOException {
         this.graph = GraphParser.readFile(path);
-        initializeLayout(graph, new Dimension(1000, 575));
+        initializeLayout(graph, new Dimension(1000, 565));
     }
 
     public UndirectedSparseGraph<MyVertex, MyEdge> getGraph() {
