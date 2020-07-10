@@ -46,7 +46,9 @@ public class Presenter {
 
                     view.setFilenameTextfield("File: " + f.getAbsolutePath());
 
-
+                    if(model.getGraph() != null){
+                        reset();
+                    }
                     // parse gfa file to graph
                     Task<Void> parseGraphTask = new Task<Void>() {
                         @Override
@@ -56,6 +58,7 @@ public class Presenter {
                         }
                     };
                     parseGraphTask.setOnSucceeded(e -> {
+                        System.out.print(model.getGraph().getVertexCount());
                         visualizeGraph();
                         view.getImportTaxonomyMenuItem().setDisable(false);
                         view.getImportCoverageMenuItem().setDisable(false);
@@ -65,7 +68,7 @@ public class Presenter {
                     parseGraphThread.setDaemon(true);
                     parseGraphThread.start();
 
-                    view.setScrollPane();
+
 
                     // Check if gfa file was imported and parsed:
                     //System.out.print(model.getGraph().getVertices());
@@ -123,12 +126,10 @@ public class Presenter {
     }
 
     private void visualizeGraph(){
-
         //add view vertices
         for (MyVertex v1: model.getGraph().getVertices()){
             // Save v1 in collection to check, it has already been created to avoid redundancies in loop below?
             ViewVertex vv = new ViewVertex(v1.getIDprop(), 5, model.getLayout().apply(v1).getX(),model.getLayout().apply(v1).getY());
-
             view.addVertex(vv);
             viewVertices.put(v1.getIDprop(),vv);
             makeDraggable(vv);
@@ -139,6 +140,8 @@ public class Presenter {
             ViewEdge ve = new ViewEdge(viewVertices.get(edge.getFirst().getIDprop()),viewVertices.get(edge.getSecond().getIDprop()));
             view.addEdge(ve);
         }
+        view.setScrollPane();
+        view.makeScrollAndZoomable();
     }
 
     private void makeDraggable(ViewVertex viewVertex){
@@ -151,5 +154,12 @@ public class Presenter {
         });
     }
 
+    private void reset(){
+        model.setGraph(null);
+        viewVertices = new HashMap<>();
+        System.out.print("reset");
+        //view.getScrollPane().setContent(null);
+        view.setViewObjects(null);
+    }
 }
 

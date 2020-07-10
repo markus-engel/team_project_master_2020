@@ -42,7 +42,7 @@ public class Model {
         Thread treeBackgroundTask = new Thread(taskTaxonomyTree);
         treeBackgroundTask.setDaemon(true);
         treeBackgroundTask.start();
-
+        /*
         Task<Void> loadGraph = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
@@ -54,6 +54,7 @@ public class Model {
         Thread loadGraphTask = new Thread(loadGraph);
         loadGraphTask.setDaemon(true);
         loadGraphTask.start();
+        */
 
         // either new method listener or:
         // InvalidationListener listener = null;
@@ -74,6 +75,8 @@ public class Model {
     public UndirectedSparseGraph<MyVertex, MyEdge> getGraph() {
         return graph;
     }
+
+    public void setGraph(UndirectedSparseGraph<MyVertex,MyEdge> graph){ this.graph = graph;}
 
     public void parseTaxId(String path) throws IOException {
         new TaxIdParser(graph, path, currentTaxTree);

@@ -42,7 +42,7 @@
     </top>
     <center>
         <ScrollPane fx:id="scrollPane" pannable="true" prefHeight="545.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
-            <Group fx:id="vertices">
+            <Group fx:id="viewObjects">
             </Group>
         </ScrollPane>
     </center>
