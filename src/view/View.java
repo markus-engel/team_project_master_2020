@@ -20,6 +20,9 @@ public class View {
     private ScrollPane scrollPane;
 
     @FXML
+    private ProgressIndicator progressIndicator;
+
+    @FXML
     private ResourceBundle resources;
 
     @FXML
@@ -115,11 +118,9 @@ public class View {
 
     public Group getViewObjects(){ return viewObjects;}
 
+    public ProgressIndicator getProgressIndicator(){ return progressIndicator;}
+
     public void setViewObjects(Group viewObjects) { this.viewObjects = viewObjects;}
-
-    public ScrollPane getScrollPane(){ return this.scrollPane;}
-
-    public void makeScrollAndZoomable(ScrollPane scrollPane) { this.scrollPane = scrollPane;}
 
     public void addVertex(ViewVertex vv) {
 
@@ -138,6 +139,8 @@ public class View {
     }
 
     public void setScrollPane() {this.scrollPane.setContent(this.viewObjects);}
+
+    public ScrollPane getScrollPane(){ return scrollPane;}
 
     public void makeScrollAndZoomable() {
         EventHandler<ScrollEvent> zoom = new EventHandler<ScrollEvent>() {

@@ -45,21 +45,25 @@ public class Presenter {
                 if (f != null) {
 
                     view.setFilenameTextfield("File: " + f.getAbsolutePath());
+                    view.getProgressIndicator().setVisible(true);
 
                     if(model.getGraph() != null){
                         reset();
+                        view.getProgressIndicator().toFront();
+                        view.getScrollPane().setDisable(true);
                     }
                     // parse gfa file to graph
                     Task<Void> parseGraphTask = new Task<Void>() {
                         @Override
                         protected Void call() throws Exception {
                             model.parseGraph(f.getAbsolutePath());
+                            view.getProgressIndicator().setVisible(false);
                             return null;
                         }
                     };
                     parseGraphTask.setOnSucceeded(e -> {
-                        System.out.print(model.getGraph().getVertexCount());
                         visualizeGraph();
+                        view.getScrollPane().setDisable(false);
                         view.getImportTaxonomyMenuItem().setDisable(false);
                         view.getImportCoverageMenuItem().setDisable(false);
                     });
@@ -67,11 +71,6 @@ public class Presenter {
                     Thread parseGraphThread = new Thread(parseGraphTask);
                     parseGraphThread.setDaemon(true);
                     parseGraphThread.start();
-
-
-
-                    // Check if gfa file was imported and parsed:
-                    //System.out.print(model.getGraph().getVertices());
                 }
             }
         });
@@ -88,7 +87,6 @@ public class Presenter {
                 }
             }
         });
-
 
         view.getImportCoverageMenuItem().setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -126,7 +124,7 @@ public class Presenter {
     }
 
     private void visualizeGraph(){
-        //add view vertices
+        // add view vertices
         for (MyVertex v1: model.getGraph().getVertices()){
             // Save v1 in collection to check, it has already been created to avoid redundancies in loop below?
             ViewVertex vv = new ViewVertex(v1.getIDprop(), 5, model.getLayout().apply(v1).getX(),model.getLayout().apply(v1).getY());
@@ -134,12 +132,12 @@ public class Presenter {
             viewVertices.put(v1.getIDprop(),vv);
             makeDraggable(vv);
         }
-
-        //add view edges
+        // add view edges
         for (MyEdge edge: model.getGraph().getEdges()){
             ViewEdge ve = new ViewEdge(viewVertices.get(edge.getFirst().getIDprop()),viewVertices.get(edge.getSecond().getIDprop()));
             view.addEdge(ve);
         }
+        // apply viewObjects onto Scrollpane
         view.setScrollPane();
         view.makeScrollAndZoomable();
     }
@@ -156,10 +154,8 @@ public class Presenter {
 
     private void reset(){
         model.setGraph(null);
-        viewVertices = new HashMap<>();
-        System.out.print("reset");
-        //view.getScrollPane().setContent(null);
         view.setViewObjects(null);
+        viewVertices = new HashMap<>();
     }
 }
 
