@@ -11,7 +11,6 @@ Class defining the edges used in UndirectedSparseGraph.
 Constructed by Antonia.
  */
 
-//EDGES MAP DEfinieren!!!
 
 public class MyEdge {
     private UndirectedSparseGraph<MyVertex, MyEdge> graph;//graph the edge is in

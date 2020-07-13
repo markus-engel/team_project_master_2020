@@ -137,6 +137,14 @@ public class Presenter {
             ViewEdge ve = new ViewEdge(viewVertices.get(edge.getFirst().getIDprop()),viewVertices.get(edge.getSecond().getIDprop()));
             view.addEdge(ve);
         }
+
+        // add lonely view vertices
+        for (MyVertex v: model.getLonelyGraph().getVertices()){
+            ViewVertex vv = new ViewVertex(v.getIDprop(), 5, model.getLonelyLayout().apply(v).getX(), model.getLonelyLayout().apply(v).getY());
+            view.addVertex(vv);
+            makeDraggable(vv);
+        }
+
         // apply viewObjects onto Scrollpane
         view.setScrollPane();
         view.makeScrollAndZoomable();
