@@ -30,6 +30,7 @@ public class GraphParser {
         int countS = 0; // could be useful in the future to know how many sequences & edges there are in total
         int countE = 0;
 
+
         HashMap<String, MyVertex> vertices = new HashMap<>(); //Hashmap collecting all vertices added to graph, with ID as key, model.graph.MyVertex as object
         UndirectedSparseGraph<MyVertex, MyEdge> graph = new UndirectedSparseGraph<>(); //UndirectedSparseGraph readfile returns
 
@@ -96,6 +97,7 @@ public class GraphParser {
         return graph;
     }
 
+
     public static double calculateGCcontent(String sequence) {
         int GCcount = 0;
         for (int i = 0; i < sequence.length(); i++) {
@@ -109,4 +111,5 @@ public class GraphParser {
     public static MyVertex getVertexFromMapOrNew(String vertexID, HashMap<String, MyVertex> vertices) {
         return vertices.getOrDefault(vertexID, new MyVertex(new SimpleStringProperty(vertexID)));
     }
+
 }

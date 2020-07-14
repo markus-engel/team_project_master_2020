@@ -68,6 +68,9 @@ public class View {
     private TextField OverlapCountTextField;
 
     @FXML
+    private TextField currentSequenceTextfield;
+
+    @FXML
     private Menu PlotMenu;
 
     @FXML
@@ -102,8 +105,13 @@ public class View {
         return SequenceCountTextField;
     }
 
+
+    public void setCurrentSequenceTextField(String currentSeq) {
+        currentSequenceTextfield.setText("Sequences: " + currentSeq);
+    }
+
     // Number of Vertices
-    public void setSequenceCountTextField(int sequenceCount) {
+    public void setSequenceCountTextField(String sequenceCount) {
         SequenceCountTextField.setText("Sequences: " + sequenceCount);
     }
 
