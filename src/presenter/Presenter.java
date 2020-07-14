@@ -18,6 +18,7 @@ import view.ViewEdge;
 import view.ViewPlot;
 import view.ViewVertex;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -62,7 +63,7 @@ public class Presenter {
                         }
                     };
                     parseGraphTask.setOnSucceeded(e -> {
-                        visualizeGraph();
+                        visualizeGraph(5);
                         view.getScrollPane().setDisable(false);
                         view.getImportTaxonomyMenuItem().setDisable(false);
                         view.getImportCoverageMenuItem().setDisable(false);
@@ -123,14 +124,16 @@ public class Presenter {
         });
     }
 
-    private void visualizeGraph(){
+    private void visualizeGraph(int size){
+
+
         // add view vertices
         for (MyVertex v1: model.getGraph().getVertices()){
             // Save v1 in collection to check, it has already been created to avoid redundancies in loop below?
-            ViewVertex vv = new ViewVertex(v1.getIDprop(), 5, model.getLayout().apply(v1).getX(),model.getLayout().apply(v1).getY());
+            ViewVertex vv = new ViewVertex(v1.getIDprop(), size, model.getLayout().apply(v1).getX(),model.getLayout().apply(v1).getY());
             view.addVertex(vv);
             viewVertices.put(v1.getIDprop(),vv);
-            makeDraggable(vv);
+            makeDraggable(vv, model.getLayout().getSize(), size);
         }
         // add view edges
         for (MyEdge edge: model.getGraph().getEdges()){
@@ -140,9 +143,9 @@ public class Presenter {
 
         // add lonely view vertices
         for (MyVertex v: model.getLonelyGraph().getVertices()){
-            ViewVertex vv = new ViewVertex(v.getIDprop(), 5, model.getLonelyLayout().apply(v).getX(), model.getLonelyLayout().apply(v).getY());
+            ViewVertex vv = new ViewVertex(v.getIDprop(), size, model.getLonelyLayout().apply(v).getX(), model.getLonelyLayout().apply(v).getY());
             view.addVertex(vv);
-            makeDraggable(vv);
+            makeDraggable(vv, model.getLayout().getSize(), size);
         }
 
         // apply viewObjects onto Scrollpane
@@ -150,10 +153,18 @@ public class Presenter {
         view.makeScrollAndZoomable();
     }
 
-    private void makeDraggable(ViewVertex viewVertex){
+    private void makeDraggable(ViewVertex viewVertex, Dimension dimension, int size){
         viewVertex.setOnMouseDragged(event -> {
             int x = (int)Math.ceil(event.getX());
             int y = (int)Math.ceil(event.getY());
+
+
+            if (x<size){
+                x=size;
+            }
+            if (x>dimension.width){
+                x=dimension.width;
+            }
 
             viewVertex.setCoords(x,y);
             viewVertex.toFront();
