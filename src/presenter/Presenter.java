@@ -189,6 +189,9 @@ public class Presenter {
     }
 
     private void reset(){
+
+
+        System.out.println("hello");
         model.setGraph(null);
         view.setViewObjects(null);
         viewVertices = new HashMap<>();
