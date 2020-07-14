@@ -59,15 +59,15 @@ public class Model {
     }
 
     // create needed objects of the IO classes to use them in presenter
-    public void parseGraph(String path) throws IOException {
+    public void parseGraph(String path, Dimension dimension) throws IOException {
         this.graph = GraphParser.readFile(path);
-        //initializeLayout(graph, new Dimension(1000, 565));
-
         this.lonelyGraph = new UndirectedSparseGraph<>();
+
         groupGraph(graph);
-        initializeLayout(graph, new Dimension(1000, 400));
+        initializeLayout(graph, dimension);
         System.out.println("Layout initialized");
-        initializeGrid(lonelyGraph, 1000,400);
+        initializeGrid(lonelyGraph, dimension.width, dimension.height);
+        centering(dimension);
 
 
     }
@@ -108,15 +108,15 @@ public class Model {
         relaxer.prerelax();
         relaxer.relax();
         relaxer.run();
+
+
     }
 
     private void initializeGrid(UndirectedSparseGraph<MyVertex, MyEdge> graph,  int maxX, int startY){
         this.lonelyLayout = new StaticLayout(graph);
         this.lonelyLayout.initialize();
         int initial=20;
-
         //MyVertex vertex = graph.getVertices().iterator().next();
-
         int countX=0+initial;
         int countY=startY-1;
         for (MyVertex vertex: this.lonelyGraph.getVertices()){
@@ -132,25 +132,25 @@ public class Model {
 
     }
 
-
-
     private void groupGraph(UndirectedSparseGraph<MyVertex, MyEdge> graph){
-        System.out.println("in group graph");
-
-
-        //need to create new collection to iterate over to remove vertices
+         //need to create new collection to iterate over to remove vertices
         Iterable<MyVertex> vertices = new ArrayList<MyVertex>(graph.getVertices());
         for (MyVertex v:vertices){
             if (graph.getPredecessors(v).size()==0){
-                System.out.println("vertex has no edges");
                 this.lonelyGraph.addVertex(v);
-                System.out.println("v added to lonely graph");
                 this.graph.removeVertex(v);
-                System.out.println("v removed from graph");
             }
-
         }
-        System.out.println("ended group graph");
     }
 
+    private void centering(Dimension dimension) {
+
+        for (MyVertex v: graph.getVertices()){
+            layout.setLocation(v, layout.apply(v).getX()+dimension.width/2, layout.apply(v).getY()+dimension.height/2 );
+        }
+        for (MyVertex v: lonelyGraph.getVertices()){
+            lonelyLayout.setLocation(v, lonelyLayout.apply(v).getX()+dimension.width/2, lonelyLayout.apply(v).getY()+dimension.height/2 );
+        }
+
+    }
 }
