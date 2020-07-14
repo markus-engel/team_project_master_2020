@@ -7,12 +7,14 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Tooltip;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.Model;
 import model.graph.MyEdge;
 import model.graph.MyVertex;
+import model.io.GraphParser;
 import view.View;
 import view.ViewEdge;
 import view.ViewPlot;
@@ -44,7 +46,7 @@ public class Presenter {
 
                 if (f != null) {
 
-                    view.setFilenameTextfield("File: " + f.getAbsolutePath());
+                    view.setFilenameTextfield("File: " + f.getName());
                     view.getProgressIndicator().setVisible(true);
 
                     if(model.getGraph() != null){
@@ -131,6 +133,7 @@ public class Presenter {
             view.addVertex(vv);
             viewVertices.put(v1.getIDprop(),vv);
             makeDraggable(vv);
+            selectNode(vv);
         }
         // add view edges
         for (MyEdge edge: model.getGraph().getEdges()){
@@ -143,6 +146,7 @@ public class Presenter {
             ViewVertex vv = new ViewVertex(v.getIDprop(), 5, model.getLonelyLayout().apply(v).getX(), model.getLonelyLayout().apply(v).getY());
             view.addVertex(vv);
             makeDraggable(vv);
+            selectNode(vv);
         }
 
         // apply viewObjects onto Scrollpane
@@ -157,6 +161,14 @@ public class Presenter {
 
             viewVertex.setCoords(x,y);
             viewVertex.toFront();
+        });
+    }
+
+    private void selectNode(ViewVertex viewVertex) {
+        viewVertex.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 1) {
+                view.setCurrentSequenceTextField(viewVertex.getID());
+            }
         });
     }
 
