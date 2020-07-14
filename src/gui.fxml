@@ -25,6 +25,12 @@
                         <MenuItem fx:id="CloseMenuItem" mnemonicParsing="false" text="Close" />
                     </items>
                 </Menu>
+                <Menu fx:id="viewMenu" mnemonicParsing="false" text="View">
+                    <items>
+                        <MenuItem fx:id="customizeMenuItem" disable="true" mnemonicParsing="false" text="Circle size"/>
+
+                    </items>
+                </Menu>
                 <Menu fx:id="helpMenu" mnemonicParsing="false" text="Help">
                     <items>
                         <MenuItem fx:id="AboutMenuItem" mnemonicParsing="false" text="About" />
@@ -39,7 +45,6 @@
         </MenuBar>
     </top>
     <center>
-
         <StackPane fx:id="stackPane" prefHeight="600.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
             <ScrollPane fx:id="scrollPane" pannable="false" prefHeight="600.0" prefWidth="1000.0">
                 <Group fx:id="viewObjects">

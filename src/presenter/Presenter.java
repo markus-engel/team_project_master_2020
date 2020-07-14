@@ -29,6 +29,7 @@ public class Presenter {
     Model model;
     View view;
     HashMap<String, view.ViewVertex> viewVertices = new HashMap<>();  //Hashmap of view vertex objects
+    public final Dimension MAX_WINDOW_DIMENSION = new Dimension(2000,1200); //gets passed to model to center layouts, gets passed to view to control size of window
 
     public Presenter(Model model, View view){
         this.model = model;
@@ -59,7 +60,7 @@ public class Presenter {
                     Task<Void> parseGraphTask = new Task<Void>() {
                         @Override
                         protected Void call() throws Exception {
-                            model.parseGraph(f.getAbsolutePath());
+                            model.parseGraph(f.getAbsolutePath(), new Dimension(MAX_WINDOW_DIMENSION.width/2,MAX_WINDOW_DIMENSION.height/2));
                             view.getProgressIndicator().setVisible(false);
                             return null;
                         }
@@ -69,6 +70,7 @@ public class Presenter {
                         view.getScrollPane().setDisable(false);
                         view.getImportTaxonomyMenuItem().setDisable(false);
                         view.getImportCoverageMenuItem().setDisable(false);
+                        view.getCustomizeMenuItem().setDisable(false);
                     });
 
                     Thread parseGraphThread = new Thread(parseGraphTask);
@@ -124,20 +126,23 @@ public class Presenter {
                 }
             }
         });
+
+        view.getCustomizeMenuItem().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                System.out.print("JHHIEA");
+            }
+        });
     }
 
     private void visualizeGraph(int size){
-
-
         // add view vertices
         for (MyVertex v1: model.getGraph().getVertices()){
             // Save v1 in collection to check, it has already been created to avoid redundancies in loop below?
             ViewVertex vv = new ViewVertex(v1.getIDprop(), size, model.getLayout().apply(v1).getX(),model.getLayout().apply(v1).getY());
             view.addVertex(vv);
             viewVertices.put(v1.getIDprop(),vv);
-
-            makeDraggable(vv, model.getLayout().getSize(), size);
-
+            makeDraggable(vv, size);
             selectNode(vv);
 
         }
@@ -151,29 +156,29 @@ public class Presenter {
         for (MyVertex v: model.getLonelyGraph().getVertices()){
             ViewVertex vv = new ViewVertex(v.getIDprop(), size, model.getLonelyLayout().apply(v).getX(), model.getLonelyLayout().apply(v).getY());
             view.addVertex(vv);
-
-            makeDraggable(vv, model.getLayout().getSize(), size);
+            makeDraggable(vv, size);
             selectNode(vv);
-
         }
-
         // apply viewObjects onto Scrollpane
         view.setScrollPane();
     }
 
-    private void makeDraggable(ViewVertex viewVertex, Dimension dimension, int size){
+    private void makeDraggable(ViewVertex viewVertex, int size){
         viewVertex.setOnMouseDragged(event -> {
             int x = (int)Math.ceil(event.getX());
             int y = (int)Math.ceil(event.getY());
-
-
-            if (x<size){
-                x=size;
+            if (x < 0 + size){
+                x = 0 + size;
             }
-            if (x>dimension.width){
-                x=dimension.width;
+            if (y < 0 + size){
+                y = 0 + size;
             }
-
+            if (x > MAX_WINDOW_DIMENSION.width - size){
+                x= MAX_WINDOW_DIMENSION.width - size;
+            }
+            if (y > MAX_WINDOW_DIMENSION.height - size){
+                y = MAX_WINDOW_DIMENSION.height - size;
+            }
             viewVertex.setCoords(x,y);
             viewVertex.toFront();
         });
