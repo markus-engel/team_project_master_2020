@@ -1,4 +1,5 @@
-import model.io.TaxonomyTree;
+package model.io;
+
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -23,9 +24,12 @@ class TaxonomyTreeTest {
     @Test
     void getAncestorId() {
         assertEquals(0, T.getAncestorId(0));
+        System.out.println(T.getScientificName(4));
+
         System.out.println(T.getScientificName(1));
         System.out.println(T.getScientificName(2));
-        System.out.println(T.getScientificName(3));
+
+
     }
 
     @Test

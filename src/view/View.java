@@ -167,11 +167,13 @@ public class View {
         scrollPane.setOnKeyPressed(pressedEvent -> {
             if (pressedEvent.isControlDown()) {
                 scrollPane.setOnScroll(zoom);
+                scrollPane.setPannable(false);
             }
             pressedEvent.consume();
         });
         scrollPane.setOnKeyReleased(releasedEvent -> {
             scrollPane.setOnScroll(null);
+            scrollPane.setPannable(true);
 
         });
     }
