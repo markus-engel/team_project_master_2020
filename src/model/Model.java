@@ -130,7 +130,6 @@ public class Model {
             countX+=20;
         }
 
-
     }
 
 

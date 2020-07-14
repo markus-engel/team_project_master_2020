@@ -39,9 +39,11 @@
         </MenuBar>
     </top>
     <center>
+
         <StackPane fx:id="stackPane" prefHeight="600.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
             <ScrollPane fx:id="scrollPane" pannable="false" prefHeight="600.0" prefWidth="1000.0">
                 <Group fx:id="viewObjects">
+                    <Group fx:id="innerViewObjects"/>
                 </Group>
             </ScrollPane>
             <ProgressIndicator fx:id="progressIndicator" layoutX="500.0" layoutY="250.0" visible="false" />
