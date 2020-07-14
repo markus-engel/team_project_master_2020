@@ -159,7 +159,6 @@ public class Presenter {
 
         // apply viewObjects onto Scrollpane
         view.setScrollPane();
-        view.makeScrollAndZoomable();
     }
 
     private void makeDraggable(ViewVertex viewVertex, Dimension dimension, int size){

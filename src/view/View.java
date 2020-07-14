@@ -4,17 +4,24 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.input.ZoomEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class View {
 
+    private final double MAX_SCALE = 2.5d;
+    private final double MIN_SCALE = .5d;
+
     @FXML
     private Group viewObjects;
+
+    @FXML
+    private Group innerViewObjects;
 
     @FXML
     private ScrollPane scrollPane;
@@ -131,50 +138,43 @@ public class View {
     public void setViewObjects(Group viewObjects) { this.viewObjects = viewObjects;}
 
     public void addVertex(ViewVertex vv) {
-
-        //not good way, should do this in FXML
-        if (viewObjects == null) {
-            viewObjects = new Group();
-        }
         viewObjects.getChildren().add(vv);
+        innerViewObjects.getChildren().add(vv);
     }
 
     public void addEdge(ViewEdge viewEdge) {
-        if (viewObjects == null) {
-            viewObjects = new Group();
-        }
         viewObjects.getChildren().add(viewEdge);
+        innerViewObjects.getChildren().add(viewEdge);
     }
 
-    public void setScrollPane() {this.scrollPane.setContent(this.viewObjects);}
+    public void setScrollPane() {
+        scrollPane.setContent(viewObjects);
+        makeZoomable();
+    }
 
     public ScrollPane getScrollPane(){ return scrollPane;}
 
-    public void makeScrollAndZoomable() {
-        EventHandler<ScrollEvent> zoom = new EventHandler<ScrollEvent>() {
+    private void makeZoomable() {
+        scrollPane.addEventFilter(ScrollEvent.ANY, new EventHandler<ScrollEvent>() {
             @Override
             public void handle(ScrollEvent scrollEvent) {
-                if (scrollEvent.getDeltaY() == 0) {
-                    return;
+                if(scrollEvent.isControlDown()){ // wenn scrollen disabled werden soll, dann hier !scrollevent.isConsumed()
+                    final double scale = calculateScale(scrollEvent);
+                    innerViewObjects.setScaleX(scale);
+                    innerViewObjects.setScaleY(scale);
+                    scrollEvent.consume();
                 }
-
-                double scaleFactor = (scrollEvent.getDeltaY() > 0) ? 1.2 : 1 / 1.2; //scaleFactor -> final
-
-                viewObjects.setScaleX(viewObjects.getScaleX() * scaleFactor);
-                viewObjects.setScaleY(viewObjects.getScaleY() * scaleFactor);
             }
-        };
-        scrollPane.setOnKeyPressed(pressedEvent -> {
-            if (pressedEvent.isControlDown()) {
-                scrollPane.setOnScroll(zoom);
-                scrollPane.setPannable(false);
-            }
-            pressedEvent.consume();
         });
-        scrollPane.setOnKeyReleased(releasedEvent -> {
-            scrollPane.setOnScroll(null);
-            scrollPane.setPannable(true);
+    }
 
-        });
+    private double calculateScale(ScrollEvent scrollEvent) {
+        double scale = innerViewObjects.getScaleX() + scrollEvent.getDeltaY()/100;
+        if (scale <= MIN_SCALE) {
+            scale = MIN_SCALE;
+        } else if (scale >= MAX_SCALE) {
+            scale = MAX_SCALE;
+        }
+        return scale;
     }
 }
