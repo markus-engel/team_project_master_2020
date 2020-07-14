@@ -28,8 +28,6 @@ class TaxonomyTreeTest {
 
         System.out.println(T.getScientificName(1));
         System.out.println(T.getScientificName(2));
-
-
     }
 
     @Test
