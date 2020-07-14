@@ -161,7 +161,7 @@ public class Presenter {
     }
 
 
-    
+
 
     private void reset(){
         model.setGraph(null);
