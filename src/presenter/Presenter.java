@@ -11,6 +11,7 @@ import javafx.scene.control.Tooltip;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import model.Model;
 import model.graph.MyEdge;
 import model.graph.MyVertex;
@@ -142,8 +143,8 @@ public class Presenter {
             ViewVertex vv = new ViewVertex(v1.getIDprop(), size, model.getLayout().apply(v1).getX(),model.getLayout().apply(v1).getY());
             view.addVertex(vv);
             viewVertices.put(v1.getIDprop(),vv);
-            makeDraggable(vv, size);
             selectNode(vv);
+            makeDraggable(vv, size);
 
         }
         // add view edges
@@ -156,8 +157,9 @@ public class Presenter {
         for (MyVertex v: model.getLonelyGraph().getVertices()){
             ViewVertex vv = new ViewVertex(v.getIDprop(), size, model.getLonelyLayout().apply(v).getX(), model.getLonelyLayout().apply(v).getY());
             view.addVertex(vv);
-            makeDraggable(vv, size);
             selectNode(vv);
+            makeDraggable(vv, size);
+
         }
         // apply viewObjects onto Scrollpane
         view.setScrollPane();
@@ -185,9 +187,26 @@ public class Presenter {
     }
 
     private void selectNode(ViewVertex viewVertex) {
+
         viewVertex.setOnMouseClicked(event -> {
             if (event.getClickCount() == 1) {
+
                 view.setCurrentSequenceTextField(viewVertex.getID());
+
+                final Tooltip tp = new Tooltip(viewVertex.getID());
+                tp.setShowDelay(Duration.seconds(3.0));
+                tp.show(viewVertex,
+                        viewVertex.getLayoutX() + viewVertex.getScene().getX() + viewVertex.getScene().getWindow().getX(),
+                        viewVertex.getLayoutY() + viewVertex.getScene().getY() + viewVertex.getScene().getWindow().getY());
+                // this didn't work:
+                //int x = (int)Math.ceil(event.getSceneX());
+                //int y = (int)Math.ceil(event.getSceneY());
+                //tp.show(viewVertex, x, y);
+
+                //tp.setAnchorX(viewVertex.getLayoutX());
+                //tp.setAnchorY(viewVertex.getLayoutY());
+
+                //Tooltip.install(viewVertex, tp);
             }
         });
     }

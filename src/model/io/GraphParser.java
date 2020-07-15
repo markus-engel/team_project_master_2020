@@ -94,6 +94,7 @@ public class GraphParser {
         System.out.println("Vertices in the graph: " + graph.getVertices().size());
         System.out.println("Edges in the graph: " + graph.getEdges().size());*/
 
+
         return graph;
     }
 

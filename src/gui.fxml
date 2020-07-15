@@ -27,18 +27,19 @@
                 </Menu>
                 <Menu fx:id="viewMenu" mnemonicParsing="false" text="View">
                     <items>
-                        <MenuItem fx:id="customizeMenuItem" disable="true" mnemonicParsing="false" text="Circle size"/>
+                  <MenuItem fx:id="selectionMenuItem" mnemonicParsing="false" text="selection Graph" />
+                        <MenuItem fx:id="customizeMenuItem" disable="true" mnemonicParsing="false" text="Circle size" />
 
-                    </items>
-                </Menu>
-                <Menu fx:id="helpMenu" mnemonicParsing="false" text="Help">
-                    <items>
-                        <MenuItem fx:id="AboutMenuItem" mnemonicParsing="false" text="About" />
                     </items>
                 </Menu>
                 <Menu fx:id="PlotMenu" mnemonicParsing="false" text="Plot">
                     <items>
                         <MenuItem fx:id="CoverageGCMenu" disable="true" mnemonicParsing="false" text="Coverage-GC" />
+                    </items>
+                </Menu>
+                <Menu fx:id="helpMenu" mnemonicParsing="false" text="Help">
+                    <items>
+                        <MenuItem fx:id="AboutMenuItem" mnemonicParsing="false" text="About" />
                     </items>
                 </Menu>
             </menus>
@@ -48,7 +49,7 @@
         <StackPane fx:id="stackPane" prefHeight="600.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
             <ScrollPane fx:id="scrollPane" pannable="false" prefHeight="600.0" prefWidth="1000.0">
                 <Group fx:id="viewObjects">
-                    <Group fx:id="innerViewObjects"/>
+                    <Group fx:id="innerViewObjects" />
                 </Group>
             </ScrollPane>
             <ProgressIndicator fx:id="progressIndicator" layoutX="500.0" layoutY="250.0" visible="false" />
