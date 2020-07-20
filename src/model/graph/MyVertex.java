@@ -1,11 +1,14 @@
 package model.graph;
 
+import com.sun.javafx.geom.Point2D;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import model.io.ContigProperty;
+
+import java.awt.*;
 
 /*
 Class defining the vertices used in UndirectedSparseGraph.
@@ -15,9 +18,11 @@ Modified by Julia: further optional ContigProperties storable in a map "furtherP
  */
 
 public class MyVertex {
-    StringProperty IDprop = new SimpleStringProperty(this, "ID", "");
-    StringProperty sequenceprop = new SimpleStringProperty(this, "Sequence", "");
-    ObservableMap<ContigProperty, Object> furtherProperties = FXCollections.observableHashMap();
+    private StringProperty IDprop = new SimpleStringProperty(this, "ID", "");
+    private StringProperty sequenceprop = new SimpleStringProperty(this, "Sequence", "");
+    private ObservableMap<ContigProperty, Object> furtherProperties = FXCollections.observableHashMap();
+    private double x;
+    private double y;
 
     public MyVertex(StringProperty ID, StringProperty sequence){
         this.IDprop = ID;
@@ -76,4 +81,11 @@ public class MyVertex {
         return String.valueOf(this.IDprop);
     }
 
+    public double getX() { return x; }
+
+    public void setX(double x) { this.x = x; }
+
+    public double getY() { return y; }
+
+    public void setY(double y) { this.y = y; }
 }

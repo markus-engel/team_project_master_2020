@@ -61,7 +61,7 @@ public class Presenter {
                     Task<Void> parseGraphTask = new Task<Void>() {
                         @Override
                         protected Void call() throws Exception {
-                            model.parseGraph(f.getAbsolutePath(), new Dimension(MAX_WINDOW_DIMENSION.width/2,MAX_WINDOW_DIMENSION.height/2));
+                            model.parseGraph(f.getAbsolutePath(), new Dimension(MAX_WINDOW_DIMENSION.width,MAX_WINDOW_DIMENSION.height));
                             view.getProgressIndicator().setVisible(false);
                             return null;
                         }
@@ -140,7 +140,7 @@ public class Presenter {
         // add view vertices
         for (MyVertex v1: model.getGraph().getVertices()){
             // Save v1 in collection to check, it has already been created to avoid redundancies in loop below?
-            ViewVertex vv = new ViewVertex(v1.getIDprop(), size, model.getLayout().apply(v1).getX(),model.getLayout().apply(v1).getY());
+            ViewVertex vv = new ViewVertex(v1.getIDprop(), size, v1.getX(),v1.getY());
             view.addVertex(vv);
             viewVertices.put(v1.getIDprop(),vv);
             selectNode(vv);
@@ -152,7 +152,7 @@ public class Presenter {
             ViewEdge ve = new ViewEdge(viewVertices.get(edge.getFirst().getIDprop()),viewVertices.get(edge.getSecond().getIDprop()));
             view.addEdge(ve);
         }
-
+        /*
         // add lonely view vertices
         for (MyVertex v: model.getLonelyGraph().getVertices()){
             ViewVertex vv = new ViewVertex(v.getIDprop(), size, model.getLonelyLayout().apply(v).getX(), model.getLonelyLayout().apply(v).getY());
@@ -160,7 +160,7 @@ public class Presenter {
             selectNode(vv);
             makeDraggable(vv, size);
 
-        }
+        } */
         // apply viewObjects onto Scrollpane
         view.setScrollPane();
     }
