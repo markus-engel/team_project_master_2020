@@ -1,6 +1,7 @@
 // combines view & model
 package presenter;
 
+import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -15,29 +16,29 @@ import javafx.util.Duration;
 import model.Model;
 import model.graph.MyEdge;
 import model.graph.MyVertex;
-import model.io.GraphParser;
 import view.*;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class Presenter {
     Model model;
     View view;
     HashMap<String, view.ViewVertex> viewVertices = new HashMap<>();  //Hashmap of view vertex objects
-    public final Dimension MAX_WINDOW_DIMENSION = new Dimension(2000,1200); //gets passed to model to center layouts, gets passed to view to control size of window
+    public final Dimension MAX_WINDOW_DIMENSION = new Dimension(2000, 1200); //gets passed to model to center layouts, gets passed to view to control size of window
+    UndirectedSparseGraph<MyVertex,MyEdge> seleGraph = new UndirectedSparseGraph<>();;
 
-
-    public Presenter(Model model, View view){
+    public Presenter(Model model, View view) {
         this.model = model;
         this.view = view;
         setUpBindings();
     }
+
+    public Presenter() { // second constructor needed for selection presenter to extend
+    }
+
 
     // Action for the Menu: choose file
     private void setUpBindings() {
@@ -53,7 +54,7 @@ public class Presenter {
                     view.setFilenameTextfield("File: " + f.getName());
                     view.getProgressIndicator().setVisible(true);
 
-                    if(model.getGraph() != null){
+                    if (model.getGraph() != null) {
                         reset();
                         view.getProgressIndicator().toFront();
                         view.getScrollPane().setDisable(true);
@@ -62,7 +63,7 @@ public class Presenter {
                     Task<Void> parseGraphTask = new Task<Void>() {
                         @Override
                         protected Void call() throws Exception {
-                            model.parseGraph(f.getAbsolutePath(), new Dimension(MAX_WINDOW_DIMENSION.width,MAX_WINDOW_DIMENSION.height));
+                            model.parseGraph(f.getAbsolutePath(), new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height));
                             view.getProgressIndicator().setVisible(false);
                             return null;
                         }
@@ -146,9 +147,7 @@ public class Presenter {
         view.getSelectionMenuItem().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-
-                try {
-                    // new window for the Selection plot
+                try { // new window for the Selection plot
                     Stage plotWindow = new Stage();
                     FXMLLoader loaderPlot = new FXMLLoader(getClass().getResource("../selection.fxml"));
                     Parent root = loaderPlot.load();
@@ -162,24 +161,23 @@ public class Presenter {
                 }
             }
         });
-
-
     }
 
-    private void visualizeGraph(int size){
+    private void visualizeGraph(int size) {
         // add view vertices
-        for (MyVertex v1: model.getGraph().getVertices()){
+        for (MyVertex v1 : model.getGraph().getVertices()) {
             // Save v1 in collection to check, it has already been created to avoid redundancies in loop below?
-            ViewVertex vv = new ViewVertex(v1.getIDprop(), size, v1.getX(),v1.getY());
+            ViewVertex vv = new ViewVertex(v1.getIDprop(), size, v1.getX(), v1.getY());
             view.addVertex(vv);
-            viewVertices.put(v1.getIDprop(),vv);
+            viewVertices.put(v1.getIDprop(), vv);
             selectNode(vv);
             makeDraggable(vv, size);
+            chooseSelectionGraph(vv);
 
         }
         // add view edges
-        for (MyEdge edge: model.getGraph().getEdges()){
-            ViewEdge ve = new ViewEdge(viewVertices.get(edge.getFirst().getIDprop()),viewVertices.get(edge.getSecond().getIDprop()));
+        for (MyEdge edge : model.getGraph().getEdges()) {
+            ViewEdge ve = new ViewEdge(viewVertices.get(edge.getFirst().getIDprop()), viewVertices.get(edge.getSecond().getIDprop()));
             view.addEdge(ve);
         }
         /*
@@ -195,28 +193,28 @@ public class Presenter {
         view.setScrollPane();
     }
 
-    private void makeDraggable(ViewVertex viewVertex, int size){
+    private void makeDraggable(ViewVertex viewVertex, int size) {
         viewVertex.setOnMouseDragged(event -> {
-            int x = (int)Math.ceil(event.getX());
-            int y = (int)Math.ceil(event.getY());
-            if (x < 0 + size){
+            int x = (int) Math.ceil(event.getX());
+            int y = (int) Math.ceil(event.getY());
+            if (x < 0 + size) {
                 x = 0 + size;
             }
-            if (y < 0 + size){
+            if (y < 0 + size) {
                 y = 0 + size;
             }
-            if (x > MAX_WINDOW_DIMENSION.width - size){
-                x= MAX_WINDOW_DIMENSION.width - size;
+            if (x > MAX_WINDOW_DIMENSION.width - size) {
+                x = MAX_WINDOW_DIMENSION.width - size;
             }
-            if (y > MAX_WINDOW_DIMENSION.height - size){
+            if (y > MAX_WINDOW_DIMENSION.height - size) {
                 y = MAX_WINDOW_DIMENSION.height - size;
             }
-            viewVertex.setCoords(x,y);
+            viewVertex.setCoords(x, y);
             viewVertex.toFront();
         });
     }
 
-    private void reset(){
+    private void reset() {
         model.setGraph(null);
         view.setViewObjects(null);
         viewVertices = new HashMap<>();
@@ -230,33 +228,30 @@ public class Presenter {
 
                 view.setCurrentSequenceTextField(viewVertex.getID());
 
-                int x = (int)Math.ceil(event.getSceneX());
-                int y = (int)Math.ceil(event.getSceneY());
+                int x = (int) Math.ceil(event.getSceneX());
+                int y = (int) Math.ceil(event.getSceneY());
                 tp.show(viewVertex, x, y);
                 tp.setShowDuration(Duration.seconds(1.0));
-
-                //tp.show(viewVertex,
-                  //    viewVertex.getLayoutX() + viewVertex.getScene().getX() + viewVertex.getScene().getWindow().getX(),
-                  //    viewVertex.getLayoutY() + viewVertex.getScene().getY() + viewVertex.getScene().getWindow().getY());
-
-                //tp.setAnchorX(viewVertex.getLayoutX());
-                //tp.setAnchorY(viewVertex.getLayoutY());
-
-                //Tooltip.install(viewVertex, tp);
             }
-            /*if (event.getClickCount() == 2) {
-                tp.hide();
-            }*/
         });
     }
 
     private void chooseSelectionGraph(ViewVertex viewVertex) {
-        List<ViewVertex> selectedNodes = new ArrayList<ViewVertex>();
+
         viewVertex.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
-                selectedNodes.add(viewVertex);
+                System.out.println(viewVertex.getID());
+                for(MyVertex v : model.getGraph().getVertices()) {
+                    if (v.getIDprop().equals(viewVertex.getID())) {
+                        seleGraph.addVertex(new MyVertex(v));
+                        for(MyEdge edge : this.model.getGraph().getInEdges(v)){
+                        seleGraph.addEdge(edge, edge.getVertices());
+                        };
+                    }
+                }
             }
         });
     }
+
 }
 

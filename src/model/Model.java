@@ -52,6 +52,7 @@ public class Model {
     // create needed objects of the IO classes to use them in presenter
     public void parseGraph(String path, Dimension dimension) throws IOException {
         this.graph = GraphParser.readFile(path);
+
         // Store connected components in a Set of Set of Vertices using the JUNG lib algorithm
         WeakComponentClusterer<MyVertex,MyEdge> weakComponentClusterer = new WeakComponentClusterer<>();
         Set<Set<MyVertex>> cluster = weakComponentClusterer.apply(graph);
@@ -112,7 +113,7 @@ public class Model {
         return auxGraph;
     }
 
-    private void applyLayout(UndirectedSparseGraph<MyVertex, MyEdge> graph, Dimension dimension, double shiftX, double shiftY) {
+    public void applyLayout(UndirectedSparseGraph<MyVertex, MyEdge> graph, Dimension dimension, double shiftX, double shiftY) {
         FRLayout<MyVertex,MyEdge> layout = new FRLayout<>(graph);
         layout.initialize();
         layout.setSize(dimension);
