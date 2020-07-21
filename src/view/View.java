@@ -9,12 +9,9 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.input.ZoomEvent;
 import javafx.scene.layout.BorderPane;
 
-import java.awt.*;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -22,7 +19,6 @@ public class View {
 
     public final double MAX_SCALE = 2.d;
     public final double MIN_SCALE = .5d;
-
 
     @FXML
     private Group viewObjects;
@@ -93,6 +89,9 @@ public class View {
     @FXML
     private MenuItem CoverageGCMenu;
 
+    @FXML
+    private MenuItem SelectionMenuItem;
+
     // getter and setter Methods. More have to be implemented if needed
     public MenuItem getImportMenuItem() {
         return ImportMenuItem;
@@ -112,6 +111,14 @@ public class View {
 
     public MenuItem getCoverageGCMenu() {
         return CoverageGCMenu;
+    }
+
+    public MenuItem getSelectionMenuItem() {
+        return SelectionMenuItem;
+    }
+
+    public MenuItem getCloseMenuItem() {
+        return CloseMenuItem;
     }
 
     public TextField getFilenameTextfield() {
@@ -173,7 +180,7 @@ public class View {
             @Override
             public void handle(ScrollEvent scrollEvent) {
                 if(scrollEvent.isControlDown()){ // wenn scrollen disabled werden soll, dann hier !scrollevent.isConsumed()
-                    final double scale = calculateScale(scrollEvent);
+                    final double scale = calculateScaleForZooming(scrollEvent);
                     innerViewObjects.setScaleX(scale);
                     innerViewObjects.setScaleY(scale);
                     scrollEvent.consume();
@@ -182,7 +189,7 @@ public class View {
         });
     }
 
-    private double calculateScale(ScrollEvent scrollEvent) {
+    private double calculateScaleForZooming(ScrollEvent scrollEvent) {
         double scale = innerViewObjects.getScaleX() + scrollEvent.getDeltaY()/100;
         if (scale <= MIN_SCALE) {
             scale = MIN_SCALE;
