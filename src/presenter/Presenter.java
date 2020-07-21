@@ -16,21 +16,22 @@ import model.Model;
 import model.graph.MyEdge;
 import model.graph.MyVertex;
 import model.io.GraphParser;
-import view.View;
-import view.ViewEdge;
-import view.ViewPlot;
-import view.ViewVertex;
+import view.*;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Presenter {
     Model model;
     View view;
     HashMap<String, view.ViewVertex> viewVertices = new HashMap<>();  //Hashmap of view vertex objects
     public final Dimension MAX_WINDOW_DIMENSION = new Dimension(2000,1200); //gets passed to model to center layouts, gets passed to view to control size of window
+
 
     public Presenter(Model model, View view){
         this.model = model;
@@ -134,6 +135,35 @@ public class Presenter {
                 System.out.print("JHHIEA");
             }
         });
+
+        view.getCloseMenuItem().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                reset();
+            }
+        });
+
+        view.getSelectionMenuItem().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+
+                try {
+                    // new window for the Selection plot
+                    Stage plotWindow = new Stage();
+                    FXMLLoader loaderPlot = new FXMLLoader(getClass().getResource("../selection.fxml"));
+                    Parent root = loaderPlot.load();
+                    ViewSelection viewSelection = loaderPlot.getController();
+                    PresenterSelection presenterSelection = new PresenterSelection(model, viewSelection);
+                    plotWindow.setScene(new Scene(root));
+                    plotWindow.initModality(Modality.APPLICATION_MODAL);
+                    plotWindow.show();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+
     }
 
     private void visualizeGraph(int size){
@@ -186,35 +216,47 @@ public class Presenter {
         });
     }
 
+    private void reset(){
+        model.setGraph(null);
+        view.setViewObjects(null);
+        viewVertices = new HashMap<>();
+    }
+
     private void selectNode(ViewVertex viewVertex) {
+        Tooltip tp = new Tooltip(viewVertex.getID());
 
         viewVertex.setOnMouseClicked(event -> {
             if (event.getClickCount() == 1) {
 
                 view.setCurrentSequenceTextField(viewVertex.getID());
 
-                final Tooltip tp = new Tooltip(viewVertex.getID());
-                tp.setShowDelay(Duration.seconds(3.0));
-                tp.show(viewVertex,
-                        viewVertex.getLayoutX() + viewVertex.getScene().getX() + viewVertex.getScene().getWindow().getX(),
-                        viewVertex.getLayoutY() + viewVertex.getScene().getY() + viewVertex.getScene().getWindow().getY());
-                // this didn't work:
-                //int x = (int)Math.ceil(event.getSceneX());
-                //int y = (int)Math.ceil(event.getSceneY());
-                //tp.show(viewVertex, x, y);
+                int x = (int)Math.ceil(event.getSceneX());
+                int y = (int)Math.ceil(event.getSceneY());
+                tp.show(viewVertex, x, y);
+                tp.setShowDuration(Duration.seconds(1.0));
+
+                //tp.show(viewVertex,
+                  //    viewVertex.getLayoutX() + viewVertex.getScene().getX() + viewVertex.getScene().getWindow().getX(),
+                  //    viewVertex.getLayoutY() + viewVertex.getScene().getY() + viewVertex.getScene().getWindow().getY());
 
                 //tp.setAnchorX(viewVertex.getLayoutX());
                 //tp.setAnchorY(viewVertex.getLayoutY());
 
                 //Tooltip.install(viewVertex, tp);
             }
+            /*if (event.getClickCount() == 2) {
+                tp.hide();
+            }*/
         });
     }
 
-    private void reset(){
-        model.setGraph(null);
-        view.setViewObjects(null);
-        viewVertices = new HashMap<>();
+    private void chooseSelectionGraph(ViewVertex viewVertex) {
+        List<ViewVertex> selectedNodes = new ArrayList<ViewVertex>();
+        viewVertex.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+                selectedNodes.add(viewVertex);
+            }
+        });
     }
 }
 

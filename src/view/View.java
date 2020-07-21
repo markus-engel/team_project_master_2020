@@ -89,6 +89,9 @@ public class View {
     @FXML
     private MenuItem CoverageGCMenu;
 
+    @FXML
+    private MenuItem SelectionMenuItem;
+
     // getter and setter Methods. More have to be implemented if needed
     public MenuItem getImportMenuItem() {
         return ImportMenuItem;
@@ -108,6 +111,14 @@ public class View {
 
     public MenuItem getCoverageGCMenu() {
         return CoverageGCMenu;
+    }
+
+    public MenuItem getSelectionMenuItem() {
+        return SelectionMenuItem;
+    }
+
+    public MenuItem getCloseMenuItem() {
+        return CloseMenuItem;
     }
 
     public TextField getFilenameTextfield() {

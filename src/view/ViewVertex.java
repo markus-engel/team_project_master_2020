@@ -8,6 +8,7 @@ Visualizes Vertex.
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.Group;
+import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
@@ -25,9 +26,9 @@ public class ViewVertex extends Group {
         this.ID = new SimpleStringProperty(ID);
         this.circle = new Circle(x, y, size);
         circle.setFill(Color.CORAL);
-
         this.getChildren().add(circle);
     }
+
 
 
     public Circle getCircle() {

@@ -27,7 +27,7 @@
                 </Menu>
                 <Menu fx:id="viewMenu" mnemonicParsing="false" text="View">
                     <items>
-                  <MenuItem fx:id="selectionMenuItem" mnemonicParsing="false" text="selection Graph" />
+                  <MenuItem fx:id="SelectionMenuItem" mnemonicParsing="false" text="Selection Graph" />
                         <MenuItem fx:id="customizeMenuItem" disable="true" mnemonicParsing="false" text="Circle size" />
 
                     </items>
