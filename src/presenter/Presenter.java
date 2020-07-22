@@ -6,7 +6,6 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.MenuItem;
@@ -20,7 +19,6 @@ import model.graph.MyEdge;
 import model.graph.MyVertex;
 import view.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -71,6 +69,7 @@ public class Presenter {
                     parseGraphTask.setOnSucceeded(e -> {
                         visualizeGraph(5);
                         view.getScrollPane().setDisable(false);
+                        view.makeScrollPaneZoomable();
                         view.getImportTaxonomyMenuItem().setDisable(false);
                         view.getImportCoverageMenuItem().setDisable(false);
                         view.getCustomizeMenuItem().setDisable(false);
@@ -174,6 +173,7 @@ public class Presenter {
         for (MyVertex v1 : model.getGraph().getVertices()) {
             // Save v1 in collection to check, it has already been created to avoid redundancies in loop below?
             ViewVertex vv = new ViewVertex(v1.getIDprop(), size, v1.getX(), v1.getY());
+            vv.toFront();
             view.addVertex(vv);
             viewVertices.put(v1.getIDprop(), vv);
             selectNode(vv);
@@ -185,8 +185,6 @@ public class Presenter {
             ViewEdge ve = new ViewEdge(viewVertices.get(edge.getFirst().getIDprop()), viewVertices.get(edge.getSecond().getIDprop()));
             view.addEdge(ve);
         }
-        // apply viewObjects onto Scrollpane
-        view.setScrollPane();
     }
 
     private void makeDraggable(ViewVertex viewVertex, int size) {
@@ -205,15 +203,14 @@ public class Presenter {
             if (y > MAX_WINDOW_DIMENSION.height - size) {
                 y = MAX_WINDOW_DIMENSION.height - size;
             }
-            viewVertex.setCoords(x, y);
-            viewVertex.toFront();
+            viewVertex.setTranslateX(event.getX());
+            viewVertex.setTranslateY(event.getY());
         });
     }
 
     private void reset() {
         model.setGraph(null);
-        view.setViewObjects(null);
-        view.setInnerViewObjects(null);
+        view.getInnerViewObjects().getChildren().clear();
         viewVertices = new HashMap<>();
     }
 
@@ -275,6 +272,7 @@ public class Presenter {
                 parseGraphTask.setOnSucceeded(e -> {
                     visualizeGraph(5);
                     view.getScrollPane().setDisable(false);
+                    view.makeScrollPaneZoomable();
                 });
 
                 Thread parseGraphThread = new Thread(parseGraphTask);

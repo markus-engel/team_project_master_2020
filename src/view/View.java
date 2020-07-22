@@ -17,8 +17,8 @@ import java.util.ResourceBundle;
 
 public class View {
 
-    public final double MAX_SCALE = 2.d;
-    public final double MIN_SCALE = .5d;
+    public final double MAX_ZOOM_SCALE = 2.d;
+    public final double MIN_ZOOM_SCALE = .5d;
 
     @FXML
     private Group viewObjects;
@@ -172,39 +172,25 @@ public class View {
 
     public Group getViewObjects(){ return viewObjects;}
 
-    public ProgressIndicator getProgressIndicator(){ return progressIndicator;}
+    public Group getInnerViewObjects() { return innerViewObjects;}
 
-    public void setViewObjects(Group viewObjects) { this.viewObjects = viewObjects;}
+    public ProgressIndicator getProgressIndicator(){ return progressIndicator;}
 
     public void setInnerViewObjects(Group innerViewObjects) { this.innerViewObjects = viewObjects;}
 
     public MenuItem getLayoutSettingsMenuItem(){ return layoutSettingsMenuItem;}
 
     public void addVertex(ViewVertex vv) {
-        // why does this not work? @Caner
-        /*if(viewObjects == null && innerViewObjects == null){
-            viewObjects = new Group();
-            innerViewObjects = new Group();
-            viewObjects.getChildren().add(vv);
-            innerViewObjects.getChildren().add(vv);
-        } else {*/
-            viewObjects.getChildren().add(vv);
-            innerViewObjects.getChildren().add(vv);
+         innerViewObjects.getChildren().add(vv);
     }
 
     public void addEdge(ViewEdge viewEdge) {
-        viewObjects.getChildren().add(viewEdge);
         innerViewObjects.getChildren().add(viewEdge);
-    }
-
-    public void setScrollPane() {
-        scrollPane.setContent(viewObjects);
-        makeZoomable();
     }
 
     public ScrollPane getScrollPane(){ return scrollPane;}
 
-    private void makeZoomable() {
+    public void makeScrollPaneZoomable() {
         scrollPane.addEventFilter(ScrollEvent.ANY, new EventHandler<ScrollEvent>() {
             @Override
             public void handle(ScrollEvent scrollEvent) {
@@ -220,10 +206,10 @@ public class View {
 
     private double calculateScaleForZooming(ScrollEvent scrollEvent) {
         double scale = innerViewObjects.getScaleX() + scrollEvent.getDeltaY()/100;
-        if (scale <= MIN_SCALE) {
-            scale = MIN_SCALE;
-        } else if (scale >= MAX_SCALE) {
-            scale = MAX_SCALE;
+        if (scale <= MIN_ZOOM_SCALE) {
+            scale = MIN_ZOOM_SCALE;
+        } else if (scale >= MAX_ZOOM_SCALE) {
+            scale = MAX_ZOOM_SCALE;
         }
         return scale;
     }
