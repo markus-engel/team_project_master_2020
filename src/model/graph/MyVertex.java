@@ -29,6 +29,11 @@ public class MyVertex {
         this.sequenceprop = sequence;
     }
 
+    public MyVertex(MyVertex vertex) {
+        this.IDprop = vertex.IDprop;
+        this.sequenceprop = vertex.sequenceprop;
+    }
+
     public MyVertex(StringProperty ID){
         this.IDprop = ID;
     }
