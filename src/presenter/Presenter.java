@@ -217,8 +217,8 @@ public class Presenter {
 
     private void makeDraggable(ViewVertex viewVertex, int size) {
         viewVertex.setOnMouseDragged(event -> {
-            int x = (int) Math.ceil(event.getX());
-            int y = (int) Math.ceil(event.getY());
+            double x = event.getSceneX();
+            double y = event.getSceneY();
             if (x < 0 + size) {
                 x = 0 + size;
             }
@@ -231,8 +231,8 @@ public class Presenter {
             if (y > MAX_WINDOW_DIMENSION.height - size) {
                 y = MAX_WINDOW_DIMENSION.height - size;
             }
-            viewVertex.setTranslateX(event.getX());
-            viewVertex.setTranslateY(event.getY());
+            viewVertex.setTranslateX(x);
+            viewVertex.setTranslateY(y);
         });
     }
 
