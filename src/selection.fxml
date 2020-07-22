@@ -4,6 +4,7 @@
 <?import javafx.scene.layout.*?>
 
 
+<?import javafx.scene.Group?>
 <TabPane fx:id="tabPaneSele" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
          prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/11.0.1"
          xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.ViewSelection">
@@ -11,6 +12,13 @@
     <Tab fx:id="tabSelection" text="Selection Graph">
         <content>
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                <StackPane fx:id="stackPane" prefHeight="600.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
+                    <ScrollPane fx:id="scrollPane" pannable="false" prefHeight="600.0" prefWidth="1000.0">
+                        <Group fx:id="viewObjects">
+                            <Group fx:id="innerViewObjects" />
+                        </Group>
+                    </ScrollPane>
+                </StackPane>
             </AnchorPane>
         </content>
     </Tab>

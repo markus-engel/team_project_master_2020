@@ -73,11 +73,6 @@
                         <Font name="Cambria" size="10.0" />
                     </font>
                 </TextField>
-            <TextField fx:id="currentSequenceTextfield" prefHeight="27.0" prefWidth="160.0" text="current Sequence:">
-               <font>
-                  <Font name="Cambria" size="10.0" />
-               </font>
-            </TextField>
             </children>
         </HBox>
     </bottom>

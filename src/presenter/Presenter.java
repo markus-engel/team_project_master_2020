@@ -164,13 +164,15 @@ public class Presenter {
     }
 
     private void visualizeGraph(int size) {
+        view.setSequenceCountTextField(model.getGraph().getVertexCount());
+        view.setOverlapCountTextField(model.getGraph().getEdgeCount());
+
         // add view vertices
         for (MyVertex v1 : model.getGraph().getVertices()) {
             // Save v1 in collection to check, it has already been created to avoid redundancies in loop below?
             ViewVertex vv = new ViewVertex(v1.getIDprop(), size, v1.getX(), v1.getY());
             view.addVertex(vv);
             viewVertices.put(v1.getIDprop(), vv);
-            selectNode(vv);
             makeDraggable(vv, size);
             chooseSelectionGraph(vv);
 
@@ -225,9 +227,6 @@ public class Presenter {
 
         viewVertex.setOnMouseClicked(event -> {
             if (event.getClickCount() == 1) {
-
-                view.setCurrentSequenceTextField(viewVertex.getID());
-
                 int x = (int) Math.ceil(event.getSceneX());
                 int y = (int) Math.ceil(event.getSceneY());
                 tp.show(viewVertex, x, y);
