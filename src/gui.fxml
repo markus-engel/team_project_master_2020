@@ -25,6 +25,7 @@
                             <MenuItem fx:id="ImportCoverageMenuItem" disable="true" mnemonicParsing="false" text="Coverage" />
                         </Menu>
                         <MenuItem fx:id="SaveMenuItem" mnemonicParsing="false" text="Save" />
+                        <MenuItem fx:id="SaveAsPNGMenuItem" mnemonicParsing="false" text="Save as PNG"/>
                         <MenuItem fx:id="CloseMenuItem" mnemonicParsing="false" text="Close" />
                     </items>
                 </Menu>
