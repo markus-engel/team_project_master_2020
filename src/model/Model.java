@@ -123,6 +123,7 @@ public class Model {
 
     public void applyLayout(UndirectedSparseGraph<MyVertex, MyEdge> graph, Dimension dimension, double shiftX, double shiftY) {
         FRLayout<MyVertex,MyEdge> layout = new FRLayout<>(graph);
+        layout.setRepulsionMultiplier(0.1);
         layout.initialize();
         layout.setSize(dimension);
 

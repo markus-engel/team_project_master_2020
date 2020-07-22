@@ -3,12 +3,16 @@ package presenter;
 
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import javafx.concurrent.Task;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Tooltip;
+import javafx.scene.control.MenuItem;
+import javafx.scene.image.WritableImage;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -18,6 +22,7 @@ import model.graph.MyEdge;
 import model.graph.MyVertex;
 import view.*;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -39,18 +44,16 @@ public class Presenter {
     public Presenter() { // second constructor needed for selection presenter to extend
     }
 
-
     // Action for the Menu: choose file
     private void setUpBindings() {
-        view.getImportMenuItem().setOnAction(new EventHandler<ActionEvent>() {
+        view.getOpenFileMenuItem().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
                 FileChooser fc = new FileChooser();
-                //fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("GFA Files", "*.gfa"));
+                fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("GFA Files", "*.gfa"));
                 File f = fc.showOpenDialog(null);
 
                 if (f != null) {
-
                     view.setFilenameTextfield("File: " + f.getName());
                     view.getProgressIndicator().setVisible(true);
 
@@ -71,9 +74,15 @@ public class Presenter {
                     parseGraphTask.setOnSucceeded(e -> {
                         visualizeGraph(5);
                         view.getScrollPane().setDisable(false);
+                        view.makeScrollPaneZoomable();
                         view.getImportTaxonomyMenuItem().setDisable(false);
                         view.getImportCoverageMenuItem().setDisable(false);
                         view.getCustomizeMenuItem().setDisable(false);
+                        MenuItem recentFile = new MenuItem(f.getAbsolutePath());
+                        if (!view.getOpenRecentFileMenu().getItems().contains(recentFile)){
+                            setOpenRecentFileEventHandler(recentFile);
+                            view.getOpenRecentFileMenu().getItems().add(recentFile);
+                        }
                     });
 
                     Thread parseGraphThread = new Thread(parseGraphTask);
@@ -145,6 +154,30 @@ public class Presenter {
             }
         });
 
+        view.getSaveAsPNGMenuItem().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                WritableImage toSave = view.getScrollPane().snapshot(new SnapshotParameters(), null);
+                FileChooser fc = new FileChooser();
+                FileChooser.ExtensionFilter extf = new FileChooser.ExtensionFilter("PNG files (*.png)", "*.png");
+                fc.getExtensionFilters().add(extf);
+                File namePNG = fc.showSaveDialog(null);
+                if (!namePNG.getPath().endsWith(".png")) {
+                    namePNG = new File(namePNG.getPath() + ".png");
+                }
+                try
+                {
+                    if(namePNG != null)
+                    {
+                        ImageIO.write(SwingFXUtils.fromFXImage(toSave, null), "png", namePNG);
+                    }
+                } catch (IOException e)
+                {
+                    System.out.println(e.toString());
+                }
+            }
+        });
+
         view.getSelectionMenuItem().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -174,7 +207,6 @@ public class Presenter {
             selectNode(vv);
             makeDraggable(vv, size);
             chooseSelectionGraph(vv);
-
         }
         // add view edges
         for (MyEdge edge : model.getGraph().getEdges()) {
@@ -182,23 +214,12 @@ public class Presenter {
             view.addEdge(ve);
             ve.toBack();
         }
-        /*
-        // add lonely view vertices
-        for (MyVertex v: model.getLonelyGraph().getVertices()){
-            ViewVertex vv = new ViewVertex(v.getIDprop(), size, model.getLonelyLayout().apply(v).getX(), model.getLonelyLayout().apply(v).getY());
-            view.addVertex(vv);
-            selectNode(vv);
-            makeDraggable(vv, size);
-
-        } */
-        // apply viewObjects onto Scrollpane
-        view.setScrollPane();
     }
 
     private void makeDraggable(ViewVertex viewVertex, int size) {
         viewVertex.setOnMouseDragged(event -> {
-            int x = (int) Math.ceil(event.getX());
-            int y = (int) Math.ceil(event.getY());
+            double x = event.getSceneX();
+            double y = event.getSceneY();
             if (x < 0 + size) {
                 x = 0 + size;
             }
@@ -211,14 +232,14 @@ public class Presenter {
             if (y > MAX_WINDOW_DIMENSION.height - size) {
                 y = MAX_WINDOW_DIMENSION.height - size;
             }
-            viewVertex.setCoords(x, y);
-            viewVertex.toFront();
+            viewVertex.setTranslateX(x);
+            viewVertex.setTranslateY(y);
         });
     }
 
     private void reset() {
         model.setGraph(null);
-        view.setViewObjects(null);
+        view.getInnerViewObjects().getChildren().clear();
         viewVertices = new HashMap<>();
     }
 
@@ -251,6 +272,41 @@ public class Presenter {
                         };
                     }
                 }
+            }
+        });
+    }
+
+    private void setOpenRecentFileEventHandler(MenuItem menuItem){
+        menuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                view.setFilenameTextfield("File: " + menuItem.getText());
+                view.getProgressIndicator().setVisible(true);
+
+                if (model.getGraph() != null) {
+                    reset();
+                    view.getProgressIndicator().toFront();
+                    view.getScrollPane().setDisable(true);
+                }
+                // parse gfa file to graph
+                Task<Void> parseGraphTask = new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        model.parseGraph(menuItem.getText(), new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height));
+                        view.getProgressIndicator().setVisible(false);
+                        System.out.println(model.getGraph().getVertexCount());
+                        return null;
+                    }
+                };
+                parseGraphTask.setOnSucceeded(e -> {
+                    visualizeGraph(5);
+                    view.getScrollPane().setDisable(false);
+                    view.makeScrollPaneZoomable();
+                });
+
+                Thread parseGraphThread = new Thread(parseGraphTask);
+                parseGraphThread.setDaemon(true);
+                parseGraphThread.start();
             }
         });
     }
