@@ -3,12 +3,15 @@ package presenter;
 
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import javafx.concurrent.Task;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.WritableImage;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -18,6 +21,7 @@ import model.graph.MyEdge;
 import model.graph.MyVertex;
 import view.*;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -141,6 +145,30 @@ public class Presenter {
             @Override
             public void handle(ActionEvent actionEvent) {
                 reset();
+            }
+        });
+
+        view.getSaveAsPNGMenuItem().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                WritableImage toSave = view.getScrollPane().snapshot(new SnapshotParameters(), null);
+                FileChooser fc = new FileChooser();
+                FileChooser.ExtensionFilter extf = new FileChooser.ExtensionFilter("PNG files (*.png)", "*.png");
+                fc.getExtensionFilters().add(extf);
+                File namePNG = fc.showSaveDialog(null);
+                if (!namePNG.getPath().endsWith(".png")) {
+                    namePNG = new File(namePNG.getPath() + ".png");
+                }
+                try
+                {
+                    if(namePNG != null)
+                    {
+                        ImageIO.write(SwingFXUtils.fromFXImage(toSave, null), "png", namePNG);
+                    }
+                } catch (IOException e)
+                {
+                    System.out.println(e.toString());
+                }
             }
         });
 
