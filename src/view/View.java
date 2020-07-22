@@ -63,6 +63,9 @@ public class View {
     private MenuItem SaveMenuItem;
 
     @FXML
+    private MenuItem SaveAsPNGMenuItem;
+
+    @FXML
     private MenuItem CloseMenuItem;
 
     @FXML
@@ -116,6 +119,8 @@ public class View {
     public MenuItem getSelectionMenuItem() {
         return SelectionMenuItem;
     }
+
+    public MenuItem getSaveAsPNGMenuItem() {return SaveAsPNGMenuItem;}
 
     public MenuItem getCloseMenuItem() {
         return CloseMenuItem;

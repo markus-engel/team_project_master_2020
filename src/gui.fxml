@@ -22,6 +22,7 @@
                         <MenuItem fx:id="ImportTaxonomyMenuItem" disable="true" mnemonicParsing="false" text="Import taxonomy IDs" />
                         <MenuItem fx:id="ImportCoverageMenuItem" disable="true" mnemonicParsing="false" text="Import coverage" />
                         <MenuItem fx:id="SaveMenuItem" mnemonicParsing="false" text="Save" />
+                        <MenuItem fx:id="SaveAsPNGMenuItem" mnemonicParsing="false" text="Save as PNG"/>
                         <MenuItem fx:id="CloseMenuItem" mnemonicParsing="false" text="Close" />
                     </items>
                 </Menu>
