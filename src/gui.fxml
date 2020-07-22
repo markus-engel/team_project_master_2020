@@ -12,25 +12,32 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="Pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.View">
+<BorderPane fx:id="Pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.View">
     <top>
         <MenuBar fx:id="menuBar" BorderPane.alignment="CENTER">
             <menus>
                 <Menu fx:id="fileMenu" mnemonicParsing="false" text="File">
                     <items>
-                        <MenuItem fx:id="ImportMenuItem" mnemonicParsing="false" text="Import" />
-                        <MenuItem fx:id="ImportTaxonomyMenuItem" disable="true" mnemonicParsing="false" text="Import taxonomy IDs" />
-                        <MenuItem fx:id="ImportCoverageMenuItem" disable="true" mnemonicParsing="false" text="Import coverage" />
+                        <MenuItem fx:id="openFileMenuItem" mnemonicParsing="false" text="Open..." />
+                        <Menu fx:id="openRecentFileMenu" mnemonicParsing="false" text="Open recent"/>
+                        <Menu fx:id="importMenu" mnemonicParsing="false" text="Import...">
+                            <MenuItem fx:id="ImportTaxonomyMenuItem" disable="true" mnemonicParsing="false" text="Taxonomy IDs" />
+                            <MenuItem fx:id="ImportCoverageMenuItem" disable="true" mnemonicParsing="false" text="Coverage" />
+                        </Menu>
                         <MenuItem fx:id="SaveMenuItem" mnemonicParsing="false" text="Save" />
                         <MenuItem fx:id="SaveAsPNGMenuItem" mnemonicParsing="false" text="Save as PNG"/>
                         <MenuItem fx:id="CloseMenuItem" mnemonicParsing="false" text="Close" />
                     </items>
                 </Menu>
-                <Menu fx:id="viewMenu" mnemonicParsing="false" text="View">
+                <Menu fx:id="editMenu" mnemonicParsing="false" text="Edit">
                     <items>
                   <MenuItem fx:id="SelectionMenuItem" mnemonicParsing="false" text="Selection Graph" />
-                        <MenuItem fx:id="customizeMenuItem" disable="true" mnemonicParsing="false" text="Circle size" />
-
+                        <MenuItem fx:id="layoutSettingsMenuItem" disable="true" mnemonicParsing="false" text="Layout Settings" />
+                    </items>
+                </Menu>
+                <Menu fx:id="viewMenu" mnemonicParsing="false" text="View">
+                    <items>
+                        <MenuItem fx:id="showTaxLegend" disable="true" text="Show Taxonomy Legend"/>
                     </items>
                 </Menu>
                 <Menu fx:id="PlotMenu" mnemonicParsing="false" text="Plot">
@@ -48,7 +55,7 @@
     </top>
     <center>
         <StackPane fx:id="stackPane" prefHeight="600.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
-            <ScrollPane fx:id="scrollPane" pannable="false" prefHeight="600.0" prefWidth="1000.0">
+            <ScrollPane fx:id="scrollPane" pannable="false" prefHeight="544.0" prefWidth="895.0">
                 <Group fx:id="viewObjects">
                     <Group fx:id="innerViewObjects" />
                 </Group>
@@ -77,6 +84,11 @@
             <TextField fx:id="currentSequenceTextfield" prefHeight="27.0" prefWidth="160.0" text="current Sequence:">
                <font>
                   <Font name="Cambria" size="10.0" />
+               </font>
+            </TextField>
+            <TextField fx:id="differentTaxaCount" editable="false" prefHeight="27.0" prefWidth="160.0" text="diff. taxa count:">
+               <font>
+                  <Font name="Candara" size="10.0" />
                </font>
             </TextField>
             </children>
