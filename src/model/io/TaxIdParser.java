@@ -52,7 +52,4 @@ public class TaxIdParser {
         }
         br.close();
     }
-    TreeSet getTaxonsID () {
-        return this.taxons;
-    }
 }

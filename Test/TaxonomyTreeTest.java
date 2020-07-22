@@ -24,14 +24,6 @@ class TaxonomyTreeTest {
     }
 
     @Test
-    void getTree() {
-    }
-
-    @Test
-    void getTaxNode() {
-    }
-
-    @Test
     void getAncestorId() {
         assertEquals(0, T.getAncestorId(1));
         assertEquals(1, T.getAncestorId(2));

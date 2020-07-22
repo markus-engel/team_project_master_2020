@@ -36,6 +36,9 @@ public class View {
     private MenuItem layoutSettingsMenuItem;
 
     @FXML
+    private MenuItem colorPlate;
+
+    @FXML
     private ResourceBundle resources;
 
     @FXML
