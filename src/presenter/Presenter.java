@@ -88,6 +88,7 @@ public class Presenter {
                 File f = fc.showOpenDialog(null);
                 if (f != null) try {
                     model.parseTaxId(f.getAbsolutePath());
+                    view.setDifferentTaxaCount("diff. taxa count: " + model.getTaxaCount());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

@@ -84,6 +84,9 @@ public class View {
     private TextField currentSequenceTextfield;
 
     @FXML
+    private TextField differentTaxaCount;
+
+    @FXML
     private Menu PlotMenu;
 
     @FXML
@@ -121,6 +124,8 @@ public class View {
     public TextField getSequenceCountTextField() {
         return SequenceCountTextField;
     }
+
+    public void setDifferentTaxaCount(String size) {differentTaxaCount.setText(String.valueOf(size));}
 
 
     public void setCurrentSequenceTextField(String currentSeq) {

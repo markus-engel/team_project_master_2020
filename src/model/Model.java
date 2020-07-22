@@ -23,6 +23,7 @@ public class Model {
     private TaxonomyTree currentTaxTree;
     private UndirectedSparseGraph<MyVertex, MyEdge> graph;
     private ObjectProperty<UndirectedSparseGraph<MyVertex, MyEdge>> graphProperty = new SimpleObjectProperty<>();
+    TreeSet taxons = new TreeSet();
 
     public Model() throws IOException {
         // Instantiation of the currentTaxTree in a task to show the responsive GUI already while parsing the tree
@@ -94,7 +95,14 @@ public class Model {
     public void setGraph(UndirectedSparseGraph<MyVertex,MyEdge> graph){ this.graph = graph;}
 
     public void parseTaxId(String path) throws IOException {
-        new TaxIdParser(graph, path, currentTaxTree);
+        new TaxIdParser(graph, path, currentTaxTree, taxons);
+    }
+    public int getTaxaCount(){
+        return taxons.size();
+    }
+
+    public TreeSet getTaxaID () {
+        return taxons;
     }
 
     public void parseCoverage(String path) throws IOException {

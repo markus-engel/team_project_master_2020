@@ -110,7 +110,7 @@ public class TaxonomyTree {
             while (!current.getRank().equals(rank) & tree.containsKey(current.getId())) {
                 current = tree.get(this.getAncestorId(current.getId()));
             }
-            if (current.getRank().equals(rank)) return current.getId();
+            if (current.getRank().equals(rank)) { return current.getId(); }
             else return 0;
         } else return 0;
     }
@@ -122,7 +122,9 @@ public class TaxonomyTree {
             while (!current.getRank().equals(rank) & tree.containsKey(current.getId())) {
                 current = tree.get(this.getAncestorId(current.getId()));
             }
-            if (current.getRank().equals(rank)) return current.getScientificName();
+            if (current.getRank().equals(rank)) {
+                return current.getScientificName();
+            }
             else return "";
         } else return "";
     }
