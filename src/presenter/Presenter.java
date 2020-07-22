@@ -180,6 +180,7 @@ public class Presenter {
         for (MyEdge edge : model.getGraph().getEdges()) {
             ViewEdge ve = new ViewEdge(viewVertices.get(edge.getFirst().getIDprop()), viewVertices.get(edge.getSecond().getIDprop()));
             view.addEdge(ve);
+            ve.toBack();
         }
         /*
         // add lonely view vertices
