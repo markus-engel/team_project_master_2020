@@ -18,18 +18,25 @@
             <menus>
                 <Menu fx:id="fileMenu" mnemonicParsing="false" text="File">
                     <items>
-                        <MenuItem fx:id="ImportMenuItem" mnemonicParsing="false" text="Import" />
-                        <MenuItem fx:id="ImportTaxonomyMenuItem" disable="true" mnemonicParsing="false" text="Import taxonomy IDs" />
-                        <MenuItem fx:id="ImportCoverageMenuItem" disable="true" mnemonicParsing="false" text="Import coverage" />
+                        <MenuItem fx:id="openFileMenuItem" mnemonicParsing="false" text="Open..." />
+                        <Menu fx:id="openRecentFileMenu" mnemonicParsing="false" text="Open recent"/>
+                        <Menu fx:id="importMenu" mnemonicParsing="false" text="Import...">
+                            <MenuItem fx:id="ImportTaxonomyMenuItem" disable="true" mnemonicParsing="false" text="Taxonomy IDs" />
+                            <MenuItem fx:id="ImportCoverageMenuItem" disable="true" mnemonicParsing="false" text="Coverage" />
+                        </Menu>
                         <MenuItem fx:id="SaveMenuItem" mnemonicParsing="false" text="Save" />
                         <MenuItem fx:id="CloseMenuItem" mnemonicParsing="false" text="Close" />
                     </items>
                 </Menu>
-                <Menu fx:id="viewMenu" mnemonicParsing="false" text="View">
+                <Menu fx:id="editMenu" mnemonicParsing="false" text="Edit">
                     <items>
                   <MenuItem fx:id="SelectionMenuItem" mnemonicParsing="false" text="Selection Graph" />
-                        <MenuItem fx:id="customizeMenuItem" disable="true" mnemonicParsing="false" text="Circle size" />
-
+                        <MenuItem fx:id="layoutSettingsMenuItem" disable="true" mnemonicParsing="false" text="Layout Settings" />
+                    </items>
+                </Menu>
+                <Menu fx:id="viewMenu" mnemonicParsing="false" text="View">
+                    <items>
+                        <MenuItem fx:id="showTaxLegend" disable="true" text="Show Taxonomy Legend"/>
                     </items>
                 </Menu>
                 <Menu fx:id="PlotMenu" mnemonicParsing="false" text="Plot">

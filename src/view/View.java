@@ -33,7 +33,7 @@ public class View {
     private ProgressIndicator progressIndicator;
 
     @FXML
-    private MenuItem customizeMenuItem;
+    private MenuItem layoutSettingsMenuItem;
 
     @FXML
     private ResourceBundle resources;
@@ -51,7 +51,13 @@ public class View {
     private Menu fileMenu;
 
     @FXML
-    private MenuItem ImportMenuItem;
+    private MenuItem openFileMenuItem;
+
+    @FXML
+    private Menu openRecentFileMenu;
+
+    @FXML
+    private Menu importMenu;
 
     @FXML
     private MenuItem ImportTaxonomyMenuItem;
@@ -64,6 +70,12 @@ public class View {
 
     @FXML
     private MenuItem CloseMenuItem;
+
+    @FXML
+    private Menu viewMenu;
+
+    @FXML
+    private MenuItem showTaxLegend;
 
     @FXML
     private Menu helpMenu;
@@ -96,12 +108,16 @@ public class View {
     private MenuItem SelectionMenuItem;
 
     // getter and setter Methods. More have to be implemented if needed
-    public MenuItem getImportMenuItem() {
-        return ImportMenuItem;
+    public MenuItem getOpenFileMenuItem() {
+        return openFileMenuItem;
+    }
+
+    public Menu getOpenRecentFileMenu() {
+        return openRecentFileMenu;
     }
 
     public MenuItem getCustomizeMenuItem() {
-        return customizeMenuItem;
+        return layoutSettingsMenuItem;
     }
 
     public MenuItem getImportTaxonomyMenuItem() {
@@ -138,16 +154,13 @@ public class View {
 
     public void setDifferentTaxaCount(String size) {differentTaxaCount.setText(String.valueOf(size));}
 
-
     public void setCurrentSequenceTextField(String currentSeq) {
         currentSequenceTextfield.setText("Sequences: " + currentSeq);
     }
-
     // Number of Vertices
     public void setSequenceCountTextField(String sequenceCount) {
         SequenceCountTextField.setText("Sequences: " + sequenceCount);
     }
-
     public TextField getOverlapCountTextField() {
         return OverlapCountTextField;
     }
@@ -163,9 +176,20 @@ public class View {
 
     public void setViewObjects(Group viewObjects) { this.viewObjects = viewObjects;}
 
+    public void setInnerViewObjects(Group innerViewObjects) { this.innerViewObjects = viewObjects;}
+
+    public MenuItem getLayoutSettingsMenuItem(){ return layoutSettingsMenuItem;}
+
     public void addVertex(ViewVertex vv) {
-        viewObjects.getChildren().add(vv);
-        innerViewObjects.getChildren().add(vv);
+        // why does this not work? @Caner
+        /*if(viewObjects == null && innerViewObjects == null){
+            viewObjects = new Group();
+            innerViewObjects = new Group();
+            viewObjects.getChildren().add(vv);
+            innerViewObjects.getChildren().add(vv);
+        } else {*/
+            viewObjects.getChildren().add(vv);
+            innerViewObjects.getChildren().add(vv);
     }
 
     public void addEdge(ViewEdge viewEdge) {

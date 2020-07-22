@@ -6,8 +6,10 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tooltip;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
@@ -17,8 +19,8 @@ import model.Model;
 import model.graph.MyEdge;
 import model.graph.MyVertex;
 import view.*;
-
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -39,18 +41,16 @@ public class Presenter {
     public Presenter() { // second constructor needed for selection presenter to extend
     }
 
-
     // Action for the Menu: choose file
     private void setUpBindings() {
-        view.getImportMenuItem().setOnAction(new EventHandler<ActionEvent>() {
+        view.getOpenFileMenuItem().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
                 FileChooser fc = new FileChooser();
-                //fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("GFA Files", "*.gfa"));
+                fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("GFA Files", "*.gfa"));
                 File f = fc.showOpenDialog(null);
 
                 if (f != null) {
-
                     view.setFilenameTextfield("File: " + f.getName());
                     view.getProgressIndicator().setVisible(true);
 
@@ -74,6 +74,11 @@ public class Presenter {
                         view.getImportTaxonomyMenuItem().setDisable(false);
                         view.getImportCoverageMenuItem().setDisable(false);
                         view.getCustomizeMenuItem().setDisable(false);
+                        MenuItem recentFile = new MenuItem(f.getAbsolutePath());
+                        if (!view.getOpenRecentFileMenu().getItems().contains(recentFile)){
+                            setOpenRecentFileEventHandler(recentFile);
+                            view.getOpenRecentFileMenu().getItems().add(recentFile);
+                        }
                     });
 
                     Thread parseGraphThread = new Thread(parseGraphTask);
@@ -174,22 +179,12 @@ public class Presenter {
             selectNode(vv);
             makeDraggable(vv, size);
             chooseSelectionGraph(vv);
-
         }
         // add view edges
         for (MyEdge edge : model.getGraph().getEdges()) {
             ViewEdge ve = new ViewEdge(viewVertices.get(edge.getFirst().getIDprop()), viewVertices.get(edge.getSecond().getIDprop()));
             view.addEdge(ve);
         }
-        /*
-        // add lonely view vertices
-        for (MyVertex v: model.getLonelyGraph().getVertices()){
-            ViewVertex vv = new ViewVertex(v.getIDprop(), size, model.getLonelyLayout().apply(v).getX(), model.getLonelyLayout().apply(v).getY());
-            view.addVertex(vv);
-            selectNode(vv);
-            makeDraggable(vv, size);
-
-        } */
         // apply viewObjects onto Scrollpane
         view.setScrollPane();
     }
@@ -218,6 +213,7 @@ public class Presenter {
     private void reset() {
         model.setGraph(null);
         view.setViewObjects(null);
+        view.setInnerViewObjects(null);
         viewVertices = new HashMap<>();
     }
 
@@ -250,6 +246,40 @@ public class Presenter {
                         };
                     }
                 }
+            }
+        });
+    }
+
+    private void setOpenRecentFileEventHandler(MenuItem menuItem){
+        menuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                view.setFilenameTextfield("File: " + menuItem.getText());
+                view.getProgressIndicator().setVisible(true);
+
+                if (model.getGraph() != null) {
+                    reset();
+                    view.getProgressIndicator().toFront();
+                    view.getScrollPane().setDisable(true);
+                }
+                // parse gfa file to graph
+                Task<Void> parseGraphTask = new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        model.parseGraph(menuItem.getText(), new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height));
+                        view.getProgressIndicator().setVisible(false);
+                        System.out.println(model.getGraph().getVertexCount());
+                        return null;
+                    }
+                };
+                parseGraphTask.setOnSucceeded(e -> {
+                    visualizeGraph(5);
+                    view.getScrollPane().setDisable(false);
+                });
+
+                Thread parseGraphThread = new Thread(parseGraphTask);
+                parseGraphThread.setDaemon(true);
+                parseGraphThread.start();
             }
         });
     }
