@@ -37,6 +37,7 @@ public class ViewVertex extends Group {
         return circle;
     }
 
+    //TODO: I suppose not used anymore (Caner)
     public void setCoords(int x, int y){
         this.circle.setCenterX(x);
         this.circle.setCenterY(y);

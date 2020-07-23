@@ -20,12 +20,12 @@ import java.util.*;
 
 public class Model {
 
-    private TaxonomyTree currentTaxTree;
-    private UndirectedSparseGraph<MyVertex, MyEdge> graph;
+    private TaxonomyTree currentTaxTree; //TODO: what's not current? :) (Caner)
+    private UndirectedSparseGraph<MyVertex, MyEdge> graph; //TODO: do we need this? it's already in graphProperty (Caner)
     private ObjectProperty<UndirectedSparseGraph<MyVertex, MyEdge>> graphProperty = new SimpleObjectProperty<>();
-    TreeSet taxons = new TreeSet();
+    TreeSet taxons = new TreeSet(); //TODO: define the type <T> (Caner)
 
-    public Model() throws IOException {
+    public Model() throws IOException { //TODO: why throw? (Caner)
         // Instantiation of the currentTaxTree in a task to show the responsive GUI already while parsing the tree
         Task<Void> taskTaxonomyTree = new Task<Void>() {
             @Override
@@ -40,6 +40,8 @@ public class Model {
         treeBackgroundTask.setDaemon(true);
         treeBackgroundTask.start();
 
+        //TODO: explain why do we need this or delete (Caner)
+
         // either new method listener or:
         // InvalidationListener listener = null;
         graphProperty.addListener(new InvalidationListener() {
@@ -50,6 +52,9 @@ public class Model {
         });
     }
 
+
+    //TODO: the name here is confusing. parsing the graph is only one of it, the rest is layout! (Caner)
+
     // create needed objects of the IO classes to use them in presenter
     public void parseGraph(String path, Dimension dimension) throws IOException {
         this.graph = GraphParser.readFile(path);
@@ -58,6 +63,8 @@ public class Model {
         WeakComponentClusterer<MyVertex,MyEdge> weakComponentClusterer = new WeakComponentClusterer<>();
         Set<Set<MyVertex>> cluster = weakComponentClusterer.apply(graph);
         // The Comparator sorts the Set of Sets based on their size. In the SortedSet the sets with biggest size appear first
+
+        //TODO: too old-school, but okay :) (Caner)
         Comparator<Set<MyVertex>> comparator = new Comparator<Set<MyVertex>>() {
             @Override
             public int compare(Set<MyVertex> o1, Set<MyVertex> o2) {
@@ -74,7 +81,7 @@ public class Model {
         // Apply the layout onto every set of vertices and update coordinates.
         for(Set<MyVertex> set : sortedSet){
             if(set.size() > 1){
-                UndirectedSparseGraph<MyVertex,MyEdge> auxGraph = createAuxilliarGraph(set);
+                UndirectedSparseGraph<MyVertex,MyEdge> auxGraph = createAuxiliaryGraph(set);
                 // Calculate layout dimension for each set based on the set size
                 int dimensionX = (int) ((double)dimension.width*((double)set.size()/(double)graph.getVertexCount()));
                 int dimensionY = (int) ((double)dimension.height*((double)set.size()/(double)graph.getVertexCount()));
@@ -110,7 +117,7 @@ public class Model {
         new CoverageParser(graph, path);
     }
 
-    private UndirectedSparseGraph<MyVertex,MyEdge> createAuxilliarGraph(Set<MyVertex> vertices){
+    private UndirectedSparseGraph<MyVertex,MyEdge> createAuxiliaryGraph(Set<MyVertex> vertices){
         UndirectedSparseGraph<MyVertex,MyEdge> auxGraph = new UndirectedSparseGraph<>();
         for(MyVertex v: vertices){
             auxGraph.addVertex(v);

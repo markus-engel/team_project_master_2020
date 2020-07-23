@@ -30,7 +30,7 @@ public class GraphParser {
         int countS = 0; // could be useful in the future to know how many sequences & edges there are in total
         int countE = 0;
 
-
+        //TODO: declare to the interface (Caner)
         HashMap<String, MyVertex> vertices = new HashMap<>(); //Hashmap collecting all vertices added to graph, with ID as key, model.graph.MyVertex as object
         UndirectedSparseGraph<MyVertex, MyEdge> graph = new UndirectedSparseGraph<>(); //UndirectedSparseGraph readfile returns
 

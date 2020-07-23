@@ -31,9 +31,9 @@ import java.util.HashMap;
 public class Presenter {
     Model model;
     View view;
-    HashMap<String, view.ViewVertex> viewVertices = new HashMap<>();  //Hashmap of view vertex objects
+    HashMap<String, view.ViewVertex> viewVertices = new HashMap<>();  //Hashmap of view vertex objects //TODO: declare to the interface (Caner)
     public final Dimension MAX_WINDOW_DIMENSION = new Dimension(2000, 1200); //gets passed to model to center layouts, gets passed to view to control size of window
-    UndirectedSparseGraph<MyVertex,MyEdge> seleGraph = new UndirectedSparseGraph<>();;
+    UndirectedSparseGraph<MyVertex,MyEdge> seleGraph = new UndirectedSparseGraph<>();
 
     public Presenter(Model model, View view) {
         this.model = model;
@@ -46,6 +46,9 @@ public class Presenter {
 
     // Action for the Menu: choose file
     private void setUpBindings() {
+
+        //TODO: For all actions, we need to handle the exceptions, maybe show an error window (Caner)
+
         view.getOpenFileMenuItem().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -147,6 +150,7 @@ public class Presenter {
             }
         });
 
+        //TODO: does this actually work? :) (Caner)
         view.getCloseMenuItem().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -220,7 +224,7 @@ public class Presenter {
         viewVertex.setOnMouseDragged(event -> {
             double x = event.getSceneX();
             double y = event.getSceneY();
-            if (x < 0 + size) {
+            if (x < 0 + size) { //TODO: 0 + ? :) (Caner)
                 x = 0 + size;
             }
             if (y < 0 + size) {
@@ -243,6 +247,7 @@ public class Presenter {
         viewVertices = new HashMap<>();
     }
 
+    //TODO: confusing name, it sets up selection event, doesn't select (Caner)
     private void selectNode(ViewVertex viewVertex) {
         Tooltip tp = new Tooltip(viewVertex.getID());
 
@@ -269,7 +274,7 @@ public class Presenter {
                         seleGraph.addVertex(new MyVertex(v));
                         for(MyEdge edge : this.model.getGraph().getInEdges(v)){
                         seleGraph.addEdge(edge, edge.getVertices());
-                        };
+                        }
                     }
                 }
             }
@@ -288,6 +293,7 @@ public class Presenter {
                     view.getProgressIndicator().toFront();
                     view.getScrollPane().setDisable(true);
                 }
+                //TODO: duplicated code, extract to a method (Caner)
                 // parse gfa file to graph
                 Task<Void> parseGraphTask = new Task<Void>() {
                     @Override

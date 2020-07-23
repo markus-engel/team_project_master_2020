@@ -43,6 +43,7 @@ class GFAparser {
         fr.close();
     }
 
+    //TODO: delete if not necessary anymore (Caner)
     public static void main(String[] args) throws IOException {
         GFAparser parser = new GFAparser();
         parser.readFile("D:/Master/Sem 2/Teamprojekt/jeon2n3_miniasm.gfa");
