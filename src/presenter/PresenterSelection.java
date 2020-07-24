@@ -10,12 +10,13 @@ import view.ViewVertex;
 import java.awt.*;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 
 public class PresenterSelection extends Presenter {
     Model model;
     ViewSelection viewSelection;
-    HashMap<String, ViewVertex> viewVerticesSele = new HashMap<>();  //Hashmap of view vertex objects
+    Map<String, ViewVertex> viewVerticesSele = new HashMap<>();  //Hashmap of view vertex objects
     //UndirectedSparseGraph<MyVertex,MyEdge> seleGraph = new UndirectedSparseGraph<>();;
 
 
