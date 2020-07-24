@@ -1,13 +1,18 @@
 // combines view & model
 package presenter;
 
+import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import javafx.concurrent.Task;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Tooltip;
+import javafx.scene.control.MenuItem;
+import javafx.scene.image.WritableImage;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -15,45 +20,47 @@ import javafx.util.Duration;
 import model.Model;
 import model.graph.MyEdge;
 import model.graph.MyVertex;
-import model.io.GraphParser;
 import view.*;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class Presenter {
     Model model;
     View view;
-    HashMap<String, view.ViewVertex> viewVertices = new HashMap<>();  //Hashmap of view vertex objects
-    public final Dimension MAX_WINDOW_DIMENSION = new Dimension(2000,1200); //gets passed to model to center layouts, gets passed to view to control size of window
+    HashMap<String, view.ViewVertex> viewVertices = new HashMap<>();  //Hashmap of view vertex objects //TODO: declare to the interface (Caner)
+    public final Dimension MAX_WINDOW_DIMENSION = new Dimension(2000, 1200); //gets passed to model to center layouts, gets passed to view to control size of window
+    UndirectedSparseGraph<MyVertex,MyEdge> seleGraph = new UndirectedSparseGraph<>();
 
-
-    public Presenter(Model model, View view){
+    public Presenter(Model model, View view) {
         this.model = model;
         this.view = view;
         setUpBindings();
     }
 
+    public Presenter() { // second constructor needed for selection presenter to extend
+    }
+
     // Action for the Menu: choose file
     private void setUpBindings() {
-        view.getImportMenuItem().setOnAction(new EventHandler<ActionEvent>() {
+
+        //TODO: For all actions, we need to handle the exceptions, maybe show an error window (Caner)
+
+        view.getOpenFileMenuItem().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
                 FileChooser fc = new FileChooser();
-                //fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("GFA Files", "*.gfa"));
+                fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("GFA Files", "*.gfa"));
                 File f = fc.showOpenDialog(null);
 
                 if (f != null) {
-
                     view.setFilenameTextfield("File: " + f.getName());
                     view.getProgressIndicator().setVisible(true);
 
-                    if(model.getGraph() != null){
+                    if (model.getGraph() != null) {
                         reset();
                         view.getProgressIndicator().toFront();
                         view.getScrollPane().setDisable(true);
@@ -62,7 +69,7 @@ public class Presenter {
                     Task<Void> parseGraphTask = new Task<Void>() {
                         @Override
                         protected Void call() throws Exception {
-                            model.parseGraph(f.getAbsolutePath(), new Dimension(MAX_WINDOW_DIMENSION.width,MAX_WINDOW_DIMENSION.height));
+                            model.parseGraph(f.getAbsolutePath(), new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height));
                             view.getProgressIndicator().setVisible(false);
                             return null;
                         }
@@ -70,9 +77,15 @@ public class Presenter {
                     parseGraphTask.setOnSucceeded(e -> {
                         visualizeGraph(5);
                         view.getScrollPane().setDisable(false);
+                        view.makeScrollPaneZoomable();
                         view.getImportTaxonomyMenuItem().setDisable(false);
                         view.getImportCoverageMenuItem().setDisable(false);
                         view.getCustomizeMenuItem().setDisable(false);
+                        MenuItem recentFile = new MenuItem(f.getAbsolutePath());
+                        if (!view.getOpenRecentFileMenu().getItems().contains(recentFile)){
+                            setOpenRecentFileEventHandler(recentFile);
+                            view.getOpenRecentFileMenu().getItems().add(recentFile);
+                        }
                     });
 
                     Thread parseGraphThread = new Thread(parseGraphTask);
@@ -89,6 +102,7 @@ public class Presenter {
                 File f = fc.showOpenDialog(null);
                 if (f != null) try {
                     model.parseTaxId(f.getAbsolutePath());
+                    view.setDifferentTaxaCount("diff. taxa count: " + model.getTaxaCount());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -136,6 +150,7 @@ public class Presenter {
             }
         });
 
+        //TODO: does this actually work? :) (Caner)
         view.getCloseMenuItem().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -143,12 +158,34 @@ public class Presenter {
             }
         });
 
+        view.getSaveAsPNGMenuItem().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                WritableImage toSave = view.getScrollPane().snapshot(new SnapshotParameters(), null);
+                FileChooser fc = new FileChooser();
+                FileChooser.ExtensionFilter extf = new FileChooser.ExtensionFilter("PNG files (*.png)", "*.png");
+                fc.getExtensionFilters().add(extf);
+                File namePNG = fc.showSaveDialog(null);
+                if (!namePNG.getPath().endsWith(".png")) {
+                    namePNG = new File(namePNG.getPath() + ".png");
+                }
+                try
+                {
+                    if(namePNG != null)
+                    {
+                        ImageIO.write(SwingFXUtils.fromFXImage(toSave, null), "png", namePNG);
+                    }
+                } catch (IOException e)
+                {
+                    System.out.println(e.toString());
+                }
+            }
+        });
+
         view.getSelectionMenuItem().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-
-                try {
-                    // new window for the Selection plot
+                try { // new window for the Selection plot
                     Stage plotWindow = new Stage();
                     FXMLLoader loaderPlot = new FXMLLoader(getClass().getResource("../selection.fxml"));
                     Parent root = loaderPlot.load();
@@ -162,66 +199,55 @@ public class Presenter {
                 }
             }
         });
-
-
     }
 
-    private void visualizeGraph(int size){
+    private void visualizeGraph(int size) {
         // add view vertices
-        for (MyVertex v1: model.getGraph().getVertices()){
+        for (MyVertex v1 : model.getGraph().getVertices()) {
             // Save v1 in collection to check, it has already been created to avoid redundancies in loop below?
-            ViewVertex vv = new ViewVertex(v1.getIDprop(), size, v1.getX(),v1.getY());
+            ViewVertex vv = new ViewVertex(v1.getIDprop(), size, v1.getX(), v1.getY());
             view.addVertex(vv);
-            viewVertices.put(v1.getIDprop(),vv);
+            viewVertices.put(v1.getIDprop(), vv);
             selectNode(vv);
             makeDraggable(vv, size);
-
+            chooseSelectionGraph(vv);
         }
         // add view edges
-        for (MyEdge edge: model.getGraph().getEdges()){
-            ViewEdge ve = new ViewEdge(viewVertices.get(edge.getFirst().getIDprop()),viewVertices.get(edge.getSecond().getIDprop()));
+        for (MyEdge edge : model.getGraph().getEdges()) {
+            ViewEdge ve = new ViewEdge(viewVertices.get(edge.getFirst().getIDprop()), viewVertices.get(edge.getSecond().getIDprop()));
             view.addEdge(ve);
+            ve.toBack();
         }
-        /*
-        // add lonely view vertices
-        for (MyVertex v: model.getLonelyGraph().getVertices()){
-            ViewVertex vv = new ViewVertex(v.getIDprop(), size, model.getLonelyLayout().apply(v).getX(), model.getLonelyLayout().apply(v).getY());
-            view.addVertex(vv);
-            selectNode(vv);
-            makeDraggable(vv, size);
-
-        } */
-        // apply viewObjects onto Scrollpane
-        view.setScrollPane();
     }
 
-    private void makeDraggable(ViewVertex viewVertex, int size){
+    private void makeDraggable(ViewVertex viewVertex, int size) {
         viewVertex.setOnMouseDragged(event -> {
-            int x = (int)Math.ceil(event.getX());
-            int y = (int)Math.ceil(event.getY());
-            if (x < 0 + size){
+            double x = event.getSceneX();
+            double y = event.getSceneY();
+            if (x < 0 + size) { //TODO: 0 + ? :) (Caner)
                 x = 0 + size;
             }
-            if (y < 0 + size){
+            if (y < 0 + size) {
                 y = 0 + size;
             }
-            if (x > MAX_WINDOW_DIMENSION.width - size){
-                x= MAX_WINDOW_DIMENSION.width - size;
+            if (x > MAX_WINDOW_DIMENSION.width - size) {
+                x = MAX_WINDOW_DIMENSION.width - size;
             }
-            if (y > MAX_WINDOW_DIMENSION.height - size){
+            if (y > MAX_WINDOW_DIMENSION.height - size) {
                 y = MAX_WINDOW_DIMENSION.height - size;
             }
-            viewVertex.setCoords(x,y);
-            viewVertex.toFront();
+            viewVertex.setTranslateX(x);
+            viewVertex.setTranslateY(y);
         });
     }
 
-    private void reset(){
+    private void reset() {
         model.setGraph(null);
-        view.setViewObjects(null);
+        view.getInnerViewObjects().getChildren().clear();
         viewVertices = new HashMap<>();
     }
 
+    //TODO: confusing name, it sets up selection event, doesn't select (Caner)
     private void selectNode(ViewVertex viewVertex) {
         Tooltip tp = new Tooltip(viewVertex.getID());
 
@@ -230,33 +256,66 @@ public class Presenter {
 
                 view.setCurrentSequenceTextField(viewVertex.getID());
 
-                int x = (int)Math.ceil(event.getSceneX());
-                int y = (int)Math.ceil(event.getSceneY());
+                int x = (int) Math.ceil(event.getSceneX());
+                int y = (int) Math.ceil(event.getSceneY());
                 tp.show(viewVertex, x, y);
                 tp.setShowDuration(Duration.seconds(1.0));
-
-                //tp.show(viewVertex,
-                  //    viewVertex.getLayoutX() + viewVertex.getScene().getX() + viewVertex.getScene().getWindow().getX(),
-                  //    viewVertex.getLayoutY() + viewVertex.getScene().getY() + viewVertex.getScene().getWindow().getY());
-
-                //tp.setAnchorX(viewVertex.getLayoutX());
-                //tp.setAnchorY(viewVertex.getLayoutY());
-
-                //Tooltip.install(viewVertex, tp);
             }
-            /*if (event.getClickCount() == 2) {
-                tp.hide();
-            }*/
         });
     }
 
     private void chooseSelectionGraph(ViewVertex viewVertex) {
-        List<ViewVertex> selectedNodes = new ArrayList<ViewVertex>();
+
         viewVertex.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
-                selectedNodes.add(viewVertex);
+                System.out.println(viewVertex.getID());
+                for(MyVertex v : model.getGraph().getVertices()) {
+                    if (v.getIDprop().equals(viewVertex.getID())) {
+                        seleGraph.addVertex(new MyVertex(v));
+                        for(MyEdge edge : this.model.getGraph().getInEdges(v)){
+                        seleGraph.addEdge(edge, edge.getVertices());
+                        }
+                    }
+                }
             }
         });
     }
+
+    private void setOpenRecentFileEventHandler(MenuItem menuItem){
+        menuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                view.setFilenameTextfield("File: " + menuItem.getText());
+                view.getProgressIndicator().setVisible(true);
+
+                if (model.getGraph() != null) {
+                    reset();
+                    view.getProgressIndicator().toFront();
+                    view.getScrollPane().setDisable(true);
+                }
+                //TODO: duplicated code, extract to a method (Caner)
+                // parse gfa file to graph
+                Task<Void> parseGraphTask = new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        model.parseGraph(menuItem.getText(), new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height));
+                        view.getProgressIndicator().setVisible(false);
+                        System.out.println(model.getGraph().getVertexCount());
+                        return null;
+                    }
+                };
+                parseGraphTask.setOnSucceeded(e -> {
+                    visualizeGraph(5);
+                    view.getScrollPane().setDisable(false);
+                    view.makeScrollPaneZoomable();
+                });
+
+                Thread parseGraphThread = new Thread(parseGraphTask);
+                parseGraphThread.setDaemon(true);
+                parseGraphThread.start();
+            }
+        });
+    }
+
 }
 

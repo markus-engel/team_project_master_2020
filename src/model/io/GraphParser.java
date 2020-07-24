@@ -17,7 +17,7 @@ import java.util.HashMap;
 This is the class containing the readFile method to construct a graph from a GFA file.
 Constructed by Anna and Antonia.
 Modified by Anna: change values to Object properties to use them in myVertex
-Modified by Julia: one bug fixed
+Modified by Julia: one bug fixed, added sequence length as furtherProperty of MyVertex
 */
 
 public class GraphParser {
@@ -30,7 +30,7 @@ public class GraphParser {
         int countS = 0; // could be useful in the future to know how many sequences & edges there are in total
         int countE = 0;
 
-
+        //TODO: declare to the interface (Caner)
         HashMap<String, MyVertex> vertices = new HashMap<>(); //Hashmap collecting all vertices added to graph, with ID as key, model.graph.MyVertex as object
         UndirectedSparseGraph<MyVertex, MyEdge> graph = new UndirectedSparseGraph<>(); //UndirectedSparseGraph readfile returns
 
@@ -48,6 +48,7 @@ public class GraphParser {
                         if (v.getIDprop().equals(ID)) {
                             v.setSequenceprop(new SimpleStringProperty(sequence));
                             v.addProperty(ContigProperty.GC, finalGC);
+                            v.addProperty(ContigProperty.LENGTH, sequence.length());
                         }
                     }
                 }
@@ -56,6 +57,7 @@ public class GraphParser {
                 else {
                     MyVertex newVertex = new MyVertex(new SimpleStringProperty(ID), new SimpleStringProperty(sequence));
                     newVertex.addProperty(ContigProperty.GC, finalGC);
+                    newVertex.addProperty(ContigProperty.LENGTH, sequence.length());
                     graph.addVertex(newVertex);
                     vertices.put(ID, newVertex);
                 }
@@ -106,7 +108,8 @@ public class GraphParser {
                 GCcount++;
             }
         }
-        return (double) GCcount / (double) sequence.length();
+        if (GCcount > 0) return (double) GCcount / (double) sequence.length();
+        else return 0;
     }
 
     public static MyVertex getVertexFromMapOrNew(String vertexID, HashMap<String, MyVertex> vertices) {

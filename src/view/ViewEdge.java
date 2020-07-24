@@ -14,14 +14,15 @@ public class ViewEdge extends Group {
     // V1 and V2 also classvariables?
     
     public ViewEdge(ViewVertex vv1, ViewVertex vv2){
-        this.line = new Line(vv1.getCircle().getCenterX(), vv1.getCircle().getCenterY(), vv2.getCircle().getCenterX(), vv2.getCircle().getCenterY());
+        this.line = new Line(vv1.getTranslateX(), vv1.getTranslateY(), vv2.getTranslateX(), vv2.getTranslateY());
         line.setFill(Color.BLACK);
 
         this.getChildren().add(line);
-        this.line.startXProperty().bind(vv1.getCircle().centerXProperty());
-        this.line.startYProperty().bind(vv1.getCircle().centerYProperty());
-        this.line.endXProperty().bind(vv2.getCircle().centerXProperty());
-        this.line.endYProperty().bind(vv2.getCircle().centerYProperty());
+        this.line.startXProperty().bind(vv1.translateXProperty());
+        this.line.startYProperty().bind(vv1.translateYProperty());
+        this.line.endXProperty().bind(vv2.translateXProperty());
+        this.line.endYProperty().bind(vv2.translateYProperty());
 
+        //TODO: Group actually makes it more complicated here. if you want to interact with the group (which I don't think you'll), you can't atm, because the group itself doesn't have coordinates. either get rid of the group or implement more complex bindings which uses group's coordinates (Caner)
     }
 }

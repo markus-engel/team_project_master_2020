@@ -24,7 +24,9 @@ public class ViewVertex extends Group {
 
     public ViewVertex(String ID, int size, double x, double y){
         this.ID = new SimpleStringProperty(ID);
-        this.circle = new Circle(x, y, size);
+        this.circle = new Circle(0, 0, size);
+        this.setTranslateX(x);
+        this.setTranslateY(y);
         circle.setFill(Color.CORAL);
         this.getChildren().add(circle);
     }
@@ -35,6 +37,7 @@ public class ViewVertex extends Group {
         return circle;
     }
 
+    //TODO: I suppose not used anymore (Caner)
     public void setCoords(int x, int y){
         this.circle.setCenterX(x);
         this.circle.setCenterY(y);
