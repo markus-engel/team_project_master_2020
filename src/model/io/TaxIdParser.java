@@ -13,22 +13,25 @@ import model.graph.MyVertex;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.TreeSet;
 
 public class TaxIdParser {
 
     UndirectedSparseGraph<MyVertex, MyEdge> graph;
     String path;
     TaxonomyTree tree;
+    private TreeSet taxons;
 
-    public TaxIdParser(UndirectedSparseGraph<MyVertex, MyEdge> graph, String path, TaxonomyTree tree) throws IOException {
+    public TaxIdParser(UndirectedSparseGraph<MyVertex, MyEdge> graph, String path, TaxonomyTree tree, TreeSet taxons) throws IOException {
         this.graph = graph;
         this.path = path;
         this.tree = tree;
-        parseTaxIDs(graph, path, tree);
+        this.taxons = taxons;
+        parseTaxIDs(graph, path, tree, taxons);
     }
 
     // Parser of the taxonomic IDs matching the contig IDs of vertices in the graph
-    private void parseTaxIDs(UndirectedSparseGraph<MyVertex, MyEdge> graph, String path, TaxonomyTree tree) throws IOException {
+    private void parseTaxIDs(UndirectedSparseGraph<MyVertex, MyEdge> graph, String path, TaxonomyTree tree, TreeSet taxons) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(path));
         String line;
         while ((line = br.readLine()) != null) {
@@ -39,6 +42,7 @@ public class TaxIdParser {
 
             String conID = temp[0];
             int taxID = Integer.parseInt(temp[1]);
+            taxons.add(taxID);
             // Comparing the IDs of the vertices to the contig ID in this line of the file
             for (MyVertex v : graph.getVertices()) {
                 if (v.getIDpropProperty().toString().equals(conID)) {

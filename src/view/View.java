@@ -17,8 +17,8 @@ import java.util.ResourceBundle;
 
 public class View {
 
-    public final double MAX_SCALE = 2.d;
-    public final double MIN_SCALE = .5d;
+    public final double MAX_ZOOM_SCALE = 2.d;
+    public final double MIN_ZOOM_SCALE = .5d;
 
     @FXML
     private Group viewObjects;
@@ -33,7 +33,10 @@ public class View {
     private ProgressIndicator progressIndicator;
 
     @FXML
-    private MenuItem customizeMenuItem;
+    private MenuItem layoutSettingsMenuItem;
+
+    @FXML
+    private MenuItem colorPlate;
 
     @FXML
     private ResourceBundle resources;
@@ -51,7 +54,13 @@ public class View {
     private Menu fileMenu;
 
     @FXML
-    private MenuItem ImportMenuItem;
+    private MenuItem openFileMenuItem;
+
+    @FXML
+    private Menu openRecentFileMenu;
+
+    @FXML
+    private Menu importMenu;
 
     @FXML
     private MenuItem ImportTaxonomyMenuItem;
@@ -63,7 +72,16 @@ public class View {
     private MenuItem SaveMenuItem;
 
     @FXML
+    private MenuItem SaveAsPNGMenuItem;
+
+    @FXML
     private MenuItem CloseMenuItem;
+
+    @FXML
+    private Menu viewMenu;
+
+    @FXML
+    private MenuItem showTaxLegend;
 
     @FXML
     private Menu helpMenu;
@@ -81,6 +99,12 @@ public class View {
     private TextField OverlapCountTextField;
 
     @FXML
+    private TextField currentSequenceTextfield;
+
+    @FXML
+    private TextField differentTaxaCount;
+
+    @FXML
     private Menu PlotMenu;
 
     @FXML
@@ -90,12 +114,16 @@ public class View {
     private MenuItem SelectionMenuItem;
 
     // getter and setter Methods. More have to be implemented if needed
-    public MenuItem getImportMenuItem() {
-        return ImportMenuItem;
+    public MenuItem getOpenFileMenuItem() {
+        return openFileMenuItem;
+    }
+
+    public Menu getOpenRecentFileMenu() {
+        return openRecentFileMenu;
     }
 
     public MenuItem getCustomizeMenuItem() {
-        return customizeMenuItem;
+        return layoutSettingsMenuItem;
     }
 
     public MenuItem getImportTaxonomyMenuItem() {
@@ -114,6 +142,8 @@ public class View {
         return SelectionMenuItem;
     }
 
+    public MenuItem getSaveAsPNGMenuItem() {return SaveAsPNGMenuItem;}
+
     public MenuItem getCloseMenuItem() {
         return CloseMenuItem;
     }
@@ -130,12 +160,15 @@ public class View {
         return SequenceCountTextField;
     }
 
+    public void setDifferentTaxaCount(String size) {differentTaxaCount.setText(String.valueOf(size));}
 
+    public void setCurrentSequenceTextField(String currentSeq) {
+        currentSequenceTextfield.setText("Sequences: " + currentSeq);
+    }
     // Number of Vertices
-    public void setSequenceCountTextField(int sequenceCount) {
+    public void setSequenceCountTextField(String sequenceCount) {
         SequenceCountTextField.setText("Sequences: " + sequenceCount);
     }
-
     public TextField getOverlapCountTextField() {
         return OverlapCountTextField;
     }
@@ -147,28 +180,25 @@ public class View {
 
     public Group getViewObjects(){ return viewObjects;}
 
+    public Group getInnerViewObjects() { return innerViewObjects;}
+
     public ProgressIndicator getProgressIndicator(){ return progressIndicator;}
 
-    public void setViewObjects(Group viewObjects) { this.viewObjects = viewObjects;}
+    public void setInnerViewObjects(Group innerViewObjects) { this.innerViewObjects = viewObjects;}
+
+    public MenuItem getLayoutSettingsMenuItem(){ return layoutSettingsMenuItem;}
 
     public void addVertex(ViewVertex vv) {
-        viewObjects.getChildren().add(vv);
-        innerViewObjects.getChildren().add(vv);
+         innerViewObjects.getChildren().add(vv);
     }
 
     public void addEdge(ViewEdge viewEdge) {
-        viewObjects.getChildren().add(viewEdge);
         innerViewObjects.getChildren().add(viewEdge);
-    }
-
-    public void setScrollPane() {
-        scrollPane.setContent(viewObjects);
-        makeZoomable();
     }
 
     public ScrollPane getScrollPane(){ return scrollPane;}
 
-    private void makeZoomable() {
+    public void makeScrollPaneZoomable() {
         scrollPane.addEventFilter(ScrollEvent.ANY, new EventHandler<ScrollEvent>() {
             @Override
             public void handle(ScrollEvent scrollEvent) {
@@ -184,10 +214,10 @@ public class View {
 
     private double calculateScaleForZooming(ScrollEvent scrollEvent) {
         double scale = innerViewObjects.getScaleX() + scrollEvent.getDeltaY()/100;
-        if (scale <= MIN_SCALE) {
-            scale = MIN_SCALE;
-        } else if (scale >= MAX_SCALE) {
-            scale = MAX_SCALE;
+        if (scale <= MIN_ZOOM_SCALE) {
+            scale = MIN_ZOOM_SCALE;
+        } else if (scale >= MAX_ZOOM_SCALE) {
+            scale = MAX_ZOOM_SCALE;
         }
         return scale;
     }

@@ -19,7 +19,7 @@ public class TaxonomyTree {
 
     // The tree has taxonomic IDs as keys and Nodes as values
     // The Nodes themselves contain rank, scientific name, as well as Edges to parent and all children in the tree structure
-    HashMap<Integer, Node> tree = new HashMap<>();
+    HashMap<Integer, Node> tree = new HashMap<>(); //TODO: unless you *really* neeed a specific method from the implementation, declare to the interface (Map) (Caner)
 
     public TaxonomyTree() throws IOException { // parameter inclusion line 85 args[0]
         parseNodes();
@@ -90,17 +90,19 @@ public class TaxonomyTree {
         return tree.get(taxId);
     }
 
+    //TODO: wouldn't it make sense to move all of these methods to the class Node? even the names suggest they're actions a node does, not the tree. you always get the node and operate on it (Caner)
+
     // Method to get the id of a node's ancestor
     public int getAncestorId(int taxId) {
         if (tree.containsKey(taxId))
             return tree.get(taxId).getParent().getId();
-        else return 0;
+        else return 0; //TODO: 0 is usually "good", and can be reserved for the root, return a negative instead (Caner)
     }
 
     // Method to get the name of a node's ancestor
     public String getAncestorName(int taxId) {
         if (tree.containsKey(taxId)) return tree.get(taxId).getParent().getScientificName();
-        else return "";
+        else return ""; //TODO: return null instad (Caner), empty string is dangerous, you won't see an error (Caner)
     }
 
     // Method to get the id of an ancestor of a specific rank, e.g. id of the order of node 11
@@ -110,9 +112,9 @@ public class TaxonomyTree {
             while (!current.getRank().equals(rank) & tree.containsKey(current.getId())) {
                 current = tree.get(this.getAncestorId(current.getId()));
             }
-            if (current.getRank().equals(rank)) return current.getId();
+            if (current.getRank().equals(rank)) { return current.getId(); }
             else return 0;
-        } else return 0;
+        } else return 0; //TODO: see above (Caner)
     }
 
     // Method to get the name of an ancestor of a specific rank, e.g. id of the order of node 11
@@ -122,21 +124,23 @@ public class TaxonomyTree {
             while (!current.getRank().equals(rank) & tree.containsKey(current.getId())) {
                 current = tree.get(this.getAncestorId(current.getId()));
             }
-            if (current.getRank().equals(rank)) return current.getScientificName();
+            if (current.getRank().equals(rank)) {
+                return current.getScientificName();
+            }
             else return "";
-        } else return "";
+        } else return ""; //TODO: see above (Caner)
     }
 
     // Method to get the scientific name of a node
     public String getScientificName(int taxId) {
         if (tree.containsKey(taxId)) return tree.get(taxId).getScientificName();
-        else return "";
+        else return ""; //TODO: see above (Caner)
     }
 
     // Method to get the rank of a node, returns e.g. "order", "family", "species", ...
     public String getRank(int taxId) {
         if (tree.containsKey(taxId)) return tree.get(taxId).getRank();
-        else return "";
+        else return ""; //TODO: see above (Caner)
     }
 
 /*    public static void main(String[] args) throws IOException {

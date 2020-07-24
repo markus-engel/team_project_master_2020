@@ -1,0 +1,8 @@
+S	contig1	GCCGGGcg
+S	contig2	AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+a	ignore	678987
+L	contig2	+	contig4	+	69878
+x	contig2	678	1	8	6	67hjg
+L	contig1	+	contig2	-	67890987654
+S	contig3	ACCT
+S	contig4	ATTTATTATTTATT
