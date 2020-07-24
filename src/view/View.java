@@ -1,5 +1,6 @@
 package view;
 
+import javafx.beans.property.ObjectProperty;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
@@ -11,6 +12,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -21,31 +23,76 @@ public class View {
     public final double MIN_ZOOM_SCALE = .5d;
 
     @FXML
+    private BorderPane Pane;
+
+    @FXML
+    private StackPane stackPane;
+
+    @FXML
+    private ProgressIndicator progressIndicator;
+
+    @FXML
+    private ScrollPane scrollPane;
+
+    @FXML
     private Group viewObjects;
 
     @FXML
     private Group innerViewObjects;
 
     @FXML
-    private ScrollPane scrollPane;
+    private TextField SequenceCountTextField;
 
     @FXML
-    private ProgressIndicator progressIndicator;
+    private TextField OverlapCountTextField;
 
     @FXML
-    private MenuItem layoutSettingsMenuItem;
+    private TextField taxaCountTextfield;
 
     @FXML
-    private MenuItem colorPlate;
+    private TextField selectionTextfield;
 
     @FXML
-    private ResourceBundle resources;
+    private RadioButton nodeSizeCoverageRadioButton;
 
     @FXML
-    private URL location;
+    private RadioButton nodeSizeContigLengthRadioButton;
 
     @FXML
-    private BorderPane Pane;
+    private RadioButton nodesizeDefaultRadioButton;
+
+    @FXML
+    private RadioButton nodesizeManualRadioButton;
+
+    @FXML
+    private Slider nodeSizeManualSlider;
+
+    @FXML
+    private ChoiceBox<?> coloringTaxonomyChoiceBox;
+
+    @FXML
+    private RadioButton coloringCoverageRadioButton;
+
+    @FXML
+    private RadioButton coloringGCcontentRadioButton;
+
+    @FXML
+    private RadioButton coloringTaxonomyRadioButton;
+
+    @FXML
+    private RadioButton orderByNodeNumbersRadioButton;
+
+    @FXML
+    private RadioButton orderByContigLengthRadioButton;
+
+    @FXML
+    private Button layoutApplyButton;
+
+    @FXML
+    private Spinner<?> layoutRepulsionFactorSpinner;
+
+    @FXML
+    private Spinner<?> layoutAttractionFactorSpinner;
 
     @FXML
     private MenuBar menuBar;
@@ -78,31 +125,19 @@ public class View {
     private MenuItem CloseMenuItem;
 
     @FXML
+    private Menu editMenu;
+
+    @FXML
+    private MenuItem SelectionMenuItem;
+
+    @FXML
+    private MenuItem layoutSettingsMenuItem;
+
+    @FXML
     private Menu viewMenu;
 
     @FXML
     private MenuItem showTaxLegend;
-
-    @FXML
-    private Menu helpMenu;
-
-    @FXML
-    private MenuItem AboutMenuItem;
-
-    @FXML
-    private TextField FilenameTextfield;
-
-    @FXML
-    private TextField SequenceCountTextField;
-
-    @FXML
-    private TextField OverlapCountTextField;
-
-    @FXML
-    private TextField currentSequenceTextfield;
-
-    @FXML
-    private TextField differentTaxaCount;
 
     @FXML
     private Menu PlotMenu;
@@ -111,7 +146,10 @@ public class View {
     private MenuItem CoverageGCMenu;
 
     @FXML
-    private MenuItem SelectionMenuItem;
+    private Menu helpMenu;
+
+    @FXML
+    private MenuItem AboutMenuItem;
 
     // getter and setter Methods. More have to be implemented if needed
     public MenuItem getOpenFileMenuItem() {
@@ -148,23 +186,12 @@ public class View {
         return CloseMenuItem;
     }
 
-    public TextField getFilenameTextfield() {
-        return FilenameTextfield;
-    }
-
-    public void setFilenameTextfield(String filename) {
-        FilenameTextfield.setText(filename);
-    }
-
     public TextField getSequenceCountTextField() {
         return SequenceCountTextField;
     }
 
-    public void setDifferentTaxaCount(String size) {differentTaxaCount.setText(String.valueOf(size));}
+    public void setTaxaCountTextField(String size) {taxaCountTextfield.setText(String.valueOf(size));}
 
-    public void setCurrentSequenceTextField(String currentSeq) {
-        currentSequenceTextfield.setText("Sequences: " + currentSeq);
-    }
     // Number of Vertices
     public void setSequenceCountTextField(String sequenceCount) {
         SequenceCountTextField.setText("Sequences: " + sequenceCount);

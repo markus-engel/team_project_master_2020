@@ -58,7 +58,6 @@ public class Presenter {
                 File f = fc.showOpenDialog(null);
 
                 if (f != null) {
-                    view.setFilenameTextfield("File: " + f.getName());
                     view.getProgressIndicator().setVisible(true);
 
                     if (model.getGraph() != null) {
@@ -103,7 +102,7 @@ public class Presenter {
                 File f = fc.showOpenDialog(null);
                 if (f != null) try {
                     model.parseTaxId(f.getAbsolutePath());
-                    view.setDifferentTaxaCount("diff. taxa count: " + model.getTaxaCount());
+                    view.setTaxaCountTextField("diff. taxa count: " + model.getTaxaCount());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -225,11 +224,11 @@ public class Presenter {
         viewVertex.setOnMouseDragged(event -> {
             double x = event.getSceneX();
             double y = event.getSceneY();
-            if (x < 0 + size) { //TODO: 0 + ? :) (Caner)
-                x = 0 + size;
+            if (x < size) {
+                x = size;
             }
-            if (y < 0 + size) {
-                y = 0 + size;
+            if (y < size) {
+                y = size;
             }
             if (x > MAX_WINDOW_DIMENSION.width - size) {
                 x = MAX_WINDOW_DIMENSION.width - size;
@@ -254,8 +253,6 @@ public class Presenter {
 
         viewVertex.setOnMouseClicked(event -> {
             if (event.getClickCount() == 1) {
-
-                view.setCurrentSequenceTextField(viewVertex.getID());
 
                 int x = (int) Math.ceil(event.getSceneX());
                 int y = (int) Math.ceil(event.getSceneY());
@@ -286,7 +283,6 @@ public class Presenter {
         menuItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                view.setFilenameTextfield("File: " + menuItem.getText());
                 view.getProgressIndicator().setVisible(true);
 
                 if (model.getGraph() != null) {
