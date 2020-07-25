@@ -1,14 +1,10 @@
 package model.graph;
 
-import com.sun.javafx.geom.Point2D;
-import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import model.io.ContigProperty;
-
-import java.awt.*;
 
 /*
 Class defining the vertices used in UndirectedSparseGraph.
@@ -23,6 +19,8 @@ public class MyVertex {
     private ObservableMap<ContigProperty, Object> furtherProperties = FXCollections.observableHashMap();
     private double x;
     private double y;
+    // added by Markus 2020/07/25
+    private int taxID;
 
     public MyVertex(StringProperty ID, StringProperty sequence){
         this.IDprop = ID;
@@ -45,8 +43,8 @@ public class MyVertex {
     }
 
     // second getter returns ID value of the StringProperty
-    public StringProperty getIDpropProperty() {
-        return IDprop;
+    public String getIDpropProperty() {
+        return IDprop.get();
     }
 
     public void setIDprop(String IDprop) {
@@ -68,8 +66,7 @@ public class MyVertex {
     }
 
     public void setSequenceprop(StringProperty sequenceprop) {
-        this.sequenceprop = sequenceprop;
-    }
+        this.sequenceprop = sequenceprop; }
 
     // Add new properties, like ContigProperty.COVERAGE, to the vertex (called by parsers)
     public void addProperty(ContigProperty propertyName, Object propertyValue) {
@@ -93,4 +90,8 @@ public class MyVertex {
     public double getY() { return y; }
 
     public void setY(double y) { this.y = y; }
+
+    // added by Markus 2020/07/25
+    public void setTaxID(Integer taxID) {this.taxID = taxID;}
+    public int getTaxID() {return taxID;}
 }

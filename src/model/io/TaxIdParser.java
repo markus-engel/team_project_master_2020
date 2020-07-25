@@ -45,8 +45,10 @@ public class TaxIdParser {
             taxons.add(taxID);
             // Comparing the IDs of the vertices to the contig ID in this line of the file
             for (MyVertex v : graph.getVertices()) {
-                if (v.getIDpropProperty().toString().equals(conID)) {
+                if (v.getIDpropProperty().equals(conID)) {
                     v.addProperty(ContigProperty.TAXONOMY, tree.getTaxNode(taxID));
+                    // added by Markus 2020/07/25
+                    v.setTaxID(taxID);
                 }
             }
         }

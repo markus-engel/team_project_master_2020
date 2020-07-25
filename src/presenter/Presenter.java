@@ -13,6 +13,7 @@ import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.WritableImage;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -203,7 +204,15 @@ public class Presenter {
         view.getColoringTaxonomyRadioButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                model.createColor(model.getTaxaCount(), model.getTaxaID());
+                HashMap<Integer, String> taxIDRGBCode = model.createColor(model.getTaxaCount(), model.getTaxaID());
+
+                for (MyVertex v : model.getGraph().getVertices()) {
+                        if (taxIDRGBCode.keySet().contains(v.getTaxID())) {
+                            String rgb = taxIDRGBCode.get(v.getTaxID());
+                            String[] rgbCodes = rgb.split("t");
+                            viewVertices.get(v.getIDprop()).getCircle().setFill(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2]))); //, rgbCodes[3]));
+                        }
+                }
             }
         });
     }

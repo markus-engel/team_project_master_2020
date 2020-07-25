@@ -61,7 +61,7 @@ public class Model {
         this.graph = GraphParser.readFile(path);
 
         // Store connected components in a Set of Set of Vertices using the JUNG lib algorithm
-        WeakComponentClusterer<MyVertex,MyEdge> weakComponentClusterer = new WeakComponentClusterer<>();
+        WeakComponentClusterer<MyVertex, MyEdge> weakComponentClusterer = new WeakComponentClusterer<>();
         Set<Set<MyVertex>> cluster = weakComponentClusterer.apply(graph);
         // The Comparator sorts the Set of Sets based on their size. In the SortedSet the sets with biggest size appear first
 
@@ -69,10 +69,11 @@ public class Model {
         Comparator<Set<MyVertex>> comparator = new Comparator<Set<MyVertex>>() {
             @Override
             public int compare(Set<MyVertex> o1, Set<MyVertex> o2) {
-                if(o1.size() > o2.size()) {
+                if (o1.size() > o2.size()) {
                     return -1;
+                } else {
+                    return 1;
                 }
-                else { return 1;}
             }
         };
         SortedSet<Set<MyVertex>> sortedSet = new TreeSet<>(comparator);
@@ -80,14 +81,14 @@ public class Model {
         double shiftX = 0.0;
         double shiftY = 0.0;
         // Apply the layout onto every set of vertices and update coordinates.
-        for(Set<MyVertex> set : sortedSet){
-            if(set.size() > 1){
-                UndirectedSparseGraph<MyVertex,MyEdge> auxGraph = createAuxiliaryGraph(set);
+        for (Set<MyVertex> set : sortedSet) {
+            if (set.size() > 1) {
+                UndirectedSparseGraph<MyVertex, MyEdge> auxGraph = createAuxiliaryGraph(set);
                 // Calculate layout dimension for each set based on the set size
-                int dimensionX = (int) ((double)dimension.width*((double)set.size()/(double)graph.getVertexCount()));
-                int dimensionY = (int) ((double)dimension.height*((double)set.size()/(double)graph.getVertexCount()));
-                Dimension setDimension = new Dimension(dimensionX,dimensionY);
-                applyLayout(auxGraph,setDimension,shiftX,shiftY);
+                int dimensionX = (int) ((double) dimension.width * ((double) set.size() / (double) graph.getVertexCount()));
+                int dimensionY = (int) ((double) dimension.height * ((double) set.size() / (double) graph.getVertexCount()));
+                Dimension setDimension = new Dimension(dimensionX, dimensionY);
+                applyLayout(auxGraph, setDimension, shiftX, shiftY);
                 shiftY += dimensionY + 10;
             } else {
                 set.iterator().next().setX(shiftX);
@@ -101,16 +102,19 @@ public class Model {
         return graph;
     }
 
-    public void setGraph(UndirectedSparseGraph<MyVertex,MyEdge> graph){ this.graph = graph;}
+    public void setGraph(UndirectedSparseGraph<MyVertex, MyEdge> graph) {
+        this.graph = graph;
+    }
 
     public void parseTaxId(String path) throws IOException {
         new TaxIdParser(graph, path, currentTaxTree, taxons);
     }
-    public int getTaxaCount(){
+
+    public int getTaxaCount() {
         return taxons.size();
     }
 
-    public TreeSet getTaxaID () {
+    public TreeSet getTaxaID() {
         return taxons;
     }
 
@@ -118,11 +122,11 @@ public class Model {
         new CoverageParser(graph, path);
     }
 
-    private UndirectedSparseGraph<MyVertex,MyEdge> createAuxiliaryGraph(Set<MyVertex> vertices){
-        UndirectedSparseGraph<MyVertex,MyEdge> auxGraph = new UndirectedSparseGraph<>();
-        for(MyVertex v: vertices){
+    private UndirectedSparseGraph<MyVertex, MyEdge> createAuxiliaryGraph(Set<MyVertex> vertices) {
+        UndirectedSparseGraph<MyVertex, MyEdge> auxGraph = new UndirectedSparseGraph<>();
+        for (MyVertex v : vertices) {
             auxGraph.addVertex(v);
-            for(MyEdge edge : this.graph.getInEdges(v)){
+            for (MyEdge edge : this.graph.getInEdges(v)) {
                 auxGraph.addEdge(edge, edge.getVertices());
             }
         }
@@ -130,7 +134,7 @@ public class Model {
     }
 
     public void applyLayout(UndirectedSparseGraph<MyVertex, MyEdge> graph, Dimension dimension, double shiftX, double shiftY) {
-        FRLayout<MyVertex,MyEdge> layout = new FRLayout<>(graph);
+        FRLayout<MyVertex, MyEdge> layout = new FRLayout<>(graph);
         layout.setRepulsionMultiplier(0.1);
         layout.initialize();
         layout.setSize(dimension);
@@ -140,59 +144,36 @@ public class Model {
         relaxer.relax();
         relaxer.run();
         // Apply layout onto auxGraph
-        for(MyVertex v : graph.getVertices()){
+        for (MyVertex v : graph.getVertices()) {
             v.setX(layout.getX(v) + shiftX);
             v.setY(layout.getY(v) + shiftY);
         }
     }
-//    markus methode for random color
-    public void createColor(Integer taxaCount, TreeSet taxaID) {
-        int r = 3, g = 3, b = 3, rgbBorderLow = 0, rgbBorderHigh = 255, counter = 0;
+
+    public HashMap<Integer, String> createColor(Integer taxaCount, TreeSet taxaID) {
+        int r = 3, g = 3, b = 3, alpha = 1, rgbBorderHigh = 255, counter = 0;
         HashMap<Integer, String> taxIDRGBCode = new HashMap<>();
-        
-        int temp1 = ((taxaCount+9)/10)*10;              // calculates the next power of ten
+
+        int temp1 = ((taxaCount + 9) / 10) * 10;
         int iterationStepsPerColor = temp1 / 3;
         int stepSizePerColor = rgbBorderHigh / (iterationStepsPerColor + 1);
-        System.out.println(temp1);
-        System.out.println(iterationStepsPerColor);
-        System.out.println(taxaID);
-        System.out.println(stepSizePerColor);
 
         for (Object i : taxaID) {
             counter += 1;
-            String rgbCodeTaxa="";
+            String rgbCodeTaxa = "";
             if (counter <= iterationStepsPerColor) {
                 r += stepSizePerColor;
-                rgbCodeTaxa = r + "." + g + "." + b;
-//                System.out.println("counter: " + counter  +" | " + "RGB Code: " + rgbCodeTaxa);
-            }
-            else if (counter > iterationStepsPerColor && counter <= iterationStepsPerColor * 2) {
+                rgbCodeTaxa = r + "t" + g + "t" + b;
+            } else if (counter > iterationStepsPerColor && counter <= iterationStepsPerColor * 2) {
                 g += stepSizePerColor;
-                rgbCodeTaxa = r + "." + g + "." + b;
-//                System.out.println("counter: " + counter  +" | " + "RGB Code: " + rgbCodeTaxa);
-            }
-            else {
+                rgbCodeTaxa = r + "t" + g + "t" + b;
+            } else {
                 b += stepSizePerColor;
-                rgbCodeTaxa = r + "." + g + "." + b;
-//                System.out.println("counter: " + counter  +" | " + "RGB Code: " + rgbCodeTaxa);
+                rgbCodeTaxa = r + "t" + g + "t" + b;
             }
-
-            taxIDRGBCode.put((int)i, rgbCodeTaxa); //fills hashmap for further use e.g. legend
+            taxIDRGBCode.put((int) i, rgbCodeTaxa);
             rgbCodeTaxa = "";
         }
-
-        for (ViewVertex vv : )
-
-//        for (Map.Entry e : taxIDRGBCode.entrySet()) {
-//            System.out.println("Key: " + e.getKey() + " | " + "Value: " + e.getValue());
-//        }
-
-//        for (Map.Entry j : taxIDRGBCode.entrySet()) {
-//            if (j.getValue().    equals("255.255.255")) {
-//                System.out.println("Key: " + j.getKey() + " | " + "Value: " + j.getValue());
-//            }
-//        }
-
-
+        return taxIDRGBCode;
     }
 }
