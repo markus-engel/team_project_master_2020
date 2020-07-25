@@ -195,7 +195,7 @@ public class View {
     public void setTaxaCountTextField(String size) {taxaCountTextfield.setText(String.valueOf(size));}
 
     // Number of Vertices
-    public void setSequenceCountTextField(String sequenceCount) {
+    public void setSequenceCountTextField(int sequenceCount) {
         SequenceCountTextField.setText("Sequences: " + sequenceCount);
     }
     public TextField getOverlapCountTextField() {
