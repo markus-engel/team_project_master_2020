@@ -181,7 +181,7 @@ public class Model {
             rgbCodeTaxa = "";
         }
 
-        for (ViewVertex vv : )
+        //for (ViewVertex vv : )
 
 //        for (Map.Entry e : taxIDRGBCode.entrySet()) {
 //            System.out.println("Key: " + e.getKey() + " | " + "Value: " + e.getValue());

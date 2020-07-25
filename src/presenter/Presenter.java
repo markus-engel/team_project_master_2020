@@ -215,9 +215,9 @@ public class Presenter {
             ViewVertex vv = new ViewVertex(v1.getIDprop(), size, v1.getX(), v1.getY());
             view.addVertex(vv);
             viewVertices.put(v1.getIDprop(), vv);
-            selectNode(vv);
             makeDraggable(vv, size);
             chooseSelectionGraph(vv);
+            Tooltip.install(vv, new Tooltip(vv.getID()));
         }
         // add view edges
         for (MyEdge edge : model.getGraph().getEdges()) {
@@ -254,13 +254,10 @@ public class Presenter {
         viewVertices = new HashMap<>();
     }
 
-    //TODO: confusing name, it sets up selection event, doesn't select (Caner)
-    private void selectNode(ViewVertex viewVertex) {
+    private void makeTooltip(ViewVertex viewVertex) {
         Tooltip tp = new Tooltip(viewVertex.getID());
-
         viewVertex.setOnMouseClicked(event -> {
             if (event.getClickCount() == 1) {
-
                 int x = (int) Math.ceil(event.getSceneX());
                 int y = (int) Math.ceil(event.getSceneY());
                 tp.show(viewVertex, x, y);
@@ -273,13 +270,22 @@ public class Presenter {
 
         viewVertex.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
-                System.out.println(viewVertex.getID());
                 for(MyVertex v : model.getGraph().getVertices()) {
                     if (v.getIDprop().equals(viewVertex.getID())) {
-                        seleGraph.addVertex(new MyVertex(v));
-                        for(MyEdge edge : this.model.getGraph().getInEdges(v)){
-                        seleGraph.addEdge(edge, edge.getVertices());
+                        if (!seleGraph.containsVertex(v)) {
+                            System.out.println("addded test: " + viewVertex.getID());
+                            seleGraph.addVertex(new MyVertex(v));
+                            for(MyEdge edge : this.model.getGraph().getInEdges(v)){
+                                seleGraph.addEdge(edge, edge.getVertices());
+                            }
+                        } else if (seleGraph.containsVertex(v)) {
+                            System.out.println("deleted test: " + viewVertex.getID());
+                            seleGraph.removeVertex(new MyVertex(v));
+                            for(MyEdge edge : this.model.getGraph().getInEdges(v)){
+                                seleGraph.removeEdge(edge);
+                            }
                         }
+
                     }
                 }
             }
