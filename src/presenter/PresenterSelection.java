@@ -4,21 +4,20 @@ package presenter;
 
 
 import model.Model;
-import model.graph.MyEdge;
-import model.graph.MyVertex;
-import view.ViewEdge;
 import view.ViewSelection;
 import view.ViewVertex;
 
 import java.awt.*;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 
 public class PresenterSelection extends Presenter {
     Model model;
     ViewSelection viewSelection;
-    HashMap<String, ViewVertex> viewVerticesSele = new HashMap<>();  //Hashmap of view vertex objects
+    Map<String, ViewVertex> viewVerticesSele = new HashMap<>();  //Hashmap of view vertex objects
+    //UndirectedSparseGraph<MyVertex,MyEdge> seleGraph = new UndirectedSparseGraph<>();;
 
 
     public PresenterSelection(Model model, ViewSelection viewSelection) throws IOException {
@@ -26,7 +25,6 @@ public class PresenterSelection extends Presenter {
         this.model = model;
         this.viewSelection = viewSelection;
         showSelectionGraph();
-
     }
 
 
@@ -36,46 +34,7 @@ public class PresenterSelection extends Presenter {
         double shiftY = 0.0;
         Dimension setDimension = new Dimension(MAX_WINDOW_DIMENSION.width,MAX_WINDOW_DIMENSION.height);
         model.applyLayout(seleGraph, setDimension, shiftX,shiftY);
-        visualizeGraph(5);
+
         // visualization is missing
-    }
-
-    private void visualizeGraph(int size) {
-
-        // add view vertices
-        for (MyVertex v1 : seleGraph.getVertices()) {
-            ViewVertex vv = new ViewVertex(v1.getIDprop(), size, v1.getX(), v1.getY());
-            viewSelection.addVertex(vv);
-            viewVerticesSele.put(v1.getIDprop(), vv);
-            makeDraggable(vv, size);
-        }
-        // add view edges
-        for (MyEdge edge : seleGraph.getEdges()) {
-            ViewEdge ve = new ViewEdge(viewVerticesSele.get(edge.getFirst().getIDprop()), viewVerticesSele.get(edge.getSecond().getIDprop()));
-            viewSelection.addEdge(ve);
-        }
-        viewSelection.setPane();
-        System.out.println("test");
-    }
-
-    private void makeDraggable(ViewVertex viewVertex, int size) {
-        viewVertex.setOnMouseDragged(event -> {
-            int x = (int) Math.ceil(event.getX());
-            int y = (int) Math.ceil(event.getY());
-            if (x < 0 + size) {
-                x = 0 + size;
-            }
-            if (y < 0 + size) {
-                y = 0 + size;
-            }
-            if (x > MAX_WINDOW_DIMENSION.width - size) {
-                x = MAX_WINDOW_DIMENSION.width - size;
-            }
-            if (y > MAX_WINDOW_DIMENSION.height - size) {
-                y = MAX_WINDOW_DIMENSION.height - size;
-            }
-            viewVertex.setCoords(x, y);
-            viewVertex.toFront();
-        });
     }
 }

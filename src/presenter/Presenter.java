@@ -27,11 +27,12 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Presenter {
     Model model;
     View view;
-    HashMap<String, view.ViewVertex> viewVertices = new HashMap<>();  //Hashmap of view vertex objects //TODO: declare to the interface (Caner)
+    Map<String, ViewVertex> viewVertices = new HashMap<>();  //Hashmap of view vertex objects
     public final Dimension MAX_WINDOW_DIMENSION = new Dimension(2000, 1200); //gets passed to model to center layouts, gets passed to view to control size of window
     UndirectedSparseGraph<MyVertex,MyEdge> seleGraph = new UndirectedSparseGraph<>();
 
@@ -57,7 +58,6 @@ public class Presenter {
                 File f = fc.showOpenDialog(null);
 
                 if (f != null) {
-                    view.setFilenameTextfield("File: " + f.getName());
                     view.getProgressIndicator().setVisible(true);
 
                     if (model.getGraph() != null) {
@@ -102,7 +102,7 @@ public class Presenter {
                 File f = fc.showOpenDialog(null);
                 if (f != null) try {
                     model.parseTaxId(f.getAbsolutePath());
-                    view.setDifferentTaxaCount("diff. taxa count: " + model.getTaxaCount());
+                    view.setTaxaCountTextField("Taxa: " + model.getTaxaCount());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -199,18 +199,23 @@ public class Presenter {
                 }
             }
         });
+
+        view.getColoringTaxonomyRadioButton().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                model.createColor(model.getTaxaCount(), model.getTaxaID());
+            }
+        });
     }
 
     private void visualizeGraph(int size) {
-        view.setSequenceCountTextField(model.getGraph().getVertexCount());
-        view.setOverlapCountTextField(model.getGraph().getEdgeCount());
-
         // add view vertices
         for (MyVertex v1 : model.getGraph().getVertices()) {
             // Save v1 in collection to check, it has already been created to avoid redundancies in loop below?
             ViewVertex vv = new ViewVertex(v1.getIDprop(), size, v1.getX(), v1.getY());
             view.addVertex(vv);
             viewVertices.put(v1.getIDprop(), vv);
+            selectNode(vv);
             makeDraggable(vv, size);
             chooseSelectionGraph(vv);
         }
@@ -226,11 +231,11 @@ public class Presenter {
         viewVertex.setOnMouseDragged(event -> {
             double x = event.getSceneX();
             double y = event.getSceneY();
-            if (x < 0 + size) { //TODO: 0 + ? :) (Caner)
-                x = 0 + size;
+            if (x < size) {
+                x = size;
             }
-            if (y < 0 + size) {
-                y = 0 + size;
+            if (y < size) {
+                y = size;
             }
             if (x > MAX_WINDOW_DIMENSION.width - size) {
                 x = MAX_WINDOW_DIMENSION.width - size;
@@ -255,6 +260,7 @@ public class Presenter {
 
         viewVertex.setOnMouseClicked(event -> {
             if (event.getClickCount() == 1) {
+
                 int x = (int) Math.ceil(event.getSceneX());
                 int y = (int) Math.ceil(event.getSceneY());
                 tp.show(viewVertex, x, y);
@@ -284,7 +290,6 @@ public class Presenter {
         menuItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                view.setFilenameTextfield("File: " + menuItem.getText());
                 view.getProgressIndicator().setVisible(true);
 
                 if (model.getGraph() != null) {

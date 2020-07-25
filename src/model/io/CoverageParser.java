@@ -24,8 +24,6 @@ public class CoverageParser {
         BufferedReader br = new BufferedReader(new FileReader(path));
         String line;
         int lineCount = 0; // line counter
-        int count = 0;
-        int countNoMatch = 0;
         while ((line = br.readLine()) != null) {
             // first line contains headline and should be skipped
             if (lineCount > 0) {
@@ -40,15 +38,11 @@ public class CoverageParser {
                 for (MyVertex v : graph.getVertices()) {
                     if (v.getIDprop().equals(conID)) {
                         v.addProperty(ContigProperty.COVERAGE, coverage);
-                        count++;
-                    } else countNoMatch++;
+                    }
                 }
             }
             lineCount++;
         }
-        //System.out.println("Number of parsed coverages: "+count);
-        //System.out.println("contig not found: "+countNoMatch);
-        //System.out.println("Numer of lines in COV file: "+lineCount);
         br.close();
     }
 }
