@@ -186,6 +186,8 @@ public class View {
         return CloseMenuItem;
     }
 
+    public RadioButton getColoringTaxonomyRadioButton() {return coloringTaxonomyRadioButton;}
+
     public TextField getSequenceCountTextField() {
         return SequenceCountTextField;
     }

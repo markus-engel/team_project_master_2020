@@ -13,6 +13,7 @@ import javafx.concurrent.Task;
 import model.graph.MyEdge;
 import model.graph.MyVertex;
 import model.io.*;
+import view.ViewVertex;
 
 import java.awt.*;
 import java.io.IOException;
@@ -23,7 +24,7 @@ public class Model {
     private TaxonomyTree currentTaxTree; //TODO: what's not current? :) (Caner)
     private UndirectedSparseGraph<MyVertex, MyEdge> graph; //TODO: do we need this? it's already in graphProperty (Caner)
     private ObjectProperty<UndirectedSparseGraph<MyVertex, MyEdge>> graphProperty = new SimpleObjectProperty<>();
-    TreeSet taxons = new TreeSet(); //TODO: define the type <T> (Caner)
+    TreeSet<Integer> taxons = new TreeSet(); //TODO: define the type <T> (Caner)
 
     public Model() throws IOException { //TODO: why throw? (Caner)
         // Instantiation of the currentTaxTree in a task to show the responsive GUI already while parsing the tree
@@ -143,5 +144,55 @@ public class Model {
             v.setX(layout.getX(v) + shiftX);
             v.setY(layout.getY(v) + shiftY);
         }
+    }
+//    markus methode for random color
+    public void createColor(Integer taxaCount, TreeSet taxaID) {
+        int r = 3, g = 3, b = 3, rgbBorderLow = 0, rgbBorderHigh = 255, counter = 0;
+        HashMap<Integer, String> taxIDRGBCode = new HashMap<>();
+        
+        int temp1 = ((taxaCount+9)/10)*10;              // calculates the next power of ten
+        int iterationStepsPerColor = temp1 / 3;
+        int stepSizePerColor = rgbBorderHigh / (iterationStepsPerColor + 1);
+        System.out.println(temp1);
+        System.out.println(iterationStepsPerColor);
+        System.out.println(taxaID);
+        System.out.println(stepSizePerColor);
+
+        for (Object i : taxaID) {
+            counter += 1;
+            String rgbCodeTaxa="";
+            if (counter <= iterationStepsPerColor) {
+                r += stepSizePerColor;
+                rgbCodeTaxa = r + "." + g + "." + b;
+//                System.out.println("counter: " + counter  +" | " + "RGB Code: " + rgbCodeTaxa);
+            }
+            else if (counter > iterationStepsPerColor && counter <= iterationStepsPerColor * 2) {
+                g += stepSizePerColor;
+                rgbCodeTaxa = r + "." + g + "." + b;
+//                System.out.println("counter: " + counter  +" | " + "RGB Code: " + rgbCodeTaxa);
+            }
+            else {
+                b += stepSizePerColor;
+                rgbCodeTaxa = r + "." + g + "." + b;
+//                System.out.println("counter: " + counter  +" | " + "RGB Code: " + rgbCodeTaxa);
+            }
+
+            taxIDRGBCode.put((int)i, rgbCodeTaxa); //fills hashmap for further use e.g. legend
+            rgbCodeTaxa = "";
+        }
+
+        for (ViewVertex vv : )
+
+//        for (Map.Entry e : taxIDRGBCode.entrySet()) {
+//            System.out.println("Key: " + e.getKey() + " | " + "Value: " + e.getValue());
+//        }
+
+//        for (Map.Entry j : taxIDRGBCode.entrySet()) {
+//            if (j.getValue().    equals("255.255.255")) {
+//                System.out.println("Key: " + j.getKey() + " | " + "Value: " + j.getValue());
+//            }
+//        }
+
+
     }
 }

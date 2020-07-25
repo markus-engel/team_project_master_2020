@@ -102,7 +102,7 @@ public class Presenter {
                 File f = fc.showOpenDialog(null);
                 if (f != null) try {
                     model.parseTaxId(f.getAbsolutePath());
-                    view.setTaxaCountTextField("diff. taxa count: " + model.getTaxaCount());
+                    view.setTaxaCountTextField("Taxa: " + model.getTaxaCount());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -197,6 +197,13 @@ public class Presenter {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+            }
+        });
+
+        view.getColoringTaxonomyRadioButton().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                model.createColor(model.getTaxaCount(), model.getTaxaID());
             }
         });
     }
