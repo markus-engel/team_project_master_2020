@@ -155,6 +155,7 @@ public class Model {
         double alpha = 1;
         HashMap<Integer, String> taxIDRGBCode = new HashMap<>();
 
+//        https://www.farb-tabelle.de/en/table-of-color.htm#white
         int temp1 = ((taxaCount + 9) / 10) * 10;
         int iterationStepsPerColor = temp1 / 3;
         int stepSizePerColor = rgbBorderHigh / (iterationStepsPerColor + 1);
