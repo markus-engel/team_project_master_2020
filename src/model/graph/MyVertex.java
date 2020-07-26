@@ -76,7 +76,7 @@ public class MyVertex {
     // Get a specific property of the vertex via the property name,
     // e.g. "getProperty(ContigProperty.TAXONOMY)" returns the Node from the taxonomic tree, to which this contig belongs
     public Object getProperty(ContigProperty propertyName) {
-        return furtherProperties.getOrDefault(propertyName, null);
+        return furtherProperties.getOrDefault(propertyName, "no entry");
     }
     @Override // is this right? the other option is tp return the property but the conversion lasted so long
     public String toString() {

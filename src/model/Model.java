@@ -151,7 +151,8 @@ public class Model {
     }
 
     public HashMap<Integer, String> createColor(Integer taxaCount, TreeSet taxaID) {
-        int r = 3, g = 3, b = 3, alpha = 1, rgbBorderHigh = 255, counter = 0;
+        int r = 5, g = 5, b = 5, rgbBorderHigh = 255, counter = 0;
+        double alpha = 1;
         HashMap<Integer, String> taxIDRGBCode = new HashMap<>();
 
         int temp1 = ((taxaCount + 9) / 10) * 10;
@@ -163,13 +164,17 @@ public class Model {
             String rgbCodeTaxa = "";
             if (counter <= iterationStepsPerColor) {
                 r += stepSizePerColor;
-                rgbCodeTaxa = r + "t" + g + "t" + b;
+                alpha -= stepSizePerColor/100;
+                rgbCodeTaxa = r + "t" + g + "t" + b + "t" + alpha;
             } else if (counter > iterationStepsPerColor && counter <= iterationStepsPerColor * 2) {
                 g += stepSizePerColor;
-                rgbCodeTaxa = r + "t" + g + "t" + b;
+                alpha -= stepSizePerColor/100;
+//                r = 125;
+                rgbCodeTaxa = r + "t" + g + "t" + b + "t" + alpha;
             } else {
                 b += stepSizePerColor;
-                rgbCodeTaxa = r + "t" + g + "t" + b;
+                alpha -= stepSizePerColor/100;
+                rgbCodeTaxa = r + "t" + g + "t" + b + "t" + alpha;
             }
             taxIDRGBCode.put((int) i, rgbCodeTaxa);
             rgbCodeTaxa = "";

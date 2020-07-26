@@ -21,6 +21,8 @@ import javafx.util.Duration;
 import model.Model;
 import model.graph.MyEdge;
 import model.graph.MyVertex;
+import model.io.ContigProperty;
+import model.io.Node;
 import view.*;
 
 import javax.imageio.ImageIO;
@@ -207,10 +209,16 @@ public class Presenter {
                 HashMap<Integer, String> taxIDRGBCode = model.createColor(model.getTaxaCount(), model.getTaxaID());
 
                 for (MyVertex v : model.getGraph().getVertices()) {
-                        if (taxIDRGBCode.keySet().contains(v.getTaxID())) {
-                            String rgb = taxIDRGBCode.get(v.getTaxID());
+                    Node taxNode = (Node) v.getProperty(ContigProperty.TAXONOMY);
+//                    System.out.println(taxIDRGBCode.size());
+//                    System.out.println("TaxParser :" + taxNode.getId() + " | " + "TaxIDMap: " + taxIDRGBCode.);
+                        if (taxIDRGBCode.keySet().contains(taxNode.getId())) {
+                            String rgb = taxIDRGBCode.get(taxNode.getId());
                             String[] rgbCodes = rgb.split("t");
-                            viewVertices.get(v.getIDprop()).getCircle().setFill(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2]))); //, rgbCodes[3]));
+                            viewVertices.get(v.getIDprop()).getCircle().setFill(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2]), Double.parseDouble(rgbCodes[3]))); //, rgbCodes[3]));
+                        }
+                        else if (taxNode.getId() == -100) {
+                            viewVertices.get(v.getIDprop()).getCircle().setFill(Color.rgb(255, 0, 255));
                         }
                 }
             }

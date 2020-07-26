@@ -29,6 +29,9 @@ public class GraphParser {
         String eSource, eDestination; // will hold the edge information
         int countS = 0; // could be useful in the future to know how many sequences & edges there are in total
         int countE = 0;
+        int count1 = 0;
+        int count2 = 0;
+        int count3 = 0;
 
         //TODO: declare to the interface (Caner)
         HashMap<String, MyVertex> vertices = new HashMap<>(); //Hashmap collecting all vertices added to graph, with ID as key, model.graph.MyVertex as object
@@ -41,6 +44,10 @@ public class GraphParser {
                 ID = seqList[1];
                 sequence = seqList[2];
                 double finalGC = calculateGCcontent(sequence);
+
+                if (!seqList[1].equals("")) {
+                    count3 += 1;
+                }
 
                 // Add sequence and GC-content to existing vertex
                 if (vertices.containsKey(ID)) {
@@ -72,6 +79,7 @@ public class GraphParser {
                 MyVertex vSource = getVertexFromMapOrNew(eSource, vertices);     //source vertex
                 MyVertex vDestination = getVertexFromMapOrNew(eDestination, vertices);     //destination vertex
                 MyEdge currentEdge = new MyEdge(graph,new Pair<>(vSource, vDestination));      //myEdge only defined by its graph
+//                MyVertex test = get
 
                 /*//get the vertices of the IDs
                 vSource = vertices.get(eSource);
@@ -84,10 +92,17 @@ public class GraphParser {
 
                 //add Edge with source and destination Vertex to graph
                 graph.addEdge(currentEdge, vSource, vDestination);
-                vertices.putIfAbsent(eSource, vSource);
-                vertices.putIfAbsent(eDestination, vDestination);
+                if (!vertices.containsKey(eSource)) {
+                    count1 += 1;
+                    vertices.putIfAbsent(eSource, vSource);
+                }
+                if (!vertices.containsKey(eDestination)) {
+                    count2 += 1;
+                    vertices.putIfAbsent(eDestination, vDestination);
+                }
             }
         }
+        System.out.println("Count1: " + count1 + "   count 2: " + count2 + "    count3: " + count3);
         br.close();
         fr.close();
 
