@@ -19,8 +19,6 @@ public class MyVertex {
     private ObservableMap<ContigProperty, Object> furtherProperties = FXCollections.observableHashMap();
     private double x;
     private double y;
-    // added by Markus 2020/07/25
-    private int taxID;
 
     public MyVertex(StringProperty ID, StringProperty sequence){
         this.IDprop = ID;
@@ -90,8 +88,4 @@ public class MyVertex {
     public double getY() { return y; }
 
     public void setY(double y) { this.y = y; }
-
-    // added by Markus 2020/07/25
-    public void setTaxID(Integer taxID) {this.taxID = taxID;}
-    public int getTaxID() {return taxID;}
 }
