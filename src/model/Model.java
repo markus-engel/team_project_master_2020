@@ -59,41 +59,62 @@ public class Model {
     // create needed objects of the IO classes to use them in presenter
     public void parseGraph(String path, Dimension dimension) throws IOException {
         this.graph = GraphParser.readFile(path);
-
         // Store connected components in a Set of Set of Vertices using the JUNG lib algorithm
-        WeakComponentClusterer<MyVertex, MyEdge> weakComponentClusterer = new WeakComponentClusterer<>();
+        WeakComponentClusterer<MyVertex,MyEdge> weakComponentClusterer = new WeakComponentClusterer<>();
         Set<Set<MyVertex>> cluster = weakComponentClusterer.apply(graph);
         // The Comparator sorts the Set of Sets based on their size. In the SortedSet the sets with biggest size appear first
-
-        //TODO: too old-school, but okay :) (Caner)
         Comparator<Set<MyVertex>> comparator = new Comparator<Set<MyVertex>>() {
             @Override
             public int compare(Set<MyVertex> o1, Set<MyVertex> o2) {
-                if (o1.size() > o2.size()) {
+                if(o1.size() > o2.size()) {
                     return -1;
-                } else {
-                    return 1;
                 }
+                else { return 1;}
             }
         };
         SortedSet<Set<MyVertex>> sortedSet = new TreeSet<>(comparator);
         sortedSet.addAll(cluster);
         double shiftX = 0.0;
         double shiftY = 0.0;
+        double maxY = 0.0;
+        boolean firstLonelyVertices = true;
+        int firstLonelyVerticesShiftY = 0;
+        int ratio = graph.getVertexCount() - getLonelyVertexCount();
         // Apply the layout onto every set of vertices and update coordinates.
-        for (Set<MyVertex> set : sortedSet) {
-            if (set.size() > 1) {
-                UndirectedSparseGraph<MyVertex, MyEdge> auxGraph = createAuxiliaryGraph(set);
+        for(Set<MyVertex> set : sortedSet){
+            firstLonelyVertices = true;
+            if(set.size() > 1){
+                UndirectedSparseGraph<MyVertex,MyEdge> auxGraph = createAuxilliarGraph(set);
                 // Calculate layout dimension for each set based on the set size
-                int dimensionX = (int) ((double) dimension.width * ((double) set.size() / (double) graph.getVertexCount()));
-                int dimensionY = (int) ((double) dimension.height * ((double) set.size() / (double) graph.getVertexCount()));
-                Dimension setDimension = new Dimension(dimensionX, dimensionY);
-                applyLayout(auxGraph, setDimension, shiftX, shiftY);
-                shiftY += dimensionY + 10;
+                int dimensionX = (int) ((double)dimension.width*((double)set.size()/(double) ratio));
+                int dimensionY = (int) ((double)dimension.height*((double)set.size()/(double)ratio));
+                firstLonelyVerticesShiftY = dimensionY;
+                Dimension setDimension = new Dimension(dimensionX,dimensionY);
+                if(dimensionY > maxY) {
+                    maxY = (double) dimensionY + 15;
+                }
+                if(dimensionX + shiftX > dimension.width){
+                    shiftX = 0.0;
+                    shiftY += maxY;
+                    maxY = 0.0;
+                    applyLayoutAndShiftCoords(auxGraph,setDimension,shiftX,shiftY);
+                } else {
+                    applyLayoutAndShiftCoords(auxGraph,setDimension,shiftX,shiftY);
+                    shiftX += dimensionX + 15;
+                }
             } else {
                 set.iterator().next().setX(shiftX);
                 set.iterator().next().setY(shiftY);
-                shiftY += 10;
+                shiftX += 10;
+                if(shiftX > dimension.width && firstLonelyVertices){
+                    shiftX = 0.0;
+                    shiftY += firstLonelyVerticesShiftY + 15;
+                    firstLonelyVertices = false;
+                }
+                else if(shiftX > dimension.width){
+                    shiftX = 0.0;
+                    shiftY += 15;
+                }
             }
         }
     }
@@ -133,7 +154,7 @@ public class Model {
         return auxGraph;
     }
 
-    public void applyLayout(UndirectedSparseGraph<MyVertex, MyEdge> graph, Dimension dimension, double shiftX, double shiftY) {
+    public void applyLayoutAndShiftCoords(UndirectedSparseGraph<MyVertex, MyEdge> graph, Dimension dimension, double shiftX, double shiftY) {
         FRLayout<MyVertex, MyEdge> layout = new FRLayout<>(graph);
         layout.setRepulsionMultiplier(0.1);
         layout.initialize();
@@ -148,6 +169,28 @@ public class Model {
             v.setX(layout.getX(v) + shiftX);
             v.setY(layout.getY(v) + shiftY);
         }
+    }
+
+    private UndirectedSparseGraph<MyVertex,MyEdge> createAuxilliarGraph(Set<MyVertex> vertexSet){
+        UndirectedSparseGraph<MyVertex,MyEdge> auxGraph = new UndirectedSparseGraph<>();
+        for(MyVertex v: vertexSet){
+            v.setConnectedComponent(vertexSet);
+            auxGraph.addVertex(v);
+            for(MyEdge edge : this.graph.getInEdges(v)){
+                auxGraph.addEdge(edge, edge.getVertices());
+            }
+        }
+        return auxGraph;
+    }
+
+    private int getLonelyVertexCount(){
+        int count = 0;
+        for (MyVertex v : graph.getVertices()){
+            if (graph.getInEdges(v).isEmpty() || (graph.getNeighbors(v).contains(v) && graph.getNeighbors(v).size() == 1)){
+                count++;
+            }
+        }
+        return count;
     }
 
     public HashMap<Integer, String> createColor(Integer taxaCount, TreeSet taxaID) {

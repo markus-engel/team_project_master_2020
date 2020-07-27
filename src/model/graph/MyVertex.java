@@ -6,6 +6,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import model.io.ContigProperty;
 
+import java.util.Set;
+
 /*
 Class defining the vertices used in UndirectedSparseGraph.
 Constructed by Antonia.
@@ -17,6 +19,7 @@ public class MyVertex {
     private StringProperty IDprop = new SimpleStringProperty(this, "ID", "");
     private StringProperty sequenceprop = new SimpleStringProperty(this, "Sequence", "");
     private ObservableMap<ContigProperty, Object> furtherProperties = FXCollections.observableHashMap();
+    private Set<MyVertex> connectedComponent;
     private double x;
     private double y;
 
@@ -70,6 +73,8 @@ public class MyVertex {
     public void addProperty(ContigProperty propertyName, Object propertyValue) {
         furtherProperties.put(propertyName, propertyValue);
     }
+
+    public void setConnectedComponent(Set<MyVertex> set) { connectedComponent = set;}
 
     // Get a specific property of the vertex via the property name,
     // e.g. "getProperty(ContigProperty.TAXONOMY)" returns the Node from the taxonomic tree, to which this contig belongs

@@ -24,7 +24,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="Pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.View">
+<BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.View">
     <center>
          <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
            <tabs>
@@ -79,7 +79,7 @@
         </HBox>
     </bottom>
    <left>
-      <VBox prefHeight="544.0" prefWidth="205.0" BorderPane.alignment="CENTER">
+      <VBox fx:id="leftVBox" prefHeight="544.0" prefWidth="205.0" BorderPane.alignment="CENTER">
          <children>
             <TitledPane animated="false" prefHeight="407.0" prefWidth="205.0" text="Graph">
                <content>

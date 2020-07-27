@@ -14,8 +14,10 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -27,7 +29,10 @@ public class View {
     private DoubleProperty scaleProperty;
 
     @FXML
-    private BorderPane Pane;
+    private BorderPane borderPane;
+
+    @FXML
+    private VBox leftVBox;
 
     @FXML
     private StackPane stackPane;
@@ -156,6 +161,8 @@ public class View {
     private MenuItem AboutMenuItem;
 
     // getter and setter Methods. More have to be implemented if needed
+    public VBox getLeftVBox() { return leftVBox;}
+
     public MenuItem getOpenFileMenuItem() {
         return openFileMenuItem;
     }

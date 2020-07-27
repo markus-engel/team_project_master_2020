@@ -256,15 +256,16 @@ public class Presenter {
             if (y < size) {
                 y = size;
             }
-            if (x > MAX_WINDOW_DIMENSION.width - size) {
-                x = MAX_WINDOW_DIMENSION.width - size;
+            if (x > (MAX_WINDOW_DIMENSION.width + view.getLeftVBox().getPrefWidth() - size)) {
+                x = MAX_WINDOW_DIMENSION.width + view.getLeftVBox().getPrefWidth() - size;
             }
-            if (y > MAX_WINDOW_DIMENSION.height - size) {
-                y = MAX_WINDOW_DIMENSION.height - size;
+            if (y > (MAX_WINDOW_DIMENSION.height + view.getLeftVBox().getPrefHeight() - size)) {
+                y = MAX_WINDOW_DIMENSION.height + view.getLeftVBox().getPrefHeight() - size;
             }
-            viewVertex.setTranslateX(x / view.getScaleProperty());
             Bounds bounds = view.getInnerViewObjects().localToScene(view.getInnerViewObjects().getBoundsInLocal());
+            double minX = bounds.getMinX();
             double minY = bounds.getMinY();
+            viewVertex.setTranslateX((x - minX) / view.getScaleProperty());
             viewVertex.setTranslateY((y - minY) / view.getScaleProperty());
         });
     }
