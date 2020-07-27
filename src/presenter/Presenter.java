@@ -74,7 +74,8 @@ public class Presenter {
                     Task<Void> parseGraphTask = new Task<Void>() {
                         @Override
                         protected Void call() throws Exception {
-                            model.parseGraph(f.getAbsolutePath(), new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height));
+                            model.parseGraph(f.getAbsolutePath());
+                            model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height));
                             view.getProgressIndicator().setVisible(false);
                             return null;
                         }
@@ -330,9 +331,9 @@ public class Presenter {
                 Task<Void> parseGraphTask = new Task<Void>() {
                     @Override
                     protected Void call() throws Exception {
-                        model.parseGraph(menuItem.getText(), new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height));
+                        model.parseGraph(menuItem.getText());
                         view.getProgressIndicator().setVisible(false);
-                        System.out.println(model.getGraph().getVertexCount());
+                        model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height));
                         return null;
                     }
                 };

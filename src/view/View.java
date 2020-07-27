@@ -26,7 +26,6 @@ public class View {
 
     public final double MAX_ZOOM_SCALE = 2.d;
     public final double MIN_ZOOM_SCALE = .5d;
-    private DoubleProperty scaleProperty;
 
     @FXML
     private BorderPane borderPane;

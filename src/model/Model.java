@@ -13,7 +13,6 @@ import javafx.concurrent.Task;
 import model.graph.MyEdge;
 import model.graph.MyVertex;
 import model.io.*;
-import view.ViewVertex;
 
 import java.awt.*;
 import java.io.IOException;
@@ -21,17 +20,17 @@ import java.util.*;
 
 public class Model {
 
-    private TaxonomyTree currentTaxTree; //TODO: what's not current? :) (Caner)
+    private TaxonomyTree taxonomyTree;
     private UndirectedSparseGraph<MyVertex, MyEdge> graph; //TODO: do we need this? it's already in graphProperty (Caner)
     private ObjectProperty<UndirectedSparseGraph<MyVertex, MyEdge>> graphProperty = new SimpleObjectProperty<>();
     TreeSet<Integer> taxons = new TreeSet(); //TODO: define the type <T> (Caner)
 
-    public Model() throws IOException { //TODO: why throw? (Caner)
+    public Model() {
         // Instantiation of the currentTaxTree in a task to show the responsive GUI already while parsing the tree
         Task<Void> taskTaxonomyTree = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                currentTaxTree = new TaxonomyTree();
+                taxonomyTree = new TaxonomyTree();
                 System.out.println("Taxonomy tree is prepared");
                 return null;
             }
@@ -54,11 +53,14 @@ public class Model {
     }
 
 
-    //TODO: the name here is confusing. parsing the graph is only one of it, the rest is layout! (Caner)
+    //TODO: the name here is confusing. parsing the graph is only one of it, the rest is layout! (Caner): Hope thats better (Jonas)
 
     // create needed objects of the IO classes to use them in presenter
-    public void parseGraph(String path, Dimension dimension) throws IOException {
+    public void parseGraph(String path) throws IOException {
         this.graph = GraphParser.readFile(path);
+    }
+
+    private SortedSet<Set<MyVertex>> clusterVertices(){
         // Store connected components in a Set of Set of Vertices using the JUNG lib algorithm
         WeakComponentClusterer<MyVertex,MyEdge> weakComponentClusterer = new WeakComponentClusterer<>();
         Set<Set<MyVertex>> cluster = weakComponentClusterer.apply(graph);
@@ -74,10 +76,15 @@ public class Model {
         };
         SortedSet<Set<MyVertex>> sortedSet = new TreeSet<>(comparator);
         sortedSet.addAll(cluster);
+        return sortedSet;
+    }
+
+    public void applyLayout(Dimension dimension){
+        SortedSet<Set<MyVertex>> sortedSet = clusterVertices();
         double shiftX = 0.0;
         double shiftY = 0.0;
         double maxY = 0.0;
-        boolean firstLonelyVertices = true;
+        boolean firstLonelyVertices;
         int firstLonelyVerticesShiftY = 0;
         int ratio = graph.getVertexCount() - getLonelyVertexCount();
         // Apply the layout onto every set of vertices and update coordinates.
@@ -128,7 +135,7 @@ public class Model {
     }
 
     public void parseTaxId(String path) throws IOException {
-        new TaxIdParser(graph, path, currentTaxTree, taxons);
+        new TaxIdParser(graph, path, taxonomyTree, taxons);
     }
 
     public int getTaxaCount() {
