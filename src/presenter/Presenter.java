@@ -7,6 +7,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Bounds;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
@@ -36,7 +37,7 @@ public class Presenter {
     Model model;
     View view;
     Map<String, ViewVertex> viewVertices = new HashMap<>();  //Hashmap of view vertex objects
-    public final Dimension MAX_WINDOW_DIMENSION = new Dimension(2000, 1200); //gets passed to model to center layouts, gets passed to view to control size of window
+    public final Dimension MAX_WINDOW_DIMENSION = new Dimension(1000, 679); //gets passed to model to center layouts, gets passed to view to control size of window
     UndirectedSparseGraph<MyVertex,MyEdge> seleGraph = new UndirectedSparseGraph<>();
 
     public Presenter(Model model, View view) {
@@ -62,6 +63,7 @@ public class Presenter {
 
                 if (f != null) {
                     view.getProgressIndicator().setVisible(true);
+                    view.getProgressIndicator().toFront();
 
                     if (model.getGraph() != null) {
                         reset();
@@ -260,8 +262,10 @@ public class Presenter {
             if (y > MAX_WINDOW_DIMENSION.height - size) {
                 y = MAX_WINDOW_DIMENSION.height - size;
             }
-            viewVertex.setTranslateX(x);
-            viewVertex.setTranslateY(y);
+            viewVertex.setTranslateX(x / view.getScaleProperty());
+            Bounds bounds = view.getInnerViewObjects().localToScene(view.getInnerViewObjects().getBoundsInLocal());
+            double minY = bounds.getMinY();
+            viewVertex.setTranslateY((y - minY) / view.getScaleProperty());
         });
     }
 

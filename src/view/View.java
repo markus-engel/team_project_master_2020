@@ -1,6 +1,9 @@
 package view;
 
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.Property;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
@@ -21,6 +24,7 @@ public class View {
 
     public final double MAX_ZOOM_SCALE = 2.d;
     public final double MIN_ZOOM_SCALE = .5d;
+    private DoubleProperty scaleProperty;
 
     @FXML
     private BorderPane Pane;
@@ -217,6 +221,10 @@ public class View {
 
     public MenuItem getLayoutSettingsMenuItem(){ return layoutSettingsMenuItem;}
 
+    public void setScaleProperty(double scale){ innerViewObjects.setScaleX(scale); }
+
+    public double getScaleProperty(){ return innerViewObjects.getScaleX();}
+
     public void addVertex(ViewVertex vv) {
          innerViewObjects.getChildren().add(vv);
     }
@@ -232,7 +240,7 @@ public class View {
             @Override
             public void handle(ScrollEvent scrollEvent) {
                 if(scrollEvent.isControlDown()){ // wenn scrollen disabled werden soll, dann hier !scrollevent.isConsumed()
-                    final double scale = calculateScaleForZooming(scrollEvent);
+                    double scale = calculateScaleForZooming(scrollEvent);
                     innerViewObjects.setScaleX(scale);
                     innerViewObjects.setScaleY(scale);
                     scrollEvent.consume();
