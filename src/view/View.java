@@ -1,9 +1,5 @@
 package view;
 
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.Property;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
@@ -14,13 +10,8 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-
-import java.net.URL;
-import java.util.ResourceBundle;
 
 public class View {
 
@@ -64,10 +55,10 @@ public class View {
     private RadioButton nodeSizeContigLengthRadioButton;
 
     @FXML
-    private RadioButton nodesizeDefaultRadioButton;
+    private RadioButton nodeSizeDefaultRadioButton;
 
     @FXML
-    private RadioButton nodesizeManualRadioButton;
+    private RadioButton nodeSizeManualRadioButton;
 
     @FXML
     private Slider nodeSizeManualSlider;
@@ -191,18 +182,43 @@ public class View {
         return CloseMenuItem;
     }
 
-    public RadioButton getColoringTaxonomyRadioButton() {return coloringTaxonomyRadioButton;}
+    public RadioButton getColoringTaxonomyRadioButton() {
+        return coloringTaxonomyRadioButton;
+    }
 
     public TextField getSequenceCountTextField() {
         return SequenceCountTextField;
     }
 
-    public void setTaxaCountTextField(String size) {taxaCountTextfield.setText(String.valueOf(size));}
+    public RadioButton getNodeSizeManualRadioButton() {
+        return nodeSizeManualRadioButton;
+    }
+
+    public Slider getNodeSizeManualSlider() {
+        return nodeSizeManualSlider;
+    }
+
+    public RadioButton getNodeSizeContigLengthRadioButton() {
+        return nodeSizeContigLengthRadioButton;
+    }
+
+    public RadioButton getNodeSizeCoverageRadioButton() {
+        return nodeSizeCoverageRadioButton;
+    }
+
+    public RadioButton getNodeSizeDefaultRadioButton() {
+        return nodeSizeDefaultRadioButton;
+    }
+
+    public void setTaxaCountTextField(String size) {
+        taxaCountTextfield.setText(String.valueOf(size));
+    }
 
     // Number of Vertices
     public void setSequenceCountTextField(int sequenceCount) {
         SequenceCountTextField.setText("Sequences: " + sequenceCount);
     }
+
     public TextField getOverlapCountTextField() {
         return OverlapCountTextField;
     }
