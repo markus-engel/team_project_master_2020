@@ -24,11 +24,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.View">
+<BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.View">
     <center>
          <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
            <tabs>
-             <Tab text="Main">
+             <Tab fx:id="tabMain" text="Main">
                <content>
                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                         <children>
@@ -44,9 +44,24 @@
                      </AnchorPane>
                </content>
              </Tab>
-             <Tab text="Selection">
+             <Tab fx:id="tabSelection" text="Selection">
                <content>
-                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <StackPane fx:id="stackPaneSele" prefHeight="712.0" prefWidth="1000.0">
+                           <children>
+                              <ScrollPane fx:id="scrollPaneSele" pannable="false" prefHeight="679.0" prefWidth="10000.0">
+                                 <content>
+                                    <Group fx:id="viewObjectsSele">
+                                       <children>
+                                          <Group fx:id="innerViewObjectsSele" />
+                                       </children>
+                                    </Group>
+                                 </content>
+                              </ScrollPane>
+                           </children>
+                        </StackPane>
+                     </children></AnchorPane>
                </content>
              </Tab>
            </tabs>
@@ -165,7 +180,6 @@
                       </Menu>
                       <Menu fx:id="editMenu" mnemonicParsing="false" text="Edit">
                           <items>
-                        <MenuItem fx:id="SelectionMenuItem" mnemonicParsing="false" text="Selection Graph" />
                               <MenuItem fx:id="layoutSettingsMenuItem" disable="true" mnemonicParsing="false" text="Layout Settings" />
                           </items>
                       </Menu>

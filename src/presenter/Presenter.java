@@ -5,6 +5,7 @@ import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
@@ -76,15 +77,15 @@ public class Presenter {
                         @Override
                         protected Void call() throws Exception {
                             model.parseGraph(f.getAbsolutePath());
-                            model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height));
+                            model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), model.getGraph());
                             view.getProgressIndicator().setVisible(false);
                             return null;
                         }
                     };
                     parseGraphTask.setOnSucceeded(e -> {
-                        visualizeGraph();
+                        visualizeGraph(model.getGraph());
                         view.getScrollPane().setDisable(false);
-                        view.makeScrollPaneZoomable();
+                        view.makeScrollPaneZoomable(view.getScrollPane());
                         view.getImportTaxonomyMenuItem().setDisable(false);
                         view.getImportCoverageMenuItem().setDisable(false);
                         view.getCustomizeMenuItem().setDisable(false);
@@ -160,6 +161,7 @@ public class Presenter {
         });
 
         //TODO: does this actually work? :) (Caner)
+        // for me it does (Anna)
         view.getCloseMenuItem().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -191,6 +193,7 @@ public class Presenter {
             }
         });
 
+        /*
         view.getSelectionMenuItem().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -207,7 +210,22 @@ public class Presenter {
                     e.printStackTrace();
                 }
             }
+        }); */
+
+        view.getTabSelection().setOnSelectionChanged(new EventHandler<Event>() {
+            @Override
+            public void handle(Event event) {
+                if (view.getTabSelection().isSelected()) {
+                    System.out.println("Selection tab recognized");
+                    model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), seleGraph);
+                    visualizeGraph(seleGraph);
+                    view.getScrollPaneSele().setDisable(false);
+                    view.makeScrollPaneZoomable(view.getScrollPaneSele());
+                }
+            }
         });
+
+
 
         view.getColoringTaxonomyRadioButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -238,7 +256,7 @@ public class Presenter {
                     protected Void call() {
                         model.setRepulsionMultiplier(view.getLayoutRepulsionMultiplierSpinner());
                         model.setAttractionMultiplier(view.getLayoutAttractionMultiplierSpinner());
-                        model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height));
+                        model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), model.getGraph());
                         for (MyVertex mv : model.getGraph().getVertices()) {
                             ViewVertex vv = viewVertices.get(mv.getID());
                             //vv.animate(mv.getX(),mv.getY());
@@ -255,9 +273,9 @@ public class Presenter {
         });
     }
 
-    private void visualizeGraph() {
+    private void visualizeGraph(UndirectedSparseGraph<MyVertex,MyEdge> currentGraph) {
         // add view vertices
-        for (MyVertex v1 : model.getGraph().getVertices()) {
+        for (MyVertex v1 : currentGraph.getVertices()) {
             // Save v1 in collection to check, it has already been created to avoid redundancies in loop below?
             ViewVertex vv = new ViewVertex(v1.getID(), 5, v1.getX(), v1.getY());
             view.addVertex(vv);
@@ -360,14 +378,14 @@ public class Presenter {
                     protected Void call() throws Exception {
                         model.parseGraph(menuItem.getText());
                         view.getProgressIndicator().setVisible(false);
-                        model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height));
+                        model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), model.getGraph());
                         return null;
                     }
                 };
                 parseGraphTask.setOnSucceeded(e -> {
-                    visualizeGraph();
+                    visualizeGraph(model.getGraph());
                     view.getScrollPane().setDisable(false);
-                    view.makeScrollPaneZoomable();
+                    view.makeScrollPaneZoomable(view.getScrollPane());
                 });
 
                 Thread parseGraphThread = new Thread(parseGraphTask);

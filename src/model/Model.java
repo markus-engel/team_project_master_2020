@@ -83,14 +83,14 @@ public class Model {
         return sortedSet;
     }
 
-    public void applyLayout(Dimension dimension){
+    public void applyLayout(Dimension dimension, UndirectedSparseGraph<MyVertex, MyEdge> currentGraph){
         SortedSet<Set<MyVertex>> sortedSet = clusterVertices();
         double shiftX = 0.0;
         double shiftY = 0.0;
         double maxY = 0.0;
         boolean firstLonelyVertices;
         int firstLonelyVerticesShiftY = 0;
-        int ratio = graph.getVertexCount() - getLonelyVertexCount();
+        int ratio = currentGraph.getVertexCount() - getLonelyVertexCount();
         // Apply the layout onto every set of vertices and update coordinates.
         for(Set<MyVertex> set : sortedSet){
             firstLonelyVertices = true;

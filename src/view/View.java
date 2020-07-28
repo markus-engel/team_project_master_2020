@@ -34,16 +34,28 @@ public class View {
     private StackPane stackPane;
 
     @FXML
+    private StackPane stackPaneSele;
+
+    @FXML
     private ProgressIndicator progressIndicator;
 
     @FXML
     private ScrollPane scrollPane;
 
     @FXML
+    private ScrollPane scrollPaneSele;
+
+    @FXML
     private Group viewObjects;
 
     @FXML
     private Group innerViewObjects;
+
+    @FXML
+    private Group viewObjectsSele;
+
+    @FXML
+    private Group innerViewObjectsSele;
 
     @FXML
     private TextField SequenceCountTextField;
@@ -53,6 +65,12 @@ public class View {
 
     @FXML
     private TextField taxaCountTextfield;
+
+    @FXML
+    private Tab tabSelection;
+
+    @FXML
+    private Tab tabMain;
 
     @FXML
     private TextField selectionTextfield;
@@ -165,6 +183,14 @@ public class View {
         return openRecentFileMenu;
     }
 
+    public Tab getTabSelection() {
+        return tabSelection;
+    }
+
+    public Tab getTabMain() {
+        return tabMain;
+    }
+
     public MenuItem getCustomizeMenuItem() {
         return layoutSettingsMenuItem;
     }
@@ -252,8 +278,10 @@ public class View {
 
     public ScrollPane getScrollPane(){ return scrollPane;}
 
-    public void makeScrollPaneZoomable() {
-        scrollPane.addEventFilter(ScrollEvent.ANY, new EventHandler<ScrollEvent>() {
+    public ScrollPane getScrollPaneSele(){ return scrollPaneSele;}
+
+    public void makeScrollPaneZoomable(ScrollPane sp) {
+        sp.addEventFilter(ScrollEvent.ANY, new EventHandler<ScrollEvent>() {
             @Override
             public void handle(ScrollEvent scrollEvent) {
                 if(scrollEvent.isControlDown()){ // wenn scrollen disabled werden soll, dann hier !scrollevent.isConsumed()

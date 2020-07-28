@@ -25,32 +25,32 @@ public class ViewSelection {
     private Tab tabSelection;
 
     @FXML
-    private Group viewObjects;
+    private Group viewObjectsSele;
 
     @FXML
-    private Group innerViewObjects;
+    private Group innerViewObjectsSele;
 
-    public void setViewObjects(Group viewObjects) { this.viewObjects = viewObjects;}
+    public void setViewObjects(Group viewObjects) { this.viewObjectsSele = viewObjects;}
 
-    public Group getViewObjects(){ return viewObjects;}
+    public Group getViewObjects(){ return viewObjectsSele;}
 
 
     public void addVertex(ViewVertex vv) {
-        viewObjects.getChildren().add(vv);
-        innerViewObjects.getChildren().add(vv);
+        viewObjectsSele.getChildren().add(vv);
+        innerViewObjectsSele.getChildren().add(vv);
     }
 
     public void addEdge(ViewEdge viewEdge) {
-        viewObjects.getChildren().add(viewEdge);
-        innerViewObjects.getChildren().add(viewEdge);
+        viewObjectsSele.getChildren().add(viewEdge);
+        innerViewObjectsSele.getChildren().add(viewEdge);
     }
 
     public void setPane() {
-        tabSelection.setContent(viewObjects);
+        tabSelection.setContent(viewObjectsSele);
     }
 
     public void setScrollPane() {
-        scrollPane.setContent(viewObjects);
+        scrollPane.setContent(viewObjectsSele);
         makeZoomable();
     }
 
@@ -62,8 +62,8 @@ public class ViewSelection {
             public void handle(ScrollEvent scrollEvent) {
                 if(scrollEvent.isControlDown()){
                     final double scale = calculateScaleForZooming(scrollEvent);
-                    innerViewObjects.setScaleX(scale);
-                    innerViewObjects.setScaleY(scale);
+                    innerViewObjectsSele.setScaleX(scale);
+                    innerViewObjectsSele.setScaleY(scale);
                     scrollEvent.consume();
                 }
             }
@@ -71,7 +71,7 @@ public class ViewSelection {
     }
 
     private double calculateScaleForZooming(ScrollEvent scrollEvent) {
-        double scale = innerViewObjects.getScaleX() + scrollEvent.getDeltaY()/100;
+        double scale = innerViewObjectsSele.getScaleX() + scrollEvent.getDeltaY()/100;
         if (scale <= MIN_SCALE) {
             scale = MIN_SCALE;
         } else if (scale >= MAX_SCALE) {
