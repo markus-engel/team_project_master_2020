@@ -46,8 +46,6 @@ public class ViewVertex extends Group {
 
     public void animate(double shiftX, double shiftY){
         TranslateTransition tt = new TranslateTransition(Duration.millis(2000),circle);
-        tt.setFromX(this.getTranslateX());
-        tt.setFromY(this.getTranslateY());
         tt.setToX(shiftX);
         tt.setToY(shiftY);
         tt.play();
