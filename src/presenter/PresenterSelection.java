@@ -10,12 +10,13 @@ import view.ViewVertex;
 import java.awt.*;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 
 public class PresenterSelection extends Presenter {
     Model model;
     ViewSelection viewSelection;
-    HashMap<String, ViewVertex> viewVerticesSele = new HashMap<>();  //Hashmap of view vertex objects
+    Map<String, ViewVertex> viewVerticesSele = new HashMap<>();  //Hashmap of view vertex objects
     //UndirectedSparseGraph<MyVertex,MyEdge> seleGraph = new UndirectedSparseGraph<>();;
 
 
@@ -32,7 +33,7 @@ public class PresenterSelection extends Presenter {
         double shiftX = 0.0;
         double shiftY = 0.0;
         Dimension setDimension = new Dimension(MAX_WINDOW_DIMENSION.width,MAX_WINDOW_DIMENSION.height);
-        model.applyLayout(seleGraph, setDimension, shiftX,shiftY);
+        model.applyLayoutAndShiftCoords(seleGraph, setDimension, shiftX,shiftY);
 
         // visualization is missing
     }

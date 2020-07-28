@@ -86,7 +86,7 @@ public class TestingLayout extends Application {
             
             graphics_context.setFill(Color.RED);
             graphics_context.fillOval(layout.getX(v1)-5, layout.getY(v1)-5, 10, 10);
-            graphics_context.fillText(v1.getIDprop(),layout.getX(v1)+10,layout.getY(v1));
+            graphics_context.fillText(v1.getID(),layout.getX(v1)+10,layout.getY(v1));
 
 
             colour=colour+0.15;

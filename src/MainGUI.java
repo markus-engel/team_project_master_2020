@@ -21,7 +21,7 @@ public class MainGUI extends Application {
         Presenter presenter = new Presenter(model,view);
 
         stage.setTitle("Long-read assembly visualization");
-        stage.setScene(new Scene(root, 1000,600));
+        stage.setScene(new Scene(root, 1202,800));
         stage.show();
     }
 

@@ -11,14 +11,24 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
-
-import java.net.URL;
-import java.util.ResourceBundle;
+import javafx.scene.layout.StackPane;
 
 public class View {
 
     public final double MAX_ZOOM_SCALE = 2.d;
     public final double MIN_ZOOM_SCALE = .5d;
+
+    @FXML
+    private BorderPane borderPane;
+
+    @FXML
+    private StackPane stackPane;
+
+    @FXML
+    private ProgressIndicator progressIndicator;
+
+    @FXML
+    private ScrollPane scrollPane;
 
     @FXML
     private Group viewObjects;
@@ -27,25 +37,58 @@ public class View {
     private Group innerViewObjects;
 
     @FXML
-    private ScrollPane scrollPane;
+    private TextField SequenceCountTextField;
 
     @FXML
-    private ProgressIndicator progressIndicator;
+    private TextField OverlapCountTextField;
 
     @FXML
-    private MenuItem layoutSettingsMenuItem;
+    private TextField taxaCountTextfield;
 
     @FXML
-    private MenuItem colorPlate;
+    private TextField selectionTextfield;
 
     @FXML
-    private ResourceBundle resources;
+    private RadioButton nodeSizeCoverageRadioButton;
 
     @FXML
-    private URL location;
+    private RadioButton nodeSizeContigLengthRadioButton;
 
     @FXML
-    private BorderPane Pane;
+    private RadioButton nodeSizeDefaultRadioButton;
+
+    @FXML
+    private RadioButton nodeSizeManualRadioButton;
+
+    @FXML
+    private Slider nodeSizeManualSlider;
+
+    @FXML
+    private ChoiceBox<?> coloringTaxonomyChoiceBox;
+
+    @FXML
+    private RadioButton coloringCoverageRadioButton;
+
+    @FXML
+    private RadioButton coloringGCcontentRadioButton;
+
+    @FXML
+    private RadioButton coloringTaxonomyRadioButton;
+
+    @FXML
+    private RadioButton orderByNodeNumbersRadioButton;
+
+    @FXML
+    private RadioButton orderByContigLengthRadioButton;
+
+    @FXML
+    private Button layoutApplyButton;
+
+    @FXML
+    private Spinner<?> layoutRepulsionMultiplierSpinner;
+
+    @FXML
+    private Spinner<?> layoutAttractionMultiplierSpinner;
 
     @FXML
     private MenuBar menuBar;
@@ -78,31 +121,19 @@ public class View {
     private MenuItem CloseMenuItem;
 
     @FXML
+    private Menu editMenu;
+
+    @FXML
+    private MenuItem SelectionMenuItem;
+
+    @FXML
+    private MenuItem layoutSettingsMenuItem;
+
+    @FXML
     private Menu viewMenu;
 
     @FXML
     private MenuItem showTaxLegend;
-
-    @FXML
-    private Menu helpMenu;
-
-    @FXML
-    private MenuItem AboutMenuItem;
-
-    @FXML
-    private TextField FilenameTextfield;
-
-    @FXML
-    private TextField SequenceCountTextField;
-
-    @FXML
-    private TextField OverlapCountTextField;
-
-    @FXML
-    private TextField currentSequenceTextfield;
-
-    @FXML
-    private TextField differentTaxaCount;
 
     @FXML
     private Menu PlotMenu;
@@ -111,7 +142,10 @@ public class View {
     private MenuItem CoverageGCMenu;
 
     @FXML
-    private MenuItem SelectionMenuItem;
+    private Menu helpMenu;
+
+    @FXML
+    private MenuItem AboutMenuItem;
 
     // getter and setter Methods. More have to be implemented if needed
     public MenuItem getOpenFileMenuItem() {
@@ -148,27 +182,43 @@ public class View {
         return CloseMenuItem;
     }
 
-    public TextField getFilenameTextfield() {
-        return FilenameTextfield;
-    }
-
-    public void setFilenameTextfield(String filename) {
-        FilenameTextfield.setText(filename);
+    public RadioButton getColoringTaxonomyRadioButton() {
+        return coloringTaxonomyRadioButton;
     }
 
     public TextField getSequenceCountTextField() {
         return SequenceCountTextField;
     }
 
-    public void setDifferentTaxaCount(String size) {differentTaxaCount.setText(String.valueOf(size));}
-
-    public void setCurrentSequenceTextField(String currentSeq) {
-        currentSequenceTextfield.setText("Sequences: " + currentSeq);
+    public RadioButton getNodeSizeManualRadioButton() {
+        return nodeSizeManualRadioButton;
     }
+
+    public Slider getNodeSizeManualSlider() {
+        return nodeSizeManualSlider;
+    }
+
+    public RadioButton getNodeSizeContigLengthRadioButton() {
+        return nodeSizeContigLengthRadioButton;
+    }
+
+    public RadioButton getNodeSizeCoverageRadioButton() {
+        return nodeSizeCoverageRadioButton;
+    }
+
+    public RadioButton getNodeSizeDefaultRadioButton() {
+        return nodeSizeDefaultRadioButton;
+    }
+
+    public void setTaxaCountTextField(String size) {
+        taxaCountTextfield.setText(String.valueOf(size));
+    }
+
     // Number of Vertices
-    public void setSequenceCountTextField(String sequenceCount) {
+    public void setSequenceCountTextField(int sequenceCount) {
         SequenceCountTextField.setText("Sequences: " + sequenceCount);
     }
+
     public TextField getOverlapCountTextField() {
         return OverlapCountTextField;
     }
@@ -188,6 +238,26 @@ public class View {
 
     public MenuItem getLayoutSettingsMenuItem(){ return layoutSettingsMenuItem;}
 
+    public void setLayoutRepulsionMultiplierSpinner(double repulsionMultiplier) {
+        SpinnerValueFactory svf = new SpinnerValueFactory.DoubleSpinnerValueFactory(0.01,10.0,repulsionMultiplier);
+        layoutRepulsionMultiplierSpinner.setValueFactory(svf);
+    }
+
+    public double getLayoutRepulsionMultiplierSpinner(){ return Double.parseDouble(layoutRepulsionMultiplierSpinner.getValueFactory().getValue().toString());}
+
+    public void setLayoutAttractionMultiplierSpinner(double attractionMultiplier) {
+        SpinnerValueFactory svf = new SpinnerValueFactory.DoubleSpinnerValueFactory(0.01,10,attractionMultiplier);
+        layoutAttractionMultiplierSpinner.setValueFactory(svf);
+    }
+
+    public double getLayoutAttractionMultiplierSpinner() {return Double.parseDouble(layoutAttractionMultiplierSpinner.getValueFactory().getValue().toString());}
+
+    public Button getLayoutApplyButton() { return layoutApplyButton;}
+
+    public void setScaleProperty(double scale){ innerViewObjects.setScaleX(scale); }
+
+    public double getScaleProperty(){ return innerViewObjects.getScaleX();}
+
     public void addVertex(ViewVertex vv) {
          innerViewObjects.getChildren().add(vv);
     }
@@ -203,7 +273,7 @@ public class View {
             @Override
             public void handle(ScrollEvent scrollEvent) {
                 if(scrollEvent.isControlDown()){ // wenn scrollen disabled werden soll, dann hier !scrollevent.isConsumed()
-                    final double scale = calculateScaleForZooming(scrollEvent);
+                    double scale = calculateScaleForZooming(scrollEvent);
                     innerViewObjects.setScaleX(scale);
                     innerViewObjects.setScaleY(scale);
                     scrollEvent.consume();

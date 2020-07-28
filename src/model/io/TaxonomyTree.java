@@ -14,12 +14,13 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class TaxonomyTree {
 
     // The tree has taxonomic IDs as keys and Nodes as values
     // The Nodes themselves contain rank, scientific name, as well as Edges to parent and all children in the tree structure
-    HashMap<Integer, Node> tree = new HashMap<>(); //TODO: unless you *really* neeed a specific method from the implementation, declare to the interface (Map) (Caner)
+    Map<Integer, Node> tree = new HashMap<>();
 
     public TaxonomyTree() throws IOException { // parameter inclusion line 85 args[0]
         parseNodes();
@@ -50,7 +51,7 @@ public class TaxonomyTree {
             // check, if parent-node exists and update its edges
             if (tree.containsKey(parentId)) {
                 parent = tree.get(parentId);
-                parent.addEdgeToChild(child);
+                parent.addEdgeToDescendent(child);
             }
             // if the parent-node is not known yet, a dummy-parent is created with an edge to this child
             else {
@@ -61,7 +62,7 @@ public class TaxonomyTree {
             tree.put(parentId, parent);
 
             // Add the the edge to the parent in the child-node and add/replace the child-node in the tree
-            child.addEdgeToParent(parent);
+            child.addEdgeToAncestor(parent);
             tree.put(childId, child);
         }
         reader.close();
@@ -81,7 +82,7 @@ public class TaxonomyTree {
     }
 
     // returns the complete tree -> mostly for testing
-    public HashMap<Integer, Node> getTree() {
+    public Map<Integer, Node> getTree() {
         return tree;
     }
 
@@ -90,19 +91,17 @@ public class TaxonomyTree {
         return tree.get(taxId);
     }
 
-    //TODO: wouldn't it make sense to move all of these methods to the class Node? even the names suggest they're actions a node does, not the tree. you always get the node and operate on it (Caner)
-
-    // Method to get the id of a node's ancestor
+    /*// Method to get the id of a node's ancestor
     public int getAncestorId(int taxId) {
         if (tree.containsKey(taxId))
             return tree.get(taxId).getParent().getId();
-        else return 0; //TODO: 0 is usually "good", and can be reserved for the root, return a negative instead (Caner)
+        else return -1;
     }
 
     // Method to get the name of a node's ancestor
     public String getAncestorName(int taxId) {
         if (tree.containsKey(taxId)) return tree.get(taxId).getParent().getScientificName();
-        else return ""; //TODO: return null instad (Caner), empty string is dangerous, you won't see an error (Caner)
+        else return null;
     }
 
     // Method to get the id of an ancestor of a specific rank, e.g. id of the order of node 11
@@ -113,8 +112,8 @@ public class TaxonomyTree {
                 current = tree.get(this.getAncestorId(current.getId()));
             }
             if (current.getRank().equals(rank)) { return current.getId(); }
-            else return 0;
-        } else return 0; //TODO: see above (Caner)
+            else return -1;
+        } else return -1;
     }
 
     // Method to get the name of an ancestor of a specific rank, e.g. id of the order of node 11
@@ -127,115 +126,20 @@ public class TaxonomyTree {
             if (current.getRank().equals(rank)) {
                 return current.getScientificName();
             }
-            else return "";
-        } else return ""; //TODO: see above (Caner)
+            else return null;
+        } else return null;
     }
 
     // Method to get the scientific name of a node
     public String getScientificName(int taxId) {
         if (tree.containsKey(taxId)) return tree.get(taxId).getScientificName();
-        else return ""; //TODO: see above (Caner)
+        else return null;
     }
 
     // Method to get the rank of a node, returns e.g. "order", "family", "species", ...
     public String getRank(int taxId) {
         if (tree.containsKey(taxId)) return tree.get(taxId).getRank();
-        else return ""; //TODO: see above (Caner)
-    }
-
-/*    public static void main(String[] args) throws IOException {
-
-        // Example test
-        TaxonomyTree t = new TaxonomyTree();  // enter file name as parameter mainly for testing
-        System.out.println(t.getRank(6));
-        System.out.println(t.getScientificName(6));
-        System.out.println(t.getAncestorName(11));
-        System.out.println(t.getAncestorName(11, "family"));
-        System.out.println(t.getAncestorId(3)); // 3 does not exist -> returns 0
-        System.out.println(t.getAncestorId(11, "order"));
-        System.out.println(t.getRank(11));
+        else return null;
     }*/
-
-    static class Node {
-
-        private final int id;
-        private String scientificName;
-        private String rank;
-        private Edge edgeToParent;
-
-        // List of all edges to the child-nodes
-        private final List<Edge> edges = new LinkedList<>();
-
-        public Node(int id, String rank) {
-            this.id = id;
-            this.rank = rank;
-        }
-
-        // Constructor for a dummy-parent (unknown rank)
-        // necessary for reading the file
-        public Node(int id, Node child) {
-            this.id = id;
-            this.addEdgeToChild(child);
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public String getScientificName() {
-            return scientificName;
-        }
-
-        public void setScientificName(String scientificName) {
-            this.scientificName = scientificName;
-        }
-
-        public String getRank() {
-            return rank;
-        }
-
-        public void setRank(String rank) {
-            this.rank = rank;
-        }
-
-        public Edge getEdgeToParent() {
-            return edgeToParent;
-        } // single value
-
-        public Node getParent() {
-            return edgeToParent.parent;
-        }
-
-        public List<Edge> getEdges() {
-            return edges;
-        }  // get list of all edges multiple list
-
-        public void addEdgeToParent(Node parent) {
-            edgeToParent = new Edge(parent, this);
-        } // if parent or child is unknown
-
-        public void addEdgeToChild (Node child) {
-            edges.add(new Edge(this, child));
-        }
-    }
-
-    static class Edge {
-
-        private final Node parent;
-        private final Node child;
-
-        public Edge(Node parent, Node child) {
-            this.parent = parent;
-            this.child = child;
-        }
-
-        public Node getParent() {
-            return parent;
-        }
-
-        public Node getChild() {
-            return child;
-        }
-
-    }
 }
+

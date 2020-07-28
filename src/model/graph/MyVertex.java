@@ -1,14 +1,12 @@
 package model.graph;
 
-import com.sun.javafx.geom.Point2D;
-import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import model.io.ContigProperty;
 
-import java.awt.*;
+import java.util.Set;
 
 /*
 Class defining the vertices used in UndirectedSparseGraph.
@@ -21,6 +19,7 @@ public class MyVertex {
     private StringProperty IDprop = new SimpleStringProperty(this, "ID", "");
     private StringProperty sequenceprop = new SimpleStringProperty(this, "Sequence", "");
     private ObservableMap<ContigProperty, Object> furtherProperties = FXCollections.observableHashMap();
+    private Set<MyVertex> connectedComponent;
     private double x;
     private double y;
 
@@ -40,12 +39,12 @@ public class MyVertex {
 
     // getter & setter
     // first getter returns StringProperty object itself
-    public String getIDprop() {
+    public String getID() {
         return IDprop.get();
     }
 
     // second getter returns ID value of the StringProperty
-    public StringProperty getIDpropProperty() {
+    public StringProperty getIDProperty() {
         return IDprop;
     }
 
@@ -68,18 +67,19 @@ public class MyVertex {
     }
 
     public void setSequenceprop(StringProperty sequenceprop) {
-        this.sequenceprop = sequenceprop;
-    }
+        this.sequenceprop = sequenceprop; }
 
     // Add new properties, like ContigProperty.COVERAGE, to the vertex (called by parsers)
     public void addProperty(ContigProperty propertyName, Object propertyValue) {
         furtherProperties.put(propertyName, propertyValue);
     }
 
+    public void setConnectedComponent(Set<MyVertex> set) { connectedComponent = set;}
+
     // Get a specific property of the vertex via the property name,
     // e.g. "getProperty(ContigProperty.TAXONOMY)" returns the Node from the taxonomic tree, to which this contig belongs
     public Object getProperty(ContigProperty propertyName) {
-        return furtherProperties.getOrDefault(propertyName, null);
+        return furtherProperties.getOrDefault(propertyName, "no entry");
     }
     @Override // is this right? the other option is tp return the property but the conversion lasted so long
     public String toString() {
