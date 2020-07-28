@@ -23,7 +23,9 @@ public class Model {
     private TaxonomyTree taxonomyTree;
     private UndirectedSparseGraph<MyVertex, MyEdge> graph; //TODO: do we need this? it's already in graphProperty (Caner)
     private ObjectProperty<UndirectedSparseGraph<MyVertex, MyEdge>> graphProperty = new SimpleObjectProperty<>();
-    TreeSet<Integer> taxons = new TreeSet(); //TODO: define the type <T> (Caner)
+    TreeSet<Integer> taxa = new TreeSet(); //TODO: define the type <T> (Caner)
+    private double repulsionMultiplier;
+    private double attractionMultiplier;
 
     public Model() {
         // Instantiation of the currentTaxTree in a task to show the responsive GUI already while parsing the tree
@@ -50,6 +52,8 @@ public class Model {
                 graphProperty.setValue(graph);
             }
         });
+        repulsionMultiplier = 0.1;
+        attractionMultiplier = 1.0;
     }
 
 
@@ -135,16 +139,24 @@ public class Model {
     }
 
     public void parseTaxId(String path) throws IOException {
-        new TaxIdParser(graph, path, taxonomyTree, taxons);
+        new TaxIdParser(graph, path, taxonomyTree, taxa);
     }
 
     public int getTaxaCount() {
-        return taxons.size();
+        return taxa.size();
     }
 
     public TreeSet getTaxaID() {
-        return taxons;
+        return taxa;
     }
+
+    public void setAttractionMultiplier(double attractionMultiplier) { this.attractionMultiplier = attractionMultiplier;}
+
+    public double getAttractionMultiplier() {return attractionMultiplier;}
+
+    public void setRepulsionMultiplier(double repulsionMultiplier) { this.repulsionMultiplier = repulsionMultiplier;}
+
+    public double getRepulsionMultiplier() {return repulsionMultiplier;}
 
     public void parseCoverage(String path) throws IOException {
         new CoverageParser(graph, path);
@@ -163,7 +175,8 @@ public class Model {
 
     public void applyLayoutAndShiftCoords(UndirectedSparseGraph<MyVertex, MyEdge> graph, Dimension dimension, double shiftX, double shiftY) {
         FRLayout<MyVertex, MyEdge> layout = new FRLayout<>(graph);
-        layout.setRepulsionMultiplier(0.1);
+        layout.setRepulsionMultiplier(repulsionMultiplier);
+        layout.setAttractionMultiplier(attractionMultiplier);
         layout.initialize();
         layout.setSize(dimension);
 

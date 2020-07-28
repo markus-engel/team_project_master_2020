@@ -39,13 +39,13 @@ public class MyVertex {
 
     // getter & setter
     // first getter returns StringProperty object itself
-    public String getIDprop() {
+    public String getID() {
         return IDprop.get();
     }
 
     // second getter returns ID value of the StringProperty
-    public String getIDpropProperty() {
-        return IDprop.get();
+    public StringProperty getIDProperty() {
+        return IDprop;
     }
 
     public void setIDprop(String IDprop) {

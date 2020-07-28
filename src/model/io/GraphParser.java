@@ -52,7 +52,7 @@ public class GraphParser {
                 // Add sequence and GC-content to existing vertex
                 if (vertices.containsKey(ID)) {
                     for (MyVertex v : graph.getVertices()) {
-                        if (v.getIDprop().equals(ID)) {
+                        if (v.getID().equals(ID)) {
                             v.setSequenceprop(new SimpleStringProperty(sequence));
                             v.addProperty(ContigProperty.GC, finalGC);
                             v.addProperty(ContigProperty.LENGTH, sequence.length());

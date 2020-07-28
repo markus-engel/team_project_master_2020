@@ -23,22 +23,22 @@ class GraphParserTest {
         assertEquals(4, graph.getVertices().size());
         assertEquals(2, graph.getEdges().size());
         for (MyVertex v : graph.getVertices()) {
-            if (v.getIDprop().equals("contig1")) {
+            if (v.getID().equals("contig1")) {
                 assertEquals(1.0, v.getProperty(ContigProperty.GC));
                 assertEquals(8, v.getProperty(ContigProperty.LENGTH));
                 assertEquals("GCCGGGcg", v.getSequenceprop());
             }
-            if (v.getIDprop().equals("contig2")) {
+            if (v.getID().equals("contig2")) {
                 assertEquals(0.0, v.getProperty(ContigProperty.GC));
                 assertEquals(31, v.getProperty(ContigProperty.LENGTH));
                 assertEquals("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", v.getSequenceprop());
             }
-            if (v.getIDprop().equals("contig3")) {
+            if (v.getID().equals("contig3")) {
                 assertEquals(0.5, v.getProperty(ContigProperty.GC));
                 assertEquals(4, v.getProperty(ContigProperty.LENGTH));
                 assertEquals("ACCT", v.getSequenceprop());
             }
-            if (v.getIDprop().equals("contig4")) {
+            if (v.getID().equals("contig4")) {
                 assertEquals(0.0, v.getProperty(ContigProperty.GC));
                 assertEquals(14, v.getProperty(ContigProperty.LENGTH));
                 assertEquals("ATTTATTATTTATT", v.getSequenceprop());

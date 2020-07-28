@@ -31,6 +31,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public class Presenter {
@@ -81,12 +82,14 @@ public class Presenter {
                         }
                     };
                     parseGraphTask.setOnSucceeded(e -> {
-                        visualizeGraph(5);
+                        visualizeGraph();
                         view.getScrollPane().setDisable(false);
                         view.makeScrollPaneZoomable();
                         view.getImportTaxonomyMenuItem().setDisable(false);
                         view.getImportCoverageMenuItem().setDisable(false);
                         view.getCustomizeMenuItem().setDisable(false);
+                        view.setLayoutRepulsionMultiplierSpinner(model.getRepulsionMultiplier());
+                        view.setLayoutAttractionMultiplierSpinner(model.getAttractionMultiplier());
                         MenuItem recentFile = new MenuItem(f.getAbsolutePath());
                         if (!view.getOpenRecentFileMenu().getItems().contains(recentFile)){
                             setOpenRecentFileEventHandler(recentFile);
@@ -218,54 +221,78 @@ public class Presenter {
                         if (taxIDRGBCode.keySet().contains(taxNode.getId())) {
                             String rgb = taxIDRGBCode.get(taxNode.getId());
                             String[] rgbCodes = rgb.split("t");
-                            viewVertices.get(v.getIDprop()).getCircle().setFill(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2]), Double.parseDouble(rgbCodes[3]))); //, rgbCodes[3]));
+                            viewVertices.get(v.getID()).getCircle().setFill(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2]), Double.parseDouble(rgbCodes[3]))); //, rgbCodes[3]));
                         }
                         else if (taxNode.getId() == -100) {
-                            viewVertices.get(v.getIDprop()).getCircle().setFill(Color.rgb(255, 0, 255));
+                            viewVertices.get(v.getID()).getCircle().setFill(Color.rgb(255, 0, 255));
                         }
                 }
             }
         });
+
+        view.getLayoutApplyButton().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                Task<Void> layoutApplyTask = new Task<Void>() {
+                    @Override
+                    protected Void call() {
+                        model.setRepulsionMultiplier(view.getLayoutRepulsionMultiplierSpinner());
+                        model.setAttractionMultiplier(view.getLayoutAttractionMultiplierSpinner());
+                        model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height));
+                        for (MyVertex mv : model.getGraph().getVertices()) {
+                            ViewVertex vv = viewVertices.get(mv.getID());
+                            //vv.animate(mv.getX(),mv.getY());
+                            vv.setTranslateX(mv.getX());
+                            vv.setTranslateY(mv.getY());
+                        }
+                        return null;
+                    }
+                };
+                Thread layoutApplyThread = new Thread(layoutApplyTask);
+                layoutApplyThread.setDaemon(true);
+                layoutApplyThread.start();
+            }
+        });
     }
 
-    private void visualizeGraph(int size) {
+    private void visualizeGraph() {
         // add view vertices
         for (MyVertex v1 : model.getGraph().getVertices()) {
             // Save v1 in collection to check, it has already been created to avoid redundancies in loop below?
-            ViewVertex vv = new ViewVertex(v1.getIDprop(), size, v1.getX(), v1.getY());
+            ViewVertex vv = new ViewVertex(v1.getID(), 5, v1.getX(), v1.getY());
             view.addVertex(vv);
-            viewVertices.put(v1.getIDprop(), vv);
-            makeDraggable(vv, size);
+            viewVertices.put(v1.getID(), vv);
+            makeDraggable(vv);
             chooseSelectionGraph(vv);
             Tooltip.install(vv, new Tooltip(vv.getID()));
         }
         // add view edges
         for (MyEdge edge : model.getGraph().getEdges()) {
-            ViewEdge ve = new ViewEdge(viewVertices.get(edge.getFirst().getIDprop()), viewVertices.get(edge.getSecond().getIDprop()));
+            ViewEdge ve = new ViewEdge(viewVertices.get(edge.getFirst().getID()), viewVertices.get(edge.getSecond().getID()));
             view.addEdge(ve);
             ve.toBack();
         }
     }
 
-    private void makeDraggable(ViewVertex viewVertex, int size) {
+    private void makeDraggable(ViewVertex viewVertex) {
         viewVertex.setOnMouseDragged(event -> {
             double x = event.getSceneX();
             double y = event.getSceneY();
-            if (x < size) {
-                x = size;
-            }
-            if (y < size) {
-                y = size;
-            }
-            if (x > (MAX_WINDOW_DIMENSION.width + view.getLeftVBox().getPrefWidth() - size)) {
-                x = MAX_WINDOW_DIMENSION.width + view.getLeftVBox().getPrefWidth() - size;
-            }
-            if (y > (MAX_WINDOW_DIMENSION.height + view.getLeftVBox().getPrefHeight() - size)) {
-                y = MAX_WINDOW_DIMENSION.height + view.getLeftVBox().getPrefHeight() - size;
-            }
             Bounds bounds = view.getInnerViewObjects().localToScene(view.getInnerViewObjects().getBoundsInLocal());
             double minX = bounds.getMinX();
             double minY = bounds.getMinY();
+            if (x < minX ) {
+                x = minX;
+            }
+            if (y < minY) {
+                y = minY;
+            }
+            if (x > (MAX_WINDOW_DIMENSION.width + minX)) {
+                x = MAX_WINDOW_DIMENSION.width + minX;
+            }
+            if (y > (MAX_WINDOW_DIMENSION.height + minY)) {
+                y = MAX_WINDOW_DIMENSION.height + minY;
+            }
             viewVertex.setTranslateX((x - minX) / view.getScaleProperty());
             viewVertex.setTranslateY((y - minY) / view.getScaleProperty());
         });
@@ -294,7 +321,7 @@ public class Presenter {
         viewVertex.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
                 for(MyVertex v : model.getGraph().getVertices()) {
-                    if (v.getIDprop().equals(viewVertex.getID())) {
+                    if (v.getID().equals(viewVertex.getID())) {
                         if (!seleGraph.containsVertex(v)) {
                             System.out.println("addded test: " + viewVertex.getID());
                             seleGraph.addVertex(new MyVertex(v));
@@ -338,7 +365,7 @@ public class Presenter {
                     }
                 };
                 parseGraphTask.setOnSucceeded(e -> {
-                    visualizeGraph(5);
+                    visualizeGraph();
                     view.getScrollPane().setDisable(false);
                     view.makeScrollPaneZoomable();
                 });

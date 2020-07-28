@@ -131,11 +131,11 @@
                     <content>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
-                              <Label layoutX="20.0" layoutY="55.0" text="Attraction factor:" />
-                              <Label layoutX="20.0" layoutY="21.0" text="Repulsion factor:" />
+                              <Label layoutX="5.0" layoutY="55.0" text="Attraction multiplier:" />
+                              <Label layoutX="5.0" layoutY="21.0" text="Repulsion multiplier:" />
                               <Button fx:id="layoutApplyButton" layoutX="74.0" layoutY="110.0" mnemonicParsing="false" text="Apply" />
-                              <Spinner fx:id="layoutRepulsionFactorSpinner" layoutX="118.0" layoutY="16.0" prefHeight="27.0" prefWidth="79.0" />
-                              <Spinner fx:id="layoutAttractionFactorSpinner" layoutX="118.0" layoutY="50.0" prefHeight="27.0" prefWidth="79.0" />
+                              <Spinner fx:id="layoutRepulsionMultiplierSpinner" layoutX="118.0" layoutY="16.0" prefHeight="27.0" prefWidth="79.0" />
+                              <Spinner fx:id="layoutAttractionMultiplierSpinner" layoutX="118.0" layoutY="50.0" prefHeight="27.0" prefWidth="79.0" />
                            </children>
                         </AnchorPane>
                     </content>

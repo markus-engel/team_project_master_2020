@@ -31,9 +31,6 @@ public class View {
     private BorderPane borderPane;
 
     @FXML
-    private VBox leftVBox;
-
-    @FXML
     private StackPane stackPane;
 
     @FXML
@@ -97,10 +94,10 @@ public class View {
     private Button layoutApplyButton;
 
     @FXML
-    private Spinner<?> layoutRepulsionFactorSpinner;
+    private Spinner<?> layoutRepulsionMultiplierSpinner;
 
     @FXML
-    private Spinner<?> layoutAttractionFactorSpinner;
+    private Spinner<?> layoutAttractionMultiplierSpinner;
 
     @FXML
     private MenuBar menuBar;
@@ -160,8 +157,6 @@ public class View {
     private MenuItem AboutMenuItem;
 
     // getter and setter Methods. More have to be implemented if needed
-    public VBox getLeftVBox() { return leftVBox;}
-
     public MenuItem getOpenFileMenuItem() {
         return openFileMenuItem;
     }
@@ -226,6 +221,22 @@ public class View {
     public void setInnerViewObjects(Group innerViewObjects) { this.innerViewObjects = viewObjects;}
 
     public MenuItem getLayoutSettingsMenuItem(){ return layoutSettingsMenuItem;}
+
+    public void setLayoutRepulsionMultiplierSpinner(double repulsionMultiplier) {
+        SpinnerValueFactory svf = new SpinnerValueFactory.DoubleSpinnerValueFactory(0.01,10.0,repulsionMultiplier);
+        layoutRepulsionMultiplierSpinner.setValueFactory(svf);
+    }
+
+    public double getLayoutRepulsionMultiplierSpinner(){ return Double.parseDouble(layoutRepulsionMultiplierSpinner.getValueFactory().getValue().toString());}
+
+    public void setLayoutAttractionMultiplierSpinner(double attractionMultiplier) {
+        SpinnerValueFactory svf = new SpinnerValueFactory.DoubleSpinnerValueFactory(0.01,10,attractionMultiplier);
+        layoutAttractionMultiplierSpinner.setValueFactory(svf);
+    }
+
+    public double getLayoutAttractionMultiplierSpinner() {return Double.parseDouble(layoutAttractionMultiplierSpinner.getValueFactory().getValue().toString());}
+
+    public Button getLayoutApplyButton() { return layoutApplyButton;}
 
     public void setScaleProperty(double scale){ innerViewObjects.setScaleX(scale); }
 

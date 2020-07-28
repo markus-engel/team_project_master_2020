@@ -36,7 +36,7 @@ public class CoverageParser {
 
                 // Comparing the IDs of the vertices to the contig ID in this line of the file
                 for (MyVertex v : graph.getVertices()) {
-                    if (v.getIDprop().equals(conID)) {
+                    if (v.getID().equals(conID)) {
                         v.addProperty(ContigProperty.COVERAGE, coverage);
                     }
                 }
