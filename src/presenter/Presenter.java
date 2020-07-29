@@ -234,6 +234,15 @@ public class Presenter {
             }
         });
 
+        view.getColoringDefaultRadioButton().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                for (MyVertex v : model.getGraph().getVertices()){
+                    viewVertices.get(v.getID()).getCircle().setFill(Color.CORAL);
+                }
+            }
+        });
+
         view.getLayoutApplyButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
