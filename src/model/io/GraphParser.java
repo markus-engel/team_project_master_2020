@@ -55,7 +55,7 @@ public class GraphParser {
                         if (v.getID().equals(ID)) {
                             v.setSequenceprop(new SimpleStringProperty(sequence));
                             v.addProperty(ContigProperty.GC, finalGC);
-                            v.addProperty(ContigProperty.LENGTH, sequence.length());
+                            v.addProperty(ContigProperty.LENGTH, (double) sequence.length());
                         }
                     }
                 }
@@ -64,7 +64,7 @@ public class GraphParser {
                 else {
                     MyVertex newVertex = new MyVertex(new SimpleStringProperty(ID), new SimpleStringProperty(sequence));
                     newVertex.addProperty(ContigProperty.GC, finalGC);
-                    newVertex.addProperty(ContigProperty.LENGTH, sequence.length());
+                    newVertex.addProperty(ContigProperty.LENGTH, (double) sequence.length());
                     graph.addVertex(newVertex);
                     vertices.put(ID, newVertex);
                 }

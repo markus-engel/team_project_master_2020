@@ -16,6 +16,8 @@ import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
@@ -114,6 +116,7 @@ public class Presenter {
                 if (f != null) try {
                     model.parseTaxId(f.getAbsolutePath());
                     view.setTaxaCountTextField("Taxa: " + model.getTaxaCount());
+                    view.getColoringTaxonomyRadioButton().setDisable(false);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -128,6 +131,7 @@ public class Presenter {
                 if (f != null) try {
                     model.parseCoverage(f.getAbsolutePath());
                     view.getCoverageGCMenu().setDisable(false);
+                    view.getNodeSizeCoverageRadioButton().setDisable(false);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -249,6 +253,15 @@ public class Presenter {
             }
         });
 
+        view.getColoringDefaultRadioButton().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                for (MyVertex v : model.getGraph().getVertices()){
+                    viewVertices.get(v.getID()).getCircle().setFill(Color.CORAL);
+                }
+            }
+        });
+
         view.getLayoutApplyButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -270,6 +283,61 @@ public class Presenter {
                 Thread layoutApplyThread = new Thread(layoutApplyTask);
                 layoutApplyThread.setDaemon(true);
                 layoutApplyThread.start();
+            }
+        });
+
+        view.getNodeSizeCoverageRadioButton().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                for (ViewVertex vv : viewVertices.values()) {
+                    for (MyVertex v : model.getGraph().getVertices()) {
+                        if (vv.getID().equals(v.getID())) {
+                            double coverage = (double) v.getProperty(ContigProperty.COVERAGE);
+                            vv.setSize(Math.log(2 * coverage));
+                        }
+                    }
+                }
+                view.getNodeSizeManualSlider().setValue(5);
+                view.getNodeSizeManualSlider().setDisable(true);
+            }
+        });
+        view.getNodeSizeContigLengthRadioButton().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                for (ViewVertex vv : viewVertices.values()) {
+                    for (MyVertex v : model.getGraph().getVertices()) {
+                        if (vv.getID().equals(v.getID())) {
+                            double contigLength = (double) v.getProperty(ContigProperty.LENGTH);
+                            vv.setSize(Math.log(contigLength / 1000.0));
+                        }
+                    }
+                }
+                view.getNodeSizeManualSlider().setValue(5);
+                view.getNodeSizeManualSlider().setDisable(true);
+            }
+        });
+        view.getNodeSizeDefaultRadioButton().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                for (ViewVertex vv : viewVertices.values()) {
+                    vv.setSize(5);
+                }
+                view.getNodeSizeManualSlider().setValue(5);
+                view.getNodeSizeManualSlider().setDisable(true);
+            }
+        });
+        view.getNodeSizeManualRadioButton().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                view.getNodeSizeManualSlider().setDisable(false);
+            }
+        });
+        view.getNodeSizeManualSlider().setOnMouseReleased(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                for (ViewVertex vv : viewVertices.values()) {
+                    vv.setSize(view.getNodeSizeManualSlider().getValue());
+                }
             }
         });
     }

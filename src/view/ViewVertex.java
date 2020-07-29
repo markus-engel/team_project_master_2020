@@ -44,10 +44,18 @@ public class ViewVertex extends Group {
         return ID;
     }
 
-    public void animate(double shiftX, double shiftY){
-        TranslateTransition tt = new TranslateTransition(Duration.millis(2000),circle);
+    public void animate(double shiftX, double shiftY) {
+        TranslateTransition tt = new TranslateTransition(Duration.millis(2000), circle);
         tt.setToX(shiftX);
         tt.setToY(shiftY);
         tt.play();
+    }
+
+    public double getSize() {
+        return circle.getRadius();
+    }
+
+    public void setSize(double size) {
+        this.circle.setRadius(size);
     }
 }
