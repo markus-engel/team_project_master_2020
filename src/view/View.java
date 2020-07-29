@@ -1,12 +1,15 @@
 package view;
 
+import javafx.beans.Observable;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -240,11 +243,17 @@ public class View {
 
     public Group getViewObjects(){ return viewObjects;}
 
+    public Group getViewObjectsSele(){ return viewObjectsSele;}
+
     public Group getInnerViewObjects() { return innerViewObjects;}
+
+    public Group getInnerViewObjectsSele() { return innerViewObjectsSele;}
 
     public ProgressIndicator getProgressIndicator(){ return progressIndicator;}
 
     public void setInnerViewObjects(Group innerViewObjects) { this.innerViewObjects = viewObjects;}
+
+    public void setInnerViewObjectsSele(Group innerViewObjectsSele) { this.innerViewObjectsSele = viewObjectsSele;}
 
     public MenuItem getLayoutSettingsMenuItem(){ return layoutSettingsMenuItem;}
 
@@ -268,12 +277,21 @@ public class View {
 
     public double getScaleProperty(){ return innerViewObjects.getScaleX();}
 
+    /*
     public void addVertex(ViewVertex vv) {
-         innerViewObjects.getChildren().add(vv);
+        innerViewObjects.getChildren().add(vv);
     }
 
     public void addEdge(ViewEdge viewEdge) {
         innerViewObjects.getChildren().add(viewEdge);
+    } */
+
+    public void addVertex(ViewVertex vv, ObservableList observableList) {
+         observableList.add(vv);
+    }
+
+    public void addEdge(ViewEdge viewEdge, ObservableList observableList) {
+        observableList.add(viewEdge);
     }
 
     public ScrollPane getScrollPane(){ return scrollPane;}

@@ -2,6 +2,7 @@
 package presenter;
 
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
@@ -83,7 +84,7 @@ public class Presenter {
                         }
                     };
                     parseGraphTask.setOnSucceeded(e -> {
-                        visualizeGraph(model.getGraph());
+                        visualizeGraph(model.getGraph(), view.getInnerViewObjects().getChildren());
                         view.getScrollPane().setDisable(false);
                         view.makeScrollPaneZoomable(view.getScrollPane());
                         view.getImportTaxonomyMenuItem().setDisable(false);
@@ -218,7 +219,7 @@ public class Presenter {
                 if (view.getTabSelection().isSelected()) {
                     System.out.println("Selection tab recognized");
                     model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), seleGraph);
-                    visualizeGraph(seleGraph);
+                    visualizeGraph(seleGraph, view.getInnerViewObjectsSele().getChildren());
                     view.getScrollPaneSele().setDisable(false);
                     view.makeScrollPaneZoomable(view.getScrollPaneSele());
                 }
@@ -273,12 +274,12 @@ public class Presenter {
         });
     }
 
-    private void visualizeGraph(UndirectedSparseGraph<MyVertex,MyEdge> currentGraph) {
+    private void visualizeGraph(UndirectedSparseGraph<MyVertex,MyEdge> currentGraph, ObservableList observableList) {
         // add view vertices
         for (MyVertex v1 : currentGraph.getVertices()) {
             // Save v1 in collection to check, it has already been created to avoid redundancies in loop below?
             ViewVertex vv = new ViewVertex(v1.getID(), 5, v1.getX(), v1.getY());
-            view.addVertex(vv);
+            view.addVertex(vv, observableList);
             viewVertices.put(v1.getID(), vv);
             makeDraggable(vv);
             chooseSelectionGraph(vv);
@@ -287,7 +288,7 @@ public class Presenter {
         // add view edges
         for (MyEdge edge : model.getGraph().getEdges()) {
             ViewEdge ve = new ViewEdge(viewVertices.get(edge.getFirst().getID()), viewVertices.get(edge.getSecond().getID()));
-            view.addEdge(ve);
+            view.addEdge(ve, observableList);
             ve.toBack();
         }
     }
@@ -322,6 +323,7 @@ public class Presenter {
         viewVertices = new HashMap<>();
     }
 
+    /*
     private void makeTooltip(ViewVertex viewVertex) {
         Tooltip tp = new Tooltip(viewVertex.getID());
         viewVertex.setOnMouseClicked(event -> {
@@ -332,10 +334,9 @@ public class Presenter {
                 tp.setShowDuration(Duration.seconds(1.0));
             }
         });
-    }
+    } */
 
     private void chooseSelectionGraph(ViewVertex viewVertex) {
-
         viewVertex.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
                 for(MyVertex v : model.getGraph().getVertices()) {
@@ -383,7 +384,7 @@ public class Presenter {
                     }
                 };
                 parseGraphTask.setOnSucceeded(e -> {
-                    visualizeGraph(model.getGraph());
+                    visualizeGraph(model.getGraph(), view.getInnerViewObjects().getChildren());
                     view.getScrollPane().setDisable(false);
                     view.makeScrollPaneZoomable(view.getScrollPane());
                 });

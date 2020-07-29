@@ -1,4 +1,4 @@
-package view;
+package previousWork;
 
 // Controller class for plot.fxml by Anna
 
@@ -9,6 +9,8 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.input.ScrollEvent;
+import view.ViewEdge;
+import view.ViewVertex;
 
 public class ViewSelection {
 

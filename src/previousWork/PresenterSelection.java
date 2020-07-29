@@ -1,10 +1,11 @@
-package presenter;
+package previousWork;
 
 // Presenter for Selection.fxml by Anna
 
 
 import model.Model;
-import view.ViewSelection;
+import presenter.Presenter;
+import previousWork.ViewSelection;
 import view.ViewVertex;
 
 import java.awt.*;
@@ -33,7 +34,7 @@ public class PresenterSelection extends Presenter {
         double shiftX = 0.0;
         double shiftY = 0.0;
         Dimension setDimension = new Dimension(MAX_WINDOW_DIMENSION.width,MAX_WINDOW_DIMENSION.height);
-        model.applyLayoutAndShiftCoords(seleGraph, setDimension, shiftX,shiftY);
+        //model.applyLayoutAndShiftCoords(seleGraph, setDimension, shiftX,shiftY);
 
         // visualization is missing
     }
