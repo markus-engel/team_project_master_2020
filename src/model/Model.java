@@ -23,6 +23,8 @@ public class Model {
     private TaxonomyTree taxonomyTree;
     private UndirectedSparseGraph<MyVertex, MyEdge> graph; //TODO: do we need this? it's already in graphProperty (Caner)
     private ObjectProperty<UndirectedSparseGraph<MyVertex, MyEdge>> graphProperty = new SimpleObjectProperty<>();
+    private double lowestCoverage, highestCoverage;
+    private double smallestContigLength, largestContigLength;
     TreeSet<Integer> taxa = new TreeSet(); //TODO: define the type <T> (Caner)
     private double repulsionMultiplier;
     private double attractionMultiplier;
@@ -62,6 +64,16 @@ public class Model {
     // create needed objects of the IO classes to use them in presenter
     public void parseGraph(String path) throws IOException {
         this.graph = GraphParser.readFile(path);
+        double smallestContigLength = Double.MAX_VALUE;
+        double largestContigLength = Double.MIN_VALUE;
+        for (MyVertex v : graph.getVertices()) {
+            double contigLength = (double) v.getProperty(ContigProperty.LENGTH);
+            if (contigLength < smallestContigLength)
+                smallestContigLength = contigLength;
+            else if (contigLength > largestContigLength)
+                largestContigLength = contigLength;
+        }
+        setContigLengthRange(smallestContigLength, largestContigLength);
     }
 
     private SortedSet<Set<MyVertex>> clusterVertices(){
@@ -150,16 +162,60 @@ public class Model {
         return taxa;
     }
 
-    public void setAttractionMultiplier(double attractionMultiplier) { this.attractionMultiplier = attractionMultiplier;}
+    public void setAttractionMultiplier(double attractionMultiplier) {
+        this.attractionMultiplier = attractionMultiplier;
+    }
 
-    public double getAttractionMultiplier() {return attractionMultiplier;}
+    public double getAttractionMultiplier() {
+        return attractionMultiplier;
+    }
 
-    public void setRepulsionMultiplier(double repulsionMultiplier) { this.repulsionMultiplier = repulsionMultiplier;}
+    public void setRepulsionMultiplier(double repulsionMultiplier) {
+        this.repulsionMultiplier = repulsionMultiplier;
+    }
 
-    public double getRepulsionMultiplier() {return repulsionMultiplier;}
+    public double getRepulsionMultiplier() {
+        return repulsionMultiplier;
+    }
+
+    public void setCoverageRange(double lowerLimit, double upperLimit) {
+        lowestCoverage = lowerLimit;
+        highestCoverage = upperLimit;
+    }
+
+    public void setContigLengthRange(double lowerLimit, double upperLimit) {
+        smallestContigLength = lowerLimit;
+        largestContigLength = upperLimit;
+    }
+
+    public double getLowestCoverage() {
+        return lowestCoverage;
+    }
+
+    public double getHighestCoverage() {
+        return highestCoverage;
+    }
+
+    public double getSmallestContigLength() {
+        return smallestContigLength;
+    }
+
+    public double getLargestContigLength() {
+        return largestContigLength;
+    }
 
     public void parseCoverage(String path) throws IOException {
         new CoverageParser(graph, path);
+        double lowestCoverage = Double.MAX_VALUE;
+        double highestCoverage = Double.MIN_VALUE;
+        for (MyVertex v : graph.getVertices()) {
+            double coverage = (double) v.getProperty(ContigProperty.COVERAGE);
+            if (coverage < lowestCoverage)
+                lowestCoverage = coverage;
+            else if (coverage > highestCoverage)
+                highestCoverage = coverage;
+        }
+        setCoverageRange(lowestCoverage, highestCoverage);
     }
 
     private UndirectedSparseGraph<MyVertex, MyEdge> createAuxiliaryGraph(Set<MyVertex> vertices) {

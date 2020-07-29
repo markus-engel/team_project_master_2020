@@ -231,6 +231,30 @@ public class View {
         return coloringDefaultRadioButton;
     }
 
+    public ChoiceBox<?> getColoringTaxonomyChoiceBox() {
+        return coloringTaxonomyChoiceBox;
+    }
+
+    public void setColoringTaxonomyChoiceBox(ChoiceBox<?> coloringTaxonomyChoiceBox) {
+        this.coloringTaxonomyChoiceBox = coloringTaxonomyChoiceBox;
+    }
+
+    public RadioButton getColoringCoverageRadioButton() {
+        return coloringCoverageRadioButton;
+    }
+
+    public void setColoringCoverageRadioButton(RadioButton coloringCoverageRadioButton) {
+        this.coloringCoverageRadioButton = coloringCoverageRadioButton;
+    }
+
+    public RadioButton getColoringGCcontentRadioButton() {
+        return coloringGCcontentRadioButton;
+    }
+
+    public void setColoringGCcontentRadioButton(RadioButton coloringGCcontentRadioButton) {
+        this.coloringGCcontentRadioButton = coloringGCcontentRadioButton;
+    }
+
     public TextField getSequenceCountTextField() {
         return sequenceCountTextField;
     }

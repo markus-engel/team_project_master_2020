@@ -16,7 +16,6 @@ import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.WritableImage;
-import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -35,7 +34,6 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 public class Presenter {
@@ -115,6 +113,7 @@ public class Presenter {
                     model.parseTaxId(f.getAbsolutePath());
                     view.setTaxaCountTextField("Taxa: " + model.getTaxaCount());
                     view.getColoringTaxonomyRadioButton().setDisable(false);
+                    view.getColoringTaxonomyChoiceBox().setDisable(false);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -130,6 +129,7 @@ public class Presenter {
                     model.parseCoverage(f.getAbsolutePath());
                     view.getCoverageGCMenu().setDisable(false);
                     view.getNodeSizeCoverageRadioButton().setDisable(false);
+                    view.getColoringCoverageRadioButton().setDisable(false);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -288,53 +288,51 @@ public class Presenter {
         view.getNodeSizeCoverageRadioButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                for (ViewVertex vv : viewVertices.values()) {
+                if (!viewVertices.isEmpty()) {
+                    double lowestCoverage = model.getLowestCoverage();
+                    double highestCoverage = model.getHighestCoverage();
+                    double range = highestCoverage - lowestCoverage;
                     for (MyVertex v : model.getGraph().getVertices()) {
-                        if (vv.getID().equals(v.getID())) {
-                            double coverage = (double) v.getProperty(ContigProperty.COVERAGE);
-                            vv.setSize(Math.log(2 * coverage));
-                        }
+                        ViewVertex vv = viewVertices.get(v.getID());
+                        double relativeCoverage = ((double) v.getProperty(ContigProperty.COVERAGE) - lowestCoverage) / range;
+                        vv.setSize(2 + (6 * relativeCoverage));
+                        //vv.setSize(Math.log(2 * coverage));
                     }
+                    view.getNodeSizeManualSlider().setValue(5);
                 }
-                view.getNodeSizeManualSlider().setValue(5);
-                view.getNodeSizeManualSlider().setDisable(true);
             }
         });
         view.getNodeSizeContigLengthRadioButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                for (ViewVertex vv : viewVertices.values()) {
+                if (!viewVertices.isEmpty()) {
+                    double smallestContigLength = model.getSmallestContigLength();
+                    double largestContigLength = model.getLargestContigLength();
+                    double range = largestContigLength - smallestContigLength;
                     for (MyVertex v : model.getGraph().getVertices()) {
-                        if (vv.getID().equals(v.getID())) {
-                            double contigLength = (double) v.getProperty(ContigProperty.LENGTH);
-                            vv.setSize(Math.log(contigLength / 1000.0));
-                        }
+                        ViewVertex vv = viewVertices.get(v.getID());
+                        double relativeContigLength = ((double) v.getProperty(ContigProperty.LENGTH) - smallestContigLength) / range;
+                        vv.setSize(2 + (6 * relativeContigLength));
+                        //vv.setSize(Math.log(contigLength / 1000.0));
                     }
+                    view.getNodeSizeManualSlider().setValue(5);
                 }
-                view.getNodeSizeManualSlider().setValue(5);
-                view.getNodeSizeManualSlider().setDisable(true);
             }
         });
         view.getNodeSizeDefaultRadioButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                for (ViewVertex vv : viewVertices.values()) {
+                if (!viewVertices.isEmpty()) for (ViewVertex vv : viewVertices.values()) {
                     vv.setSize(5);
                 }
                 view.getNodeSizeManualSlider().setValue(5);
-                view.getNodeSizeManualSlider().setDisable(true);
             }
         });
-        view.getNodeSizeManualRadioButton().setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                view.getNodeSizeManualSlider().setDisable(false);
-            }
-        });
+        view.getNodeSizeManualSlider().disableProperty().bind(view.getNodeSizeManualRadioButton().selectedProperty().not());
         view.getNodeSizeManualSlider().setOnMouseReleased(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                for (ViewVertex vv : viewVertices.values()) {
+                if (!viewVertices.isEmpty()) for (ViewVertex vv : viewVertices.values()) {
                     vv.setSize(view.getNodeSizeManualSlider().getValue());
                 }
             }
