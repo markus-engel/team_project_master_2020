@@ -73,6 +73,9 @@ public class View {
     private RadioButton coloringGCcontentRadioButton;
 
     @FXML
+    private RadioButton coloringDefaultRadioButton;
+
+    @FXML
     private RadioButton coloringTaxonomyRadioButton;
 
     @FXML
@@ -184,6 +187,10 @@ public class View {
 
     public RadioButton getColoringTaxonomyRadioButton() {
         return coloringTaxonomyRadioButton;
+    }
+
+    public RadioButton getColoringDefaultRadioButton() {
+        return coloringDefaultRadioButton;
     }
 
     public TextField getSequenceCountTextField() {
