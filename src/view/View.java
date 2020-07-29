@@ -17,8 +17,13 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+
+import java.net.URL;
+import java.util.ResourceBundle;
 
 public class View {
 
@@ -56,10 +61,10 @@ public class View {
     private Group innerViewObjectsSele;
 
     @FXML
-    private TextField SequenceCountTextField;
+    private TextField sequenceCountTextField;
 
     @FXML
-    private TextField OverlapCountTextField;
+    private TextField overlapCountTextField;
 
     @FXML
     private TextField taxaCountTextfield;
@@ -227,7 +232,7 @@ public class View {
     }
 
     public TextField getSequenceCountTextField() {
-        return SequenceCountTextField;
+        return sequenceCountTextField;
     }
 
     public RadioButton getNodeSizeManualRadioButton() {
@@ -256,16 +261,15 @@ public class View {
 
     // Number of Vertices
     public void setSequenceCountTextField(int sequenceCount) {
-        SequenceCountTextField.setText("Sequences: " + sequenceCount);
+        sequenceCountTextField.setText("Sequences: " + sequenceCount);
     }
-
     public TextField getOverlapCountTextField() {
-        return OverlapCountTextField;
+        return overlapCountTextField;
     }
 
     // Number of Edges
     public void setOverlapCountTextField(int overlapCount) {
-        OverlapCountTextField.setText("Overlaps: " + overlapCount);
+        overlapCountTextField.setText("Overlaps: " + overlapCount);
     }
 
     public Group getViewObjects(){ return viewObjects;}
@@ -284,17 +288,7 @@ public class View {
 
     public MenuItem getLayoutSettingsMenuItem(){ return layoutSettingsMenuItem;}
 
-    public void setLayoutRepulsionMultiplierSpinner(double repulsionMultiplier) {
-        SpinnerValueFactory svf = new SpinnerValueFactory.DoubleSpinnerValueFactory(0.01,10.0,repulsionMultiplier);
-        layoutRepulsionMultiplierSpinner.setValueFactory(svf);
-    }
-
     public double getLayoutRepulsionMultiplierSpinner(){ return Double.parseDouble(layoutRepulsionMultiplierSpinner.getValueFactory().getValue().toString());}
-
-    public void setLayoutAttractionMultiplierSpinner(double attractionMultiplier) {
-        SpinnerValueFactory svf = new SpinnerValueFactory.DoubleSpinnerValueFactory(0.01,10,attractionMultiplier);
-        layoutAttractionMultiplierSpinner.setValueFactory(svf);
-    }
 
     public double getLayoutAttractionMultiplierSpinner() {return Double.parseDouble(layoutAttractionMultiplierSpinner.getValueFactory().getValue().toString());}
 
@@ -306,7 +300,7 @@ public class View {
 
     /*
     public void addVertex(ViewVertex vv) {
-        innerViewObjects.getChildren().add(vv);
+         innerViewObjects.getChildren().add(vv);
     }
 
     public void addEdge(ViewEdge viewEdge) {

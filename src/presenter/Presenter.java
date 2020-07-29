@@ -42,7 +42,7 @@ public class Presenter {
     Model model;
     View view;
     Map<String, ViewVertex> viewVertices = new HashMap<>();  //Hashmap of view vertex objects
-    public final Dimension MAX_WINDOW_DIMENSION = new Dimension(1000, 679); //gets passed to model to center layouts, gets passed to view to control size of window
+    public final Dimension MAX_WINDOW_DIMENSION = new Dimension(775, 500); //gets passed to model to center layouts, gets passed to view to control size of window
     UndirectedSparseGraph<MyVertex,MyEdge> seleGraph = new UndirectedSparseGraph<>();
 
     public Presenter(Model model, View view) {
@@ -92,8 +92,6 @@ public class Presenter {
                         view.getImportTaxonomyMenuItem().setDisable(false);
                         view.getImportCoverageMenuItem().setDisable(false);
                         view.getCustomizeMenuItem().setDisable(false);
-                        view.setLayoutRepulsionMultiplierSpinner(model.getRepulsionMultiplier());
-                        view.setLayoutAttractionMultiplierSpinner(model.getAttractionMultiplier());
                         MenuItem recentFile = new MenuItem(f.getAbsolutePath());
                         if (!view.getOpenRecentFileMenu().getItems().contains(recentFile)){
                             setOpenRecentFileEventHandler(recentFile);
@@ -273,9 +271,10 @@ public class Presenter {
                         model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), model.getGraph());
                         for (MyVertex mv : model.getGraph().getVertices()) {
                             ViewVertex vv = viewVertices.get(mv.getID());
-                            //vv.animate(mv.getX(),mv.getY());
+                            vv.animate(mv.getX(),mv.getY());
                             vv.setTranslateX(mv.getX());
                             vv.setTranslateY(mv.getY());
+                            System.out.println(vv.getTranslateX() + " " + vv.getTranslateY());
                         }
                         return null;
                     }
