@@ -2,9 +2,11 @@
 package presenter;
 
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
@@ -14,7 +16,6 @@ import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.WritableImage;
-import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -33,14 +34,13 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 public class Presenter {
     Model model;
     View view;
     Map<String, ViewVertex> viewVertices = new HashMap<>();  //Hashmap of view vertex objects
-    public final Dimension MAX_WINDOW_DIMENSION = new Dimension(1000, 679); //gets passed to model to center layouts, gets passed to view to control size of window
+    public final Dimension MAX_WINDOW_DIMENSION = new Dimension(775, 500); //gets passed to model to center layouts, gets passed to view to control size of window
     UndirectedSparseGraph<MyVertex,MyEdge> seleGraph = new UndirectedSparseGraph<>();
 
     public Presenter(Model model, View view) {
@@ -78,20 +78,18 @@ public class Presenter {
                         @Override
                         protected Void call() throws Exception {
                             model.parseGraph(f.getAbsolutePath());
-                            model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height));
+                            model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), model.getGraph());
                             view.getProgressIndicator().setVisible(false);
                             return null;
                         }
                     };
                     parseGraphTask.setOnSucceeded(e -> {
-                        visualizeGraph();
+                        visualizeGraph(model.getGraph(), view.getInnerViewObjects().getChildren());
                         view.getScrollPane().setDisable(false);
-                        view.makeScrollPaneZoomable();
+                        view.makeScrollPaneZoomable(view.getScrollPane());
                         view.getImportTaxonomyMenuItem().setDisable(false);
                         view.getImportCoverageMenuItem().setDisable(false);
                         view.getCustomizeMenuItem().setDisable(false);
-                        view.setLayoutRepulsionMultiplierSpinner(model.getRepulsionMultiplier());
-                        view.setLayoutAttractionMultiplierSpinner(model.getAttractionMultiplier());
                         MenuItem recentFile = new MenuItem(f.getAbsolutePath());
                         if (!view.getOpenRecentFileMenu().getItems().contains(recentFile)){
                             setOpenRecentFileEventHandler(recentFile);
@@ -115,6 +113,7 @@ public class Presenter {
                     model.parseTaxId(f.getAbsolutePath());
                     view.setTaxaCountTextField("Taxa: " + model.getTaxaCount());
                     view.getColoringTaxonomyRadioButton().setDisable(false);
+                    view.getColoringTaxonomyChoiceBox().setDisable(false);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -130,6 +129,7 @@ public class Presenter {
                     model.parseCoverage(f.getAbsolutePath());
                     view.getCoverageGCMenu().setDisable(false);
                     view.getNodeSizeCoverageRadioButton().setDisable(false);
+                    view.getColoringCoverageRadioButton().setDisable(false);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -164,6 +164,7 @@ public class Presenter {
         });
 
         //TODO: does this actually work? :) (Caner)
+        // for me it does (Anna)
         view.getCloseMenuItem().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -195,6 +196,7 @@ public class Presenter {
             }
         });
 
+        /*
         view.getSelectionMenuItem().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -211,7 +213,22 @@ public class Presenter {
                     e.printStackTrace();
                 }
             }
+        }); */
+
+        view.getTabSelection().setOnSelectionChanged(new EventHandler<Event>() {
+            @Override
+            public void handle(Event event) {
+                if (view.getTabSelection().isSelected()) {
+                    System.out.println("Selection tab recognized");
+                    model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), seleGraph);
+                    visualizeGraph(seleGraph, view.getInnerViewObjectsSele().getChildren());
+                    view.getScrollPaneSele().setDisable(false);
+                    view.makeScrollPaneZoomable(view.getScrollPaneSele());
+                }
+            }
         });
+
+
 
         view.getColoringTaxonomyRadioButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -251,16 +268,16 @@ public class Presenter {
                     protected Void call() {
                         model.setRepulsionMultiplier(view.getLayoutRepulsionMultiplierSpinner());
                         model.setAttractionMultiplier(view.getLayoutAttractionMultiplierSpinner());
-                        model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height));
-                        for (MyVertex mv : model.getGraph().getVertices()) {
-                            ViewVertex vv = viewVertices.get(mv.getID());
-                            //vv.animate(mv.getX(),mv.getY());
-                            vv.setTranslateX(mv.getX());
-                            vv.setTranslateY(mv.getY());
-                        }
+                        model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), model.getGraph());
                         return null;
                     }
                 };
+                layoutApplyTask.setOnSucceeded(e ->{
+                    for (MyVertex mv : model.getGraph().getVertices()) {
+                        ViewVertex vv = viewVertices.get(mv.getID());
+                        vv.animate(mv.getX(),mv.getY());
+                    }
+                });
                 Thread layoutApplyThread = new Thread(layoutApplyTask);
                 layoutApplyThread.setDaemon(true);
                 layoutApplyThread.start();
@@ -270,65 +287,63 @@ public class Presenter {
         view.getNodeSizeCoverageRadioButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                for (ViewVertex vv : viewVertices.values()) {
+                if (!viewVertices.isEmpty()) {
+                    double lowestCoverage = model.getLowestCoverage();
+                    double highestCoverage = model.getHighestCoverage();
+                    double range = highestCoverage - lowestCoverage;
                     for (MyVertex v : model.getGraph().getVertices()) {
-                        if (vv.getID().equals(v.getID())) {
-                            double coverage = (double) v.getProperty(ContigProperty.COVERAGE);
-                            vv.setSize(Math.log(2 * coverage));
-                        }
+                        ViewVertex vv = viewVertices.get(v.getID());
+                        double relativeCoverage = ((double) v.getProperty(ContigProperty.COVERAGE) - lowestCoverage) / range;
+                        vv.setSize(2 + (6 * relativeCoverage));
+                        //vv.setSize(Math.log(2 * coverage));
                     }
+                    view.getNodeSizeManualSlider().setValue(5);
                 }
-                view.getNodeSizeManualSlider().setValue(5);
-                view.getNodeSizeManualSlider().setDisable(true);
             }
         });
         view.getNodeSizeContigLengthRadioButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                for (ViewVertex vv : viewVertices.values()) {
+                if (!viewVertices.isEmpty()) {
+                    double smallestContigLength = model.getSmallestContigLength();
+                    double largestContigLength = model.getLargestContigLength();
+                    double range = largestContigLength - smallestContigLength;
                     for (MyVertex v : model.getGraph().getVertices()) {
-                        if (vv.getID().equals(v.getID())) {
-                            double contigLength = (double) v.getProperty(ContigProperty.LENGTH);
-                            vv.setSize(Math.log(contigLength / 1000.0));
-                        }
+                        ViewVertex vv = viewVertices.get(v.getID());
+                        double relativeContigLength = ((double) v.getProperty(ContigProperty.LENGTH) - smallestContigLength) / range;
+                        vv.setSize(2 + (6 * relativeContigLength));
+                        //vv.setSize(Math.log(contigLength / 1000.0));
                     }
+                    view.getNodeSizeManualSlider().setValue(5);
                 }
-                view.getNodeSizeManualSlider().setValue(5);
-                view.getNodeSizeManualSlider().setDisable(true);
             }
         });
         view.getNodeSizeDefaultRadioButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                for (ViewVertex vv : viewVertices.values()) {
+                if (!viewVertices.isEmpty()) for (ViewVertex vv : viewVertices.values()) {
                     vv.setSize(5);
                 }
                 view.getNodeSizeManualSlider().setValue(5);
-                view.getNodeSizeManualSlider().setDisable(true);
             }
         });
-        view.getNodeSizeManualRadioButton().setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                view.getNodeSizeManualSlider().setDisable(false);
-            }
-        });
+        view.getNodeSizeManualSlider().disableProperty().bind(view.getNodeSizeManualRadioButton().selectedProperty().not());
         view.getNodeSizeManualSlider().setOnMouseReleased(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                for (ViewVertex vv : viewVertices.values()) {
+                if (!viewVertices.isEmpty()) for (ViewVertex vv : viewVertices.values()) {
                     vv.setSize(view.getNodeSizeManualSlider().getValue());
                 }
             }
         });
     }
 
-    private void visualizeGraph() {
+    private void visualizeGraph(UndirectedSparseGraph<MyVertex,MyEdge> currentGraph, ObservableList observableList) {
         // add view vertices
-        for (MyVertex v1 : model.getGraph().getVertices()) {
+        for (MyVertex v1 : currentGraph.getVertices()) {
             // Save v1 in collection to check, it has already been created to avoid redundancies in loop below?
             ViewVertex vv = new ViewVertex(v1.getID(), 5, v1.getX(), v1.getY());
-            view.addVertex(vv);
+            view.addVertex(vv, observableList);
             viewVertices.put(v1.getID(), vv);
             makeDraggable(vv);
             chooseSelectionGraph(vv);
@@ -337,7 +352,7 @@ public class Presenter {
         // add view edges
         for (MyEdge edge : model.getGraph().getEdges()) {
             ViewEdge ve = new ViewEdge(viewVertices.get(edge.getFirst().getID()), viewVertices.get(edge.getSecond().getID()));
-            view.addEdge(ve);
+            view.addEdge(ve, observableList);
             ve.toBack();
         }
     }
@@ -372,6 +387,7 @@ public class Presenter {
         viewVertices = new HashMap<>();
     }
 
+    /*
     private void makeTooltip(ViewVertex viewVertex) {
         Tooltip tp = new Tooltip(viewVertex.getID());
         viewVertex.setOnMouseClicked(event -> {
@@ -382,10 +398,9 @@ public class Presenter {
                 tp.setShowDuration(Duration.seconds(1.0));
             }
         });
-    }
+    } */
 
     private void chooseSelectionGraph(ViewVertex viewVertex) {
-
         viewVertex.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
                 for(MyVertex v : model.getGraph().getVertices()) {
@@ -428,14 +443,14 @@ public class Presenter {
                     protected Void call() throws Exception {
                         model.parseGraph(menuItem.getText());
                         view.getProgressIndicator().setVisible(false);
-                        model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height));
+                        model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), model.getGraph());
                         return null;
                     }
                 };
                 parseGraphTask.setOnSucceeded(e -> {
-                    visualizeGraph();
+                    visualizeGraph(model.getGraph(), view.getInnerViewObjects().getChildren());
                     view.getScrollPane().setDisable(false);
-                    view.makeScrollPaneZoomable();
+                    view.makeScrollPaneZoomable(view.getScrollPane());
                 });
 
                 Thread parseGraphThread = new Thread(parseGraphTask);

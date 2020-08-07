@@ -1,8 +1,15 @@
 package view;
 
+import javafx.beans.Observable;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.Property;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -10,8 +17,13 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+
+import java.net.URL;
+import java.util.ResourceBundle;
 
 public class View {
 
@@ -25,10 +37,16 @@ public class View {
     private StackPane stackPane;
 
     @FXML
+    private StackPane stackPaneSele;
+
+    @FXML
     private ProgressIndicator progressIndicator;
 
     @FXML
     private ScrollPane scrollPane;
+
+    @FXML
+    private ScrollPane scrollPaneSele;
 
     @FXML
     private Group viewObjects;
@@ -37,13 +55,25 @@ public class View {
     private Group innerViewObjects;
 
     @FXML
-    private TextField SequenceCountTextField;
+    private Group viewObjectsSele;
 
     @FXML
-    private TextField OverlapCountTextField;
+    private Group innerViewObjectsSele;
+
+    @FXML
+    private TextField sequenceCountTextField;
+
+    @FXML
+    private TextField overlapCountTextField;
 
     @FXML
     private TextField taxaCountTextfield;
+
+    @FXML
+    private Tab tabSelection;
+
+    @FXML
+    private Tab tabMain;
 
     @FXML
     private TextField selectionTextfield;
@@ -159,6 +189,14 @@ public class View {
         return openRecentFileMenu;
     }
 
+    public Tab getTabSelection() {
+        return tabSelection;
+    }
+
+    public Tab getTabMain() {
+        return tabMain;
+    }
+
     public MenuItem getCustomizeMenuItem() {
         return layoutSettingsMenuItem;
     }
@@ -193,8 +231,32 @@ public class View {
         return coloringDefaultRadioButton;
     }
 
+    public ChoiceBox<?> getColoringTaxonomyChoiceBox() {
+        return coloringTaxonomyChoiceBox;
+    }
+
+    public void setColoringTaxonomyChoiceBox(ChoiceBox<?> coloringTaxonomyChoiceBox) {
+        this.coloringTaxonomyChoiceBox = coloringTaxonomyChoiceBox;
+    }
+
+    public RadioButton getColoringCoverageRadioButton() {
+        return coloringCoverageRadioButton;
+    }
+
+    public void setColoringCoverageRadioButton(RadioButton coloringCoverageRadioButton) {
+        this.coloringCoverageRadioButton = coloringCoverageRadioButton;
+    }
+
+    public RadioButton getColoringGCcontentRadioButton() {
+        return coloringGCcontentRadioButton;
+    }
+
+    public void setColoringGCcontentRadioButton(RadioButton coloringGCcontentRadioButton) {
+        this.coloringGCcontentRadioButton = coloringGCcontentRadioButton;
+    }
+
     public TextField getSequenceCountTextField() {
-        return SequenceCountTextField;
+        return sequenceCountTextField;
     }
 
     public RadioButton getNodeSizeManualRadioButton() {
@@ -223,39 +285,34 @@ public class View {
 
     // Number of Vertices
     public void setSequenceCountTextField(int sequenceCount) {
-        SequenceCountTextField.setText("Sequences: " + sequenceCount);
+        sequenceCountTextField.setText("Sequences: " + sequenceCount);
     }
-
     public TextField getOverlapCountTextField() {
-        return OverlapCountTextField;
+        return overlapCountTextField;
     }
 
     // Number of Edges
     public void setOverlapCountTextField(int overlapCount) {
-        OverlapCountTextField.setText("Overlaps: " + overlapCount);
+        overlapCountTextField.setText("Overlaps: " + overlapCount);
     }
 
     public Group getViewObjects(){ return viewObjects;}
 
+    public Group getViewObjectsSele(){ return viewObjectsSele;}
+
     public Group getInnerViewObjects() { return innerViewObjects;}
+
+    public Group getInnerViewObjectsSele() { return innerViewObjectsSele;}
 
     public ProgressIndicator getProgressIndicator(){ return progressIndicator;}
 
     public void setInnerViewObjects(Group innerViewObjects) { this.innerViewObjects = viewObjects;}
 
+    public void setInnerViewObjectsSele(Group innerViewObjectsSele) { this.innerViewObjectsSele = viewObjectsSele;}
+
     public MenuItem getLayoutSettingsMenuItem(){ return layoutSettingsMenuItem;}
 
-    public void setLayoutRepulsionMultiplierSpinner(double repulsionMultiplier) {
-        SpinnerValueFactory svf = new SpinnerValueFactory.DoubleSpinnerValueFactory(0.01,10.0,repulsionMultiplier);
-        layoutRepulsionMultiplierSpinner.setValueFactory(svf);
-    }
-
     public double getLayoutRepulsionMultiplierSpinner(){ return Double.parseDouble(layoutRepulsionMultiplierSpinner.getValueFactory().getValue().toString());}
-
-    public void setLayoutAttractionMultiplierSpinner(double attractionMultiplier) {
-        SpinnerValueFactory svf = new SpinnerValueFactory.DoubleSpinnerValueFactory(0.01,10,attractionMultiplier);
-        layoutAttractionMultiplierSpinner.setValueFactory(svf);
-    }
 
     public double getLayoutAttractionMultiplierSpinner() {return Double.parseDouble(layoutAttractionMultiplierSpinner.getValueFactory().getValue().toString());}
 
@@ -265,18 +322,29 @@ public class View {
 
     public double getScaleProperty(){ return innerViewObjects.getScaleX();}
 
+    /*
     public void addVertex(ViewVertex vv) {
          innerViewObjects.getChildren().add(vv);
     }
 
     public void addEdge(ViewEdge viewEdge) {
         innerViewObjects.getChildren().add(viewEdge);
+    } */
+
+    public void addVertex(ViewVertex vv, ObservableList observableList) {
+         observableList.add(vv);
+    }
+
+    public void addEdge(ViewEdge viewEdge, ObservableList observableList) {
+        observableList.add(viewEdge);
     }
 
     public ScrollPane getScrollPane(){ return scrollPane;}
 
-    public void makeScrollPaneZoomable() {
-        scrollPane.addEventFilter(ScrollEvent.ANY, new EventHandler<ScrollEvent>() {
+    public ScrollPane getScrollPaneSele(){ return scrollPaneSele;}
+
+    public void makeScrollPaneZoomable(ScrollPane sp) {
+        sp.addEventFilter(ScrollEvent.ANY, new EventHandler<ScrollEvent>() {
             @Override
             public void handle(ScrollEvent scrollEvent) {
                 if(scrollEvent.isControlDown()){ // wenn scrollen disabled werden soll, dann hier !scrollevent.isConsumed()
