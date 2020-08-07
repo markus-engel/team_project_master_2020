@@ -169,7 +169,7 @@
                               <Label layoutX="5.0" layoutY="55.0" text="Attraction multiplier:" />
                               <Label layoutX="5.0" layoutY="21.0" text="Repulsion multiplier:" />
                               <Button fx:id="layoutApplyButton" layoutX="74.0" layoutY="110.0" mnemonicParsing="false" text="Apply" />
-                              <Spinner fx:id="layoutRepulsionMultiplierSpinner" amountToStepBy="0.1" initialValue="0.1" layoutX="118.0" layoutY="16.0" max="10" min="0.0" prefHeight="27.0" prefWidth="79.0" />
+                              <Spinner fx:id="layoutRepulsionMultiplierSpinner" amountToStepBy="0.01" initialValue="0.1" layoutX="118.0" layoutY="16.0" max="10" min="0.0" prefHeight="27.0" prefWidth="79.0" />
                               <Spinner fx:id="layoutAttractionMultiplierSpinner" amountToStepBy="0.1" initialValue="1" layoutX="118.0" layoutY="50.0" max="10" min="0.0" prefHeight="27.0" prefWidth="79.0" />
                            </children>
                         </AnchorPane>

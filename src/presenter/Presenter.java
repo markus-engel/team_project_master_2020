@@ -269,16 +269,15 @@ public class Presenter {
                         model.setRepulsionMultiplier(view.getLayoutRepulsionMultiplierSpinner());
                         model.setAttractionMultiplier(view.getLayoutAttractionMultiplierSpinner());
                         model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), model.getGraph());
-                        for (MyVertex mv : model.getGraph().getVertices()) {
-                            ViewVertex vv = viewVertices.get(mv.getID());
-                            vv.animate(mv.getX(),mv.getY());
-                            vv.setTranslateX(mv.getX());
-                            vv.setTranslateY(mv.getY());
-                            System.out.println(vv.getTranslateX() + " " + vv.getTranslateY());
-                        }
                         return null;
                     }
                 };
+                layoutApplyTask.setOnSucceeded(e ->{
+                    for (MyVertex mv : model.getGraph().getVertices()) {
+                        ViewVertex vv = viewVertices.get(mv.getID());
+                        vv.animate(mv.getX(),mv.getY());
+                    }
+                });
                 Thread layoutApplyThread = new Thread(layoutApplyTask);
                 layoutApplyThread.setDaemon(true);
                 layoutApplyThread.start();
