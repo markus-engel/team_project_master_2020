@@ -21,7 +21,6 @@ import java.util.*;
 public class Model {
 
     private TaxonomyTree taxonomyTree;
-    private UndirectedSparseGraph<MyVertex, MyEdge> graph; //TODO: do we need this? it's already in graphProperty (Caner)
     private ObjectProperty<UndirectedSparseGraph<MyVertex, MyEdge>> graphProperty = new SimpleObjectProperty<>();
     private double lowestCoverage, highestCoverage;
     private double smallestContigLength, largestContigLength;
@@ -51,7 +50,7 @@ public class Model {
         graphProperty.addListener(new InvalidationListener() {
             @Override
             public void invalidated(Observable observable) {
-                graphProperty.setValue(graph);
+                graphProperty.setValue(graphProperty.get());
             }
         });
         repulsionMultiplier = 0.1;
@@ -63,10 +62,10 @@ public class Model {
 
     // create needed objects of the IO classes to use them in presenter
     public void parseGraph(String path) throws IOException {
-        this.graph = GraphParser.readFile(path);
+        this.graphProperty = new SimpleObjectProperty<>(GraphParser.readFile(path));
         double smallestContigLength = Double.MAX_VALUE;
         double largestContigLength = Double.MIN_VALUE;
-        for (MyVertex v : graph.getVertices()) {
+        for (MyVertex v : graphProperty.get().getVertices()) {
             double contigLength = (double) v.getProperty(ContigProperty.LENGTH);
             if (contigLength < smallestContigLength)
                 smallestContigLength = contigLength;
@@ -79,7 +78,7 @@ public class Model {
     private SortedSet<Set<MyVertex>> clusterVertices(){
         // Store connected components in a Set of Set of Vertices using the JUNG lib algorithm
         WeakComponentClusterer<MyVertex,MyEdge> weakComponentClusterer = new WeakComponentClusterer<>();
-        Set<Set<MyVertex>> cluster = weakComponentClusterer.apply(graph);
+        Set<Set<MyVertex>> cluster = weakComponentClusterer.apply(graphProperty.get());
         // The Comparator sorts the Set of Sets based on their size. In the SortedSet the sets with biggest size appear first
         Comparator<Set<MyVertex>> comparator = new Comparator<Set<MyVertex>>() {
             @Override
@@ -143,15 +142,15 @@ public class Model {
     }
 
     public UndirectedSparseGraph<MyVertex, MyEdge> getGraph() {
-        return graph;
+        return graphProperty.get();
     }
 
-    public void setGraph(UndirectedSparseGraph<MyVertex, MyEdge> graph) {
-        this.graph = graph;
+    public void setGraphProperty(UndirectedSparseGraph<MyVertex, MyEdge> graph) {
+        this.graphProperty = new SimpleObjectProperty<>(graph) ;
     }
 
     public void parseTaxId(String path) throws IOException {
-        new TaxIdParser(graph, path, taxonomyTree, taxa);
+        new TaxIdParser(graphProperty.get(), path, taxonomyTree, taxa);
     }
 
     public int getTaxaCount() {
@@ -205,10 +204,10 @@ public class Model {
     }
 
     public void parseCoverage(String path) throws IOException {
-        new CoverageParser(graph, path);
+        new CoverageParser(graphProperty.get(), path);
         double lowestCoverage = Double.MAX_VALUE;
         double highestCoverage = Double.MIN_VALUE;
-        for (MyVertex v : graph.getVertices()) {
+        for (MyVertex v : graphProperty.get().getVertices()) {
             double coverage = (double) v.getProperty(ContigProperty.COVERAGE);
             if (coverage < lowestCoverage)
                 lowestCoverage = coverage;
@@ -222,7 +221,7 @@ public class Model {
         UndirectedSparseGraph<MyVertex, MyEdge> auxGraph = new UndirectedSparseGraph<>();
         for (MyVertex v : vertices) {
             auxGraph.addVertex(v);
-            for (MyEdge edge : this.graph.getInEdges(v)) {
+            for (MyEdge edge : this.graphProperty.get().getInEdges(v)) {
                 auxGraph.addEdge(edge, edge.getVertices());
             }
         }
@@ -252,7 +251,7 @@ public class Model {
         for(MyVertex v: vertexSet){
             v.setConnectedComponent(vertexSet);
             auxGraph.addVertex(v);
-            for(MyEdge edge : this.graph.getInEdges(v)){
+            for(MyEdge edge : this.graphProperty.get().getInEdges(v)){
                 auxGraph.addEdge(edge, edge.getVertices());
             }
         }
@@ -261,8 +260,8 @@ public class Model {
 
     private int getLonelyVertexCount(){
         int count = 0;
-        for (MyVertex v : graph.getVertices()){
-            if (graph.getInEdges(v).isEmpty() || (graph.getNeighbors(v).contains(v) && graph.getNeighbors(v).size() == 1)){
+        for (MyVertex v : graphProperty.get().getVertices()){
+            if (graphProperty.get().getInEdges(v).isEmpty() || (graphProperty.get().getNeighbors(v).contains(v) && graphProperty.get().getNeighbors(v).size() == 1)){
                 count++;
             }
         }
