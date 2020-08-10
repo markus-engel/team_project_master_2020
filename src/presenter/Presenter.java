@@ -403,6 +403,7 @@ public class Presenter {
     private void chooseSelectionGraph(ViewVertex viewVertex) {
         viewVertex.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
+                viewVertex.setSelected();
                 for(MyVertex v : model.getGraph().getVertices()) {
                     if (v.getID().equals(viewVertex.getID())) {
                         if (!seleGraph.containsVertex(v)) {
