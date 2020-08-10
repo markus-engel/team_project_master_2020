@@ -22,6 +22,7 @@ public class ViewVertex extends Group {
 
     private StringProperty ID;
     private Circle circle;
+    private boolean selected;
 
     public ViewVertex(String ID, int size, double x, double y){
         this.ID = new SimpleStringProperty(ID);
@@ -29,6 +30,7 @@ public class ViewVertex extends Group {
         this.setTranslateX(x);
         this.setTranslateY(y);
         circle.setFill(Color.CORAL);
+        circle.setStroke(Color.CORAL);
         this.getChildren().add(circle);
     }
 
@@ -42,6 +44,17 @@ public class ViewVertex extends Group {
 
     public StringProperty getIDProperty() {
         return ID;
+    }
+    
+    public void setSelected(){
+        if (selected){
+            selected=false;
+            circle.setStroke(circle.getFill());
+        }
+        else{
+            selected=true;
+            circle.setStroke(Color.BLACK);
+        }
     }
 
     public void animate(double shiftX, double shiftY){
