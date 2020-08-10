@@ -43,7 +43,7 @@ public class ViewVertex extends Group {
         }
         else{
             selected=true;
-            circle.setStroke(Color.LAVENDER);
+            circle.setStroke(Color.BLACK);
         }
     }
 
@@ -57,7 +57,7 @@ public class ViewVertex extends Group {
 
     public void setColour(Paint paint){
         this.circle.setFill(paint);
-        //this.circle.setStroke(paint);
+        this.circle.setStroke(paint);
     }
 
     public StringProperty getIDProperty() {

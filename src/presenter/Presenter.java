@@ -41,7 +41,7 @@ public class Presenter {
     Model model;
     View view;
     Map<String, ViewVertex> viewVertices = new HashMap<>();  //Hashmap of view vertex objects
-    Map<String, ViewVertex> selectedViewVertices = new HashMap<>(); //Hashmap of selected View Vertices
+    Map<String, MyVertex> selectedMyVertices = new HashMap<>(); //Hashmap of selected Vertices
     public final Dimension MAX_WINDOW_DIMENSION = new Dimension(775, 500); //gets passed to model to center layouts, gets passed to view to control size of window
 
     //Do we need this? Maybe its enough to save the view vertices, and look up the IDs each time we need the Infos.
@@ -453,20 +453,26 @@ public class Presenter {
     }
 
     private void updateSelectionGraph(ViewVertex viewVertex) {
-        for (MyVertex v : model.getGraph().getVertices()) {
-            //is this first if necessary? the IDs are always the same..
-            if (!selectionGraphProperty.get().containsVertex(v)) {
-                System.out.println("addded test: " + viewVertex.getID());
-                selectionGraphProperty.get().addVertex(new MyVertex(v));
-                for (MyEdge edge : this.model.getGraph().getInEdges(v)) {
-                    selectionGraphProperty.get().addEdge(edge, edge.getVertices());
+        for (MyVertex originVertex : model.getGraph().getVertices()) {
+
+            if (originVertex.getID().equals(viewVertex.getID())) {
+
+                //returns true if vertex cannot be removed/is not in graph
+                if (selectedMyVertices.get(viewVertex.getID())==null){
+                    MyVertex vertex = new MyVertex(originVertex);
+                    selectionGraphProperty.get().addVertex(vertex);
+                    selectedMyVertices.put(vertex.getID(), vertex);
+
+                    for (MyEdge edge : this.model.getGraph().getInEdges(originVertex)) {
+
+                        if (selectedMyVertices.containsKey(edge.getFirst().getID()) && selectedMyVertices.containsKey(edge.getSecond().getID())) {
+                            selectionGraphProperty.get().addEdge(edge, edge.getVertices());
+                        }
+                    }
                 }
-            } else if (selectionGraphProperty.get().containsVertex(v)) {
-                System.out.println("deleted test: " + viewVertex.getID());
-                selectionGraphProperty.get().removeVertex(new MyVertex(v));
-                for (MyEdge edge : this.model.getGraph().getInEdges(v)) {
-                    selectionGraphProperty.get().removeEdge(edge);
-                }
+                else{
+                    selectionGraphProperty.get().removeVertex(selectedMyVertices.get(viewVertex.getID()));
+                    selectedMyVertices.remove(viewVertex.getID()); }
             }
         }
     }

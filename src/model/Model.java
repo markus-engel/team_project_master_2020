@@ -104,9 +104,10 @@ public class Model {
         int ratio = currentGraph.getVertexCount() - getLonelyVertexCount(currentGraph);
 
         //Stimmt das Logisch? dass es dann einfach 1 ist??
-        if (ratio==0){
+        if (ratio<=0){
             ratio=1;
         }
+
         // Apply the layout onto every set of vertices and update coordinates.
         for(Set<MyVertex> set : sortedSet){
             firstLonelyVertices = true;
@@ -263,7 +264,7 @@ public class Model {
         return auxGraph;
     }
 
-    //cannot get lonely vertices, has to be grpah specific...
+    //cannot get lonely vertices, has to be graph specific, I believe..
     private int getLonelyVertexCount(UndirectedSparseGraph<MyVertex, MyEdge> graph){
         int count = 0;
         for (MyVertex v : graph.getVertices()){
