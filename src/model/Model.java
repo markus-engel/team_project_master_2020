@@ -101,7 +101,12 @@ public class Model {
         double maxY = 0.0;
         boolean firstLonelyVertices;
         int firstLonelyVerticesShiftY = 0;
-        int ratio = currentGraph.getVertexCount() - getLonelyVertexCount();
+        int ratio = currentGraph.getVertexCount() - getLonelyVertexCount(currentGraph);
+
+        //Stimmt das Logisch? dass es dann einfach 1 ist??
+        if (ratio==0){
+            ratio=1;
+        }
         // Apply the layout onto every set of vertices and update coordinates.
         for(Set<MyVertex> set : sortedSet){
             firstLonelyVertices = true;
@@ -258,10 +263,11 @@ public class Model {
         return auxGraph;
     }
 
-    private int getLonelyVertexCount(){
+    //cannot get lonely vertices, has to be grpah specific...
+    private int getLonelyVertexCount(UndirectedSparseGraph<MyVertex, MyEdge> graph){
         int count = 0;
-        for (MyVertex v : graphProperty.get().getVertices()){
-            if (graphProperty.get().getInEdges(v).isEmpty() || (graphProperty.get().getNeighbors(v).contains(v) && graphProperty.get().getNeighbors(v).size() == 1)){
+        for (MyVertex v : graph.getVertices()){
+            if (graph.getInEdges(v).isEmpty() || (graph.getNeighbors(v).contains(v) && graph.getNeighbors(v).size() == 1)){
                 count++;
             }
         }

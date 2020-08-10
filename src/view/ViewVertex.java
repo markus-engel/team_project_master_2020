@@ -11,6 +11,7 @@ import javafx.beans.property.StringProperty;
 import javafx.scene.Group;
 import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
 
@@ -22,14 +23,28 @@ public class ViewVertex extends Group {
 
     private StringProperty ID;
     private Circle circle;
+    private boolean selected;
 
     public ViewVertex(String ID, int size, double x, double y){
         this.ID = new SimpleStringProperty(ID);
         this.circle = new Circle(0, 0, size);
+        this.selected = false;
         this.setTranslateX(x);
         this.setTranslateY(y);
         circle.setFill(Color.CORAL);
+        circle.setStroke(Color.CORAL);
         this.getChildren().add(circle);
+    }
+
+    public void setSelected(){
+        if (selected){
+            selected=false;
+            circle.setStroke(circle.getFill());
+        }
+        else{
+            selected=true;
+            circle.setStroke(Color.LAVENDER);
+        }
     }
 
     public Circle getCircle() {
@@ -38,6 +53,11 @@ public class ViewVertex extends Group {
 
     public String getID() {
         return ID.get();
+    }
+
+    public void setColour(Paint paint){
+        this.circle.setFill(paint);
+        //this.circle.setStroke(paint);
     }
 
     public StringProperty getIDProperty() {
