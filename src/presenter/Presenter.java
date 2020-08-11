@@ -2,6 +2,7 @@
 package presenter;
 
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
+import edu.uci.ics.jung.graph.util.Pair;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
@@ -16,12 +17,12 @@ import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 import model.Model;
 import model.graph.MyEdge;
 import model.graph.MyVertex;
@@ -35,6 +36,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Presenter {
     Model model;
@@ -77,7 +80,7 @@ public class Presenter {
                     Task<Void> parseGraphTask = new Task<Void>() {
                         @Override
                         protected Void call() throws Exception {
-                            model.parseGraph(f.getAbsolutePath());
+                            model.parseGFA(f.getAbsolutePath());
                             model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), model.getGraph());
                             view.getProgressIndicator().setVisible(false);
                             return null;
@@ -218,6 +221,7 @@ public class Presenter {
         view.getTabSelection().setOnSelectionChanged(new EventHandler<Event>() {
             @Override
             public void handle(Event event) {
+                resetTab();
                 if (view.getTabSelection().isSelected()) {
                     System.out.println("Selection tab recognized");
                     model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), seleGraph);
@@ -227,7 +231,6 @@ public class Presenter {
                 }
             }
         });
-
 
 
         view.getColoringTaxonomyRadioButton().setOnAction(new EventHandler<ActionEvent>() {
@@ -266,6 +269,7 @@ public class Presenter {
                 Task<Void> layoutApplyTask = new Task<Void>() {
                     @Override
                     protected Void call() {
+                        view.getLayoutApplyButton().setDisable(true);
                         model.setRepulsionMultiplier(view.getLayoutRepulsionMultiplierSpinner());
                         model.setAttractionMultiplier(view.getLayoutAttractionMultiplierSpinner());
                         model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), model.getGraph());
@@ -277,6 +281,7 @@ public class Presenter {
                         ViewVertex vv = viewVertices.get(mv.getID());
                         vv.animate(mv.getX(),mv.getY());
                     }
+                    view.getLayoutApplyButton().setDisable(false);
                 });
                 Thread layoutApplyThread = new Thread(layoutApplyTask);
                 layoutApplyThread.setDaemon(true);
@@ -346,11 +351,11 @@ public class Presenter {
             view.addVertex(vv, observableList);
             viewVertices.put(v1.getID(), vv);
             makeDraggable(vv);
-            chooseSelectionGraph(vv);
+            makeSelectable(vv);
             Tooltip.install(vv, new Tooltip(vv.getID()));
         }
         // add view edges
-        for (MyEdge edge : model.getGraph().getEdges()) {
+        for (MyEdge edge : currentGraph.getEdges()) {
             ViewEdge ve = new ViewEdge(viewVertices.get(edge.getFirst().getID()), viewVertices.get(edge.getSecond().getID()));
             view.addEdge(ve, observableList);
             ve.toBack();
@@ -387,6 +392,11 @@ public class Presenter {
         viewVertices = new HashMap<>();
     }
 
+    private void resetTab(){
+        view.getInnerViewObjectsSele().getChildren().clear();
+
+    }
+
     /*
     private void makeTooltip(ViewVertex viewVertex) {
         Tooltip tp = new Tooltip(viewVertex.getID());
@@ -400,32 +410,33 @@ public class Presenter {
         });
     } */
 
-    private void chooseSelectionGraph(ViewVertex viewVertex) {
+    private void makeSelectable(ViewVertex viewVertex) {
         viewVertex.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2) {
-                viewVertex.setSelected();
-                for(MyVertex v : model.getGraph().getVertices()) {
-                    if (v.getID().equals(viewVertex.getID())) {
-                        if (!seleGraph.containsVertex(v)) {
-                            System.out.println("addded test: " + viewVertex.getID());
-                            seleGraph.addVertex(new MyVertex(v));
-                            for(MyEdge edge : this.model.getGraph().getInEdges(v)){
+            viewVertex.setSelected();
+            for(MyVertex v : model.getGraph().getVertices()) {
+                if (v.getID().equals(viewVertex.getID())) {
+                    if (!seleGraph.containsVertex(v)) {
+                        System.out.println("addded test: " + viewVertex.getID());
+                        seleGraph.addVertex(new MyVertex(v));
+                        for(MyEdge edge : this.model.getGraph().getInEdges(v)){
+                            if (seleGraph.containsVertex(edge.getFirst()) && seleGraph.containsVertex(edge.getSecond())) {
                                 seleGraph.addEdge(edge, edge.getVertices());
-                            }
-                        } else if (seleGraph.containsVertex(v)) {
-                            System.out.println("deleted test: " + viewVertex.getID());
-                            seleGraph.removeVertex(new MyVertex(v));
-                            for(MyEdge edge : this.model.getGraph().getInEdges(v)){
-                                seleGraph.removeEdge(edge);
+                                System.out.println("edge added");
                             }
                         }
-
+                    } else if (seleGraph.containsVertex(v)) {
+                        System.out.println("deleted test: " + viewVertex.getID());
+                        seleGraph.removeVertex(new MyVertex(v));
+                        for(MyEdge edge : this.model.getGraph().getInEdges(v)){
+                            seleGraph.removeEdge(edge);
+                        }
                     }
+
                 }
             }
         });
     }
-
+    
     private void setOpenRecentFileEventHandler(MenuItem menuItem){
         menuItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -442,7 +453,7 @@ public class Presenter {
                 Task<Void> parseGraphTask = new Task<Void>() {
                     @Override
                     protected Void call() throws Exception {
-                        model.parseGraph(menuItem.getText());
+                        model.parseGFA(menuItem.getText());
                         view.getProgressIndicator().setVisible(false);
                         model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), model.getGraph());
                         return null;
