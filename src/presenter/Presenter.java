@@ -2,6 +2,7 @@
 package presenter;
 
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
+import edu.uci.ics.jung.graph.util.Pair;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
@@ -354,7 +355,7 @@ public class Presenter {
             Tooltip.install(vv, new Tooltip(vv.getID()));
         }
         // add view edges
-        for (MyEdge edge : model.getGraph().getEdges()) {
+        for (MyEdge edge : currentGraph.getEdges()) {
             ViewEdge ve = new ViewEdge(viewVertices.get(edge.getFirst().getID()), viewVertices.get(edge.getSecond().getID()));
             view.addEdge(ve, observableList);
             ve.toBack();
@@ -418,7 +419,10 @@ public class Presenter {
                         System.out.println("addded test: " + viewVertex.getID());
                         seleGraph.addVertex(new MyVertex(v));
                         for(MyEdge edge : this.model.getGraph().getInEdges(v)){
-                            seleGraph.addEdge(edge, edge.getVertices());
+                            if (seleGraph.containsVertex(edge.getFirst()) && seleGraph.containsVertex(edge.getSecond())) {
+                                seleGraph.addEdge(edge, edge.getVertices());
+                                System.out.println("edge added");
+                            }
                         }
                     } else if (seleGraph.containsVertex(v)) {
                         System.out.println("deleted test: " + viewVertex.getID());

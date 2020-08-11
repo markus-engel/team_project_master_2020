@@ -107,7 +107,7 @@ public class Model {
         double maxY = 0.0;
         boolean firstLonelyVertices;
         int firstLonelyVerticesShiftY = 0;
-        int ratio = graph.getVertexCount() - getLonelyVertexCount();
+        int ratio = graph.getVertexCount() - getLonelyVertexCount(graph);
         int spaceInbetween = 15;
         // Apply the layout onto every set of vertices and update coordinates.
         for(Set<MyVertex> set : sortedSet){
@@ -263,10 +263,10 @@ public class Model {
         return auxGraph;
     }
 
-    private int getLonelyVertexCount(){
+    private int getLonelyVertexCount(UndirectedSparseGraph<MyVertex, MyEdge> graph){
         int count = 0;
-        for (MyVertex v : graphProperty.get().getVertices()){
-            if (graphProperty.get().getInEdges(v).isEmpty() || (graphProperty.get().getNeighbors(v).contains(v) && graphProperty.get().getNeighbors(v).size() == 1)){
+        for (MyVertex v : graph.getVertices()){
+            if (graph.getInEdges(v).isEmpty() || (graph.getNeighbors(v).contains(v) && graph.getNeighbors(v).size() == 1)){
                 count++;
             }
         }
