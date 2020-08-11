@@ -356,7 +356,7 @@ public class Presenter {
             Tooltip.install(vv, new Tooltip(vv.getID()));
         }
         // add view edges
-        for (MyEdge edge : model.getGraph().getEdges()) {
+        for (MyEdge edge : currentGraph.getEdges()) {
             ViewEdge ve = new ViewEdge(viewVertices.get(edge.getFirst().getID()), viewVertices.get(edge.getSecond().getID()));
             view.addEdge(ve, observableList);
             ve.toBack();
@@ -416,7 +416,6 @@ public class Presenter {
         viewVertex.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
                 for(MyVertex v : model.getGraph().getVertices()) {
-                    //is this first if necessary? the IDs are always the same..
                     if (v.getID().equals(viewVertex.getID())) {
                         if (!seleGraph.containsVertex(v)) {
                             System.out.println("addded test: " + viewVertex.getID());
@@ -457,7 +456,6 @@ public class Presenter {
 
             if (originVertex.getID().equals(viewVertex.getID())) {
 
-                //returns true if vertex cannot be removed/is not in graph
                 if (selectedMyVertices.get(viewVertex.getID())==null){
                     MyVertex vertex = new MyVertex(originVertex);
                     selectionGraphProperty.get().addVertex(vertex);
