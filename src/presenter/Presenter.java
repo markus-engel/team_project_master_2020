@@ -382,7 +382,7 @@ public class Presenter {
     }
 
     private void reset() {
-        model.setGraph(null);
+        model.setGraphProperty(null);
         view.getInnerViewObjects().getChildren().clear();
         viewVertices = new HashMap<>();
     }
@@ -460,6 +460,5 @@ public class Presenter {
             }
         });
     }
-
 }
 
