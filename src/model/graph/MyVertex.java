@@ -6,6 +6,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import model.io.ContigProperty;
 
+import java.util.Objects;
 import java.util.Set;
 
 /*
@@ -41,6 +42,19 @@ public class MyVertex {
     // first getter returns StringProperty object itself
     public String getID() {
         return IDprop.get();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MyVertex myVertex = (MyVertex) o;
+        return Objects.equals(IDprop, myVertex.IDprop);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(IDprop);
     }
 
     // second getter returns ID value of the StringProperty

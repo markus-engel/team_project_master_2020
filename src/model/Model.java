@@ -58,10 +58,10 @@ public class Model {
     }
 
 
-    //TODO: the name here is confusing. parsing the graph is only one of it, the rest is layout! (Caner): Hope thats better (Jonas)
+    //TODO: the name here is confusing. parsing the graph is only one of it, the rest is layout! (Caner) @Julia: export for loop in different method (Jonas)
 
     // create needed objects of the IO classes to use them in presenter
-    public void parseGraph(String path) throws IOException {
+    public void parseGFA(String path) throws IOException {
         this.graphProperty = new SimpleObjectProperty<>(GraphParser.readFile(path));
         double smallestContigLength = Double.MAX_VALUE;
         double largestContigLength = Double.MIN_VALUE;
@@ -75,10 +75,16 @@ public class Model {
         setContigLengthRange(smallestContigLength, largestContigLength);
     }
 
-    private SortedSet<Set<MyVertex>> clusterVertices(){
+    private SortedSet<Set<MyVertex>> clusterVertices(UndirectedSparseGraph<MyVertex,MyEdge> graph){
         // Store connected components in a Set of Set of Vertices using the JUNG lib algorithm
         WeakComponentClusterer<MyVertex,MyEdge> weakComponentClusterer = new WeakComponentClusterer<>();
-        Set<Set<MyVertex>> cluster = weakComponentClusterer.apply(graphProperty.get());
+        Set<Set<MyVertex>> cluster = weakComponentClusterer.apply(graph);
+        // Each Vertex knows in which connected component it is
+        for(Set<MyVertex> set: cluster){
+            for(MyVertex mv : set){
+                mv.setConnectedComponent(set);
+            }
+        }
         // The Comparator sorts the Set of Sets based on their size. In the SortedSet the sets with biggest size appear first
         Comparator<Set<MyVertex>> comparator = new Comparator<Set<MyVertex>>() {
             @Override
@@ -94,14 +100,15 @@ public class Model {
         return sortedSet;
     }
 
-    public void applyLayout(Dimension dimension, UndirectedSparseGraph<MyVertex, MyEdge> currentGraph){
-        SortedSet<Set<MyVertex>> sortedSet = clusterVertices();
+    public void applyLayout(Dimension dimension, UndirectedSparseGraph<MyVertex, MyEdge> graph){
+        SortedSet<Set<MyVertex>> sortedSet = clusterVertices(graph);
         double shiftX = 0.0;
         double shiftY = 0.0;
         double maxY = 0.0;
         boolean firstLonelyVertices;
         int firstLonelyVerticesShiftY = 0;
-        int ratio = currentGraph.getVertexCount() - getLonelyVertexCount();
+        int ratio = graph.getVertexCount() - getLonelyVertexCount();
+        int spaceInbetween = 15;
         // Apply the layout onto every set of vertices and update coordinates.
         for(Set<MyVertex> set : sortedSet){
             firstLonelyVertices = true;
@@ -113,7 +120,7 @@ public class Model {
                 firstLonelyVerticesShiftY = dimensionY;
                 Dimension setDimension = new Dimension(dimensionX,dimensionY);
                 if(dimensionY > maxY) {
-                    maxY = (double) dimensionY + 15;
+                    maxY = (double) dimensionY + spaceInbetween;
                 }
                 if(dimensionX + shiftX > dimension.width){
                     shiftX = 0.0;
@@ -122,7 +129,7 @@ public class Model {
                     applyLayoutAndShiftCoords(auxGraph,setDimension,shiftX,shiftY);
                 } else {
                     applyLayoutAndShiftCoords(auxGraph,setDimension,shiftX,shiftY);
-                    shiftX += dimensionX + 15;
+                    shiftX += dimensionX + spaceInbetween;
                 }
             } else {
                 set.iterator().next().setX(shiftX);
@@ -130,12 +137,12 @@ public class Model {
                 shiftX += 10;
                 if(shiftX > dimension.width && firstLonelyVertices){
                     shiftX = 0.0;
-                    shiftY += firstLonelyVerticesShiftY + 15;
+                    shiftY += firstLonelyVerticesShiftY + spaceInbetween;
                     firstLonelyVertices = false;
                 }
                 else if(shiftX > dimension.width){
                     shiftX = 0.0;
-                    shiftY += 15;
+                    shiftY += spaceInbetween;
                 }
             }
         }
@@ -145,9 +152,7 @@ public class Model {
         return graphProperty.get();
     }
 
-    public void setGraphProperty(UndirectedSparseGraph<MyVertex, MyEdge> graph) {
-        this.graphProperty = new SimpleObjectProperty<>(graph) ;
-    }
+    public void setGraph(UndirectedSparseGraph<MyVertex,MyEdge> graph) {this.graphProperty.set(graph);}
 
     public void parseTaxId(String path) throws IOException {
         new TaxIdParser(graphProperty.get(), path, taxonomyTree, taxa);
