@@ -53,7 +53,7 @@ public class TaxIdParser {
                     counterMEJL += 1;
                     v.addProperty(ContigProperty.TAXONOMY, tree.getTaxNode(taxID));
                 }
-                
+
                 if(!ranks.contains(tree.getTaxNode(taxID).getRank())) {
                     ranks.add(tree.getTaxNode(taxID).getRank());
                 }
