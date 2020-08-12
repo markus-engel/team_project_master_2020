@@ -72,9 +72,5 @@ public class TaxIdParser {
             }
         }
         System.out.println("-100: " + counter123);
-
-        for (Object s : ranks) {
-            System.out.println(s);
-        }
     }
 }

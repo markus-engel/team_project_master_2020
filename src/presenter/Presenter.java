@@ -117,6 +117,8 @@ public class Presenter {
                     view.setTaxaCountTextField("Taxa: " + model.getTaxaCount());
                     view.getColoringTaxonomyRadioButton().setDisable(false);
                     view.getColoringTaxonomyChoiceBox().setDisable(false);
+                    view.getColoringRankRadioButton().setDisable(false);
+//                    view.getColoringDefaultRadioButton().setDisable(false);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -250,6 +252,22 @@ public class Presenter {
                         else if (taxNode.getId() == -100) {
                             viewVertices.get(v.getID()).getCircle().setFill(Color.rgb(255, 0, 255));
                         }
+                }
+            }
+        });
+
+        view.getColoringRankRadioButton().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                HashMap<String, String> rankRGBCode = model.createColorRank(model.getRanks());
+
+                for (MyVertex v : model.getGraph().getVertices()) {
+                    Node taxNode = (Node) v.getProperty(ContigProperty.TAXONOMY);
+                    if (rankRGBCode.keySet().contains(taxNode.getRank())) {
+                        String rgb = rankRGBCode.get(taxNode.getRank());
+                        String[] rgbCodes = rgb.split("t");
+                        viewVertices.get(v.getID()).getCircle().setFill(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2])));
+                    }
                 }
             }
         });

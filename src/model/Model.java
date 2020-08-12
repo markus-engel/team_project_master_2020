@@ -316,15 +316,15 @@ public class Model {
         return taxIDRGBCode;
     }
 
-    public HashMap<Integer, String> createColorRank(TreeSet ranks) {
+    public HashMap<String, String> createColorRank(TreeSet ranks) {
         int [] rgbNumbersRank;
-        HashMap<Integer, String> rankIDRGBCode = new HashMap<>();
+        HashMap<String, String> rankIDRGBCode = new HashMap<>();
 
         for (Object i : ranks) {
             String rgbCodeTaxa;
             rgbNumbersRank = randomNumberColoring();
             rgbCodeTaxa = rgbNumbersRank[0] + "t" + rgbNumbersRank[1] + "t" + rgbNumbersRank[2];
-            rankIDRGBCode.put((int) i, rgbCodeTaxa);
+            rankIDRGBCode.put((String) i, rgbCodeTaxa);
         }
         return rankIDRGBCode;
     }
