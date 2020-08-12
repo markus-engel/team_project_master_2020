@@ -24,7 +24,8 @@ public class Model {
     private ObjectProperty<UndirectedSparseGraph<MyVertex, MyEdge>> graphProperty = new SimpleObjectProperty<>();
     private double lowestCoverage, highestCoverage;
     private double smallestContigLength, largestContigLength;
-    TreeSet<Integer> taxa = new TreeSet(); //TODO: define the type <T> (Caner)
+    TreeSet<Integer> taxa = new TreeSet<>(); //TODO: define the type <T> (Caner)
+    TreeSet<String> ranks = new TreeSet<>();
     private double repulsionMultiplier;
     private double attractionMultiplier;
 
@@ -155,7 +156,7 @@ public class Model {
     public void setGraph(UndirectedSparseGraph<MyVertex,MyEdge> graph) {this.graphProperty.set(graph);}
 
     public void parseTaxId(String path) throws IOException {
-        new TaxIdParser(graphProperty.get(), path, taxonomyTree, taxa);
+        new TaxIdParser(graphProperty.get(), path, taxonomyTree, taxa, ranks);
     }
 
     public int getTaxaCount() {
