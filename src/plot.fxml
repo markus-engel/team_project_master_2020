@@ -3,21 +3,95 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.ChoiceBox?>
 
-<TabPane fx:id="tabPanePlots" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-         prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/11.0.1"
-         xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.ViewPlot">
-  <tabs>
-    <Tab fx:id="tabGcCoverage" text="GC-content vs. Coverage">
-      <content>
-        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-        </AnchorPane>
-      </content>
-    </Tab>
-    <Tab fx:id="tabElse" text="something else">
-      <content>
-        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
-      </content>
-    </Tab>
-  </tabs>
-</TabPane>
+<BorderPane fx:id="borderPanePlots" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.ViewPlot">
+  <center>
+    <TabPane fx:id="tabPanePlots" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE">
+      <tabs>
+        <Tab fx:id="tabGcCoverage" text="GC-content vs. Coverage">
+          <content>
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+            </AnchorPane>
+          </content>
+        </Tab>
+        <Tab fx:id="tabElse" text="something else">
+          <content>
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
+          </content>
+        </Tab>
+      </tabs>
+    </TabPane>
+  </center>
+  <left>
+    <VBox fx:id="leftVBox" prefHeight="600.0" prefWidth="205.0" BorderPane.alignment="CENTER">
+      <children>
+        <Accordion prefHeight="544.0" prefWidth="205.0">
+          <panes>
+            <TitledPane animated="false" prefHeight="407.0" prefWidth="205.0" text="Plots">
+              <content>
+                <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                  <children>
+                    <fx:define>
+                      <ToggleGroup fx:id="choicePlot"/>
+                    </fx:define>
+                    <RadioButton fx:id="gcCovRadioButton" disable="false" layoutX="53.0"
+                                 layoutY="29.0" mnemonicParsing="false" selected="true" text="None"
+                                 toggleGroup="$choicePlot" AnchorPane.leftAnchor="30.0"
+                                 AnchorPane.topAnchor="0.0"/>
+                    <RadioButton fx:id="disOfCovLengthRadioButton" disable="true" layoutX="53.0" layoutY="29.0" mnemonicParsing="false" text="Distribution of contig lengths" toggleGroup="$choicePlot" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="30.0" />
+                  </children>
+                </AnchorPane>
+              </content>
+            </TitledPane>
+            <TitledPane animated="false" text="Dot Size">
+              <content>
+                <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                  <children>
+                    <fx:define>
+                      <ToggleGroup fx:id="dotSizeGroup" />
+                    </fx:define>
+                    <RadioButton fx:id="nodeSizeCoverageRadioButton" disable="true" layoutX="41.0"
+                                 layoutY="21.0" mnemonicParsing="false" text="Coverage"
+                                 toggleGroup="$dotSizeGroup" AnchorPane.leftAnchor="30.0"
+                                 AnchorPane.topAnchor="0.0"/>
+                    <RadioButton fx:id="nodeSizeContigLengthRadioButton" layoutX="41.0" layoutY="54.0" mnemonicParsing="false" text="Contig length" toggleGroup="$dotSizeGroup" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="30.0" />
+                    <RadioButton fx:id="nodeSizeDefaultRadioButton" layoutX="41.0" layoutY="80.0" mnemonicParsing="false" selected="true" text="Default" toggleGroup="$dotSizeGroup" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="60.0" />
+                    <RadioButton fx:id="nodeSizeManualRadioButton" layoutX="41.0" layoutY="112.0" mnemonicParsing="false" text="Manual" toggleGroup="$dotSizeGroup" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="90.0" />
+                    <Slider fx:id="nodeSizeManualSlider" disable="true" layoutX="32.0" layoutY="129.0" max="8" min="2" value="5" />
+                  </children>
+                </AnchorPane>
+              </content>
+            </TitledPane>
+            <TitledPane animated="false" text="Coloring">
+              <content>
+                <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                  <children>
+                    <fx:define>
+                      <ToggleGroup fx:id="coloringGroup" />
+                    </fx:define>
+                    <RadioButton fx:id="coloringDefaultRadioButton" disable="false" layoutX="53.0"
+                                 layoutY="29.0" mnemonicParsing="false" selected="true" text="None"
+                                 toggleGroup="$coloringGroup" AnchorPane.leftAnchor="30.0"
+                                 AnchorPane.topAnchor="0.0"/>
+                    <RadioButton fx:id="coloringCoverageRadioButton" disable="true" layoutX="53.0" layoutY="29.0" mnemonicParsing="false" text="Coverage" toggleGroup="$coloringGroup" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="30.0" />
+                    <RadioButton fx:id="coloringGCcontentRadioButton" disable="true" layoutX="47.0" layoutY="106.0" mnemonicParsing="false" text="GC-content" toggleGroup="$coloringGroup" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="60.0" />
+                    <RadioButton fx:id="coloringTaxonomyRadioButton" disable="true" layoutX="26.0" layoutY="146.0" mnemonicParsing="false" text="Taxonomy" toggleGroup="$coloringGroup" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="90.0" />
+                  </children>
+                </AnchorPane>
+              </content>
+            </TitledPane>
+          </panes>
+        </Accordion>
+      </children>
+    </VBox>
+  </left>
+</BorderPane>
