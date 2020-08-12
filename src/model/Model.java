@@ -167,6 +167,10 @@ public class Model {
         return taxa;
     }
 
+    public TreeSet<String> getRanks() {
+        return ranks;
+    }
+
     public void setAttractionMultiplier(double attractionMultiplier) {
         this.attractionMultiplier = attractionMultiplier;
     }
@@ -310,6 +314,19 @@ public class Model {
             taxIDRGBCode.put((int) i, rgbCodeTaxa);
         }
         return taxIDRGBCode;
+    }
+
+    public HashMap<Integer, String> createColorRank(TreeSet ranks) {
+        int [] rgbNumbersRank;
+        HashMap<Integer, String> rankIDRGBCode = new HashMap<>();
+
+        for (Object i : ranks) {
+            String rgbCodeTaxa;
+            rgbNumbersRank = randomNumberColoring();
+            rgbCodeTaxa = rgbNumbersRank[0] + "t" + rgbNumbersRank[1] + "t" + rgbNumbersRank[2];
+            rankIDRGBCode.put((int) i, rgbCodeTaxa);
+        }
+        return rankIDRGBCode;
     }
 
     public int[] randomNumberColoring () {

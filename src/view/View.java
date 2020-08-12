@@ -109,6 +109,9 @@ public class View {
     private RadioButton coloringTaxonomyRadioButton;
 
     @FXML
+    private RadioButton coloringRankRadioButton;
+
+    @FXML
     private RadioButton orderByNodeNumbersRadioButton;
 
     @FXML
@@ -230,6 +233,8 @@ public class View {
     public RadioButton getColoringDefaultRadioButton() {
         return coloringDefaultRadioButton;
     }
+
+    public RadioButton getColoringRankRadioButton () { return coloringRankRadioButton;}
 
     public ChoiceBox<?> getColoringTaxonomyChoiceBox() {
         return coloringTaxonomyChoiceBox;
