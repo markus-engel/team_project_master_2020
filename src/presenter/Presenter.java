@@ -417,7 +417,7 @@ public class Presenter {
                 if (v.getID().equals(viewVertex.getID())) {
                     if (!seleGraph.containsVertex(v)) {
                         System.out.println("addded test: " + viewVertex.getID());
-                        seleGraph.addVertex(new MyVertex(v));
+                        seleGraph.addVertex(v);
                         for(MyEdge edge : this.model.getGraph().getInEdges(v)){
                             if (seleGraph.containsVertex(edge.getFirst()) && seleGraph.containsVertex(edge.getSecond())) {
                                 seleGraph.addEdge(edge, edge.getVertices());
@@ -426,7 +426,7 @@ public class Presenter {
                         }
                     } else if (seleGraph.containsVertex(v)) {
                         System.out.println("deleted test: " + viewVertex.getID());
-                        seleGraph.removeVertex(new MyVertex(v));
+                        seleGraph.removeVertex(v);
                         for(MyEdge edge : this.model.getGraph().getInEdges(v)){
                             seleGraph.removeEdge(edge);
                         }
