@@ -162,7 +162,7 @@
                             <children>
                                 <ChoiceBox fx:id="coloringTaxonomyChoiceBox" disable="true" layoutX="14.0"
                                            layoutY="132.0" prefHeight="27.0" prefWidth="93.0"
-                                           AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="120.0"/>
+                                           AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="150.0"/>
                                 <RadioButton fx:id="coloringDefaultRadioButton" disable="false" layoutX="53.0"
                                              layoutY="29.0" mnemonicParsing="false" selected="true" text="None"
                                              AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="0.0">
