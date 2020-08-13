@@ -20,18 +20,19 @@ public class TaxIdParser {
     UndirectedSparseGraph<MyVertex, MyEdge> graph;
     String path;
     TaxonomyTree tree;
-    private TreeSet taxons;
+    private TreeSet taxons, ranks;
 
-    public TaxIdParser(UndirectedSparseGraph<MyVertex, MyEdge> graph, String path, TaxonomyTree tree, TreeSet taxons) throws IOException {
+    public TaxIdParser(UndirectedSparseGraph<MyVertex, MyEdge> graph, String path, TaxonomyTree tree, TreeSet taxons, TreeSet ranks) throws IOException {
         this.graph = graph;
         this.path = path;
         this.tree = tree;
         this.taxons = taxons;
-        parseTaxIDs(graph, path, tree, taxons);
+        this.ranks = ranks;
+        parseTaxIDs(graph, path, tree, taxons, ranks);
     }
 
     // Parser of the taxonomic IDs matching the contig IDs of vertices in the graph
-    private void parseTaxIDs(UndirectedSparseGraph<MyVertex, MyEdge> graph, String path, TaxonomyTree tree, TreeSet taxons) throws IOException {
+    private void parseTaxIDs(UndirectedSparseGraph<MyVertex, MyEdge> graph, String path, TaxonomyTree tree, TreeSet taxons, TreeSet ranks) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(path));
         String line;
         Integer counterMEJL = 0;
@@ -51,6 +52,10 @@ public class TaxIdParser {
                 if (v.getID().equals(conID)) {
                     counterMEJL += 1;
                     v.addProperty(ContigProperty.TAXONOMY, tree.getTaxNode(taxID));
+                }
+
+                if(!ranks.contains(tree.getTaxNode(taxID).getRank())) {
+                    ranks.add(tree.getTaxNode(taxID).getRank());
                 }
             }
 

@@ -24,7 +24,8 @@ public class Model {
     private ObjectProperty<UndirectedSparseGraph<MyVertex, MyEdge>> graphProperty = new SimpleObjectProperty<>();
     private double lowestCoverage, highestCoverage;
     private double smallestContigLength, largestContigLength;
-    TreeSet<Integer> taxa = new TreeSet(); //TODO: define the type <T> (Caner)
+    TreeSet<Integer> taxa = new TreeSet<>(); //TODO: define the type <T> (Caner)
+    TreeSet<String> ranks = new TreeSet<>();
     private double repulsionMultiplier;
     private double attractionMultiplier;
 
@@ -113,7 +114,7 @@ public class Model {
         for(Set<MyVertex> set : sortedSet){
             firstLonelyVertices = true;
             if(set.size() > 1){
-                UndirectedSparseGraph<MyVertex,MyEdge> auxGraph = createAuxilliarGraph(set);
+                UndirectedSparseGraph<MyVertex,MyEdge> auxGraph = createAuxilliarGraph(set, graph);
                 // Calculate layout dimension for each set based on the set size
                 int dimensionX = (int) ((double)dimension.width*((double)set.size()/(double) ratio));
                 int dimensionY = (int) ((double)dimension.height*((double)set.size()/(double)ratio));
@@ -155,7 +156,7 @@ public class Model {
     public void setGraph(UndirectedSparseGraph<MyVertex,MyEdge> graph) {this.graphProperty.set(graph);}
 
     public void parseTaxId(String path) throws IOException {
-        new TaxIdParser(graphProperty.get(), path, taxonomyTree, taxa);
+        new TaxIdParser(graphProperty.get(), path, taxonomyTree, taxa, ranks);
     }
 
     public int getTaxaCount() {
@@ -164,6 +165,10 @@ public class Model {
 
     public TreeSet getTaxaID() {
         return taxa;
+    }
+
+    public TreeSet<String> getRanks() {
+        return ranks;
     }
 
     public void setAttractionMultiplier(double attractionMultiplier) {
@@ -251,12 +256,12 @@ public class Model {
         }
     }
 
-    private UndirectedSparseGraph<MyVertex,MyEdge> createAuxilliarGraph(Set<MyVertex> vertexSet){
+    private UndirectedSparseGraph<MyVertex,MyEdge> createAuxilliarGraph(Set<MyVertex> vertexSet, UndirectedSparseGraph<MyVertex, MyEdge> graph){
         UndirectedSparseGraph<MyVertex,MyEdge> auxGraph = new UndirectedSparseGraph<>();
         for(MyVertex v: vertexSet){
             v.setConnectedComponent(vertexSet);
             auxGraph.addVertex(v);
-            for(MyEdge edge : this.graphProperty.get().getInEdges(v)){
+            for(MyEdge edge : graph.getInEdges(v)){
                 auxGraph.addEdge(edge, edge.getVertices());
             }
         }
@@ -309,6 +314,19 @@ public class Model {
             taxIDRGBCode.put((int) i, rgbCodeTaxa);
         }
         return taxIDRGBCode;
+    }
+
+    public HashMap<String, String> createColorRank(TreeSet ranks) {
+        int [] rgbNumbersRank;
+        HashMap<String, String> rankIDRGBCode = new HashMap<>();
+
+        for (Object i : ranks) {
+            String rgbCodeTaxa;
+            rgbNumbersRank = randomNumberColoring();
+            rgbCodeTaxa = rgbNumbersRank[0] + "t" + rgbNumbersRank[1] + "t" + rgbNumbersRank[2];
+            rankIDRGBCode.put((String) i, rgbCodeTaxa);
+        }
+        return rankIDRGBCode;
     }
 
     public int[] randomNumberColoring () {

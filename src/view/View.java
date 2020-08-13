@@ -79,6 +79,9 @@ public class View {
     private TextField selectionTextfield;
 
     @FXML
+    private Button resetSelectionButton;
+
+    @FXML
     private RadioButton nodeSizeCoverageRadioButton;
 
     @FXML
@@ -94,6 +97,9 @@ public class View {
     private Slider nodeSizeManualSlider;
 
     @FXML
+    private Slider coloringTransparencySlider;
+
+    @FXML
     private ChoiceBox<?> coloringTaxonomyChoiceBox;
 
     @FXML
@@ -107,6 +113,12 @@ public class View {
 
     @FXML
     private RadioButton coloringTaxonomyRadioButton;
+
+    @FXML
+    private RadioButton coloringRankRadioButton;
+
+    @FXML
+    private RadioButton coloringTransparencyRadioButton;
 
     @FXML
     private RadioButton orderByNodeNumbersRadioButton;
@@ -231,6 +243,10 @@ public class View {
         return coloringDefaultRadioButton;
     }
 
+    public RadioButton getColoringRankRadioButton () { return coloringRankRadioButton;}
+
+    public RadioButton getColoringTransparencyRadioButton () { return  coloringTransparencyRadioButton; }
+
     public ChoiceBox<?> getColoringTaxonomyChoiceBox() {
         return coloringTaxonomyChoiceBox;
     }
@@ -266,6 +282,8 @@ public class View {
     public Slider getNodeSizeManualSlider() {
         return nodeSizeManualSlider;
     }
+
+    public Slider getColoringTransparencySlider () { return coloringTransparencySlider; }
 
     public RadioButton getNodeSizeContigLengthRadioButton() {
         return nodeSizeContigLengthRadioButton;
@@ -317,6 +335,8 @@ public class View {
     public double getLayoutAttractionMultiplierSpinner() {return Double.parseDouble(layoutAttractionMultiplierSpinner.getValueFactory().getValue().toString());}
 
     public Button getLayoutApplyButton() { return layoutApplyButton;}
+
+    public Button getResetSelectionButton() {return resetSelectionButton;}
 
     public void setScaleProperty(double scale){ innerViewObjects.setScaleX(scale); }
 

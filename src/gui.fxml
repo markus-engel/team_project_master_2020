@@ -37,7 +37,7 @@
                                 <ProgressIndicator fx:id="progressIndicator" layoutX="500.0" layoutY="250.0" prefHeight="94.0" prefWidth="100.0" translateX="-85.0" translateY="-85.0" visible="false" />
                                 <ScrollPane fx:id="scrollPane" pannable="false" prefHeight="238.0" prefWidth="540.0">
                                   <Group fx:id="viewObjects">
-                                      <Group fx:id="innerViewObjects"/>
+                                      <Group fx:id="innerViewObjects" />
                                   </Group>
                               </ScrollPane>
                             </StackPane>
@@ -102,6 +102,7 @@
                   <ScrollPane prefHeight="200.0" prefWidth="200.0">
                     <content>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="252.0" prefWidth="200.0" />
+                        <Button fx:id="resetSelectionButton" layoutX="74.0" layoutY="110.0" mnemonicParsing="false" text="Reset Selection" />
                     </content>
                   </ScrollPane>
                </content>
@@ -115,10 +116,10 @@
                                 <fx:define>
                                     <ToggleGroup fx:id="nodeSizeGroup" />
                                 </fx:define>
-                                <RadioButton fx:id="nodeSizeCoverageRadioButton" disable="true" layoutX="41.0"
-                                             layoutY="21.0" mnemonicParsing="false" text="Coverage"
-                                             toggleGroup="$nodeSizeGroup" AnchorPane.leftAnchor="30.0"
-                                             AnchorPane.topAnchor="0.0"/>
+                                <RadioButton fx:id="nodeSizeCoverageRadioButton" disable="true" layoutX="41.0" layoutY="21.0" mnemonicParsing="false" text="Coverage" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="0.0">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="nodeSizeGroup" />
+                                 </toggleGroup></RadioButton>
                                 <RadioButton fx:id="nodeSizeContigLengthRadioButton" layoutX="41.0" layoutY="54.0" mnemonicParsing="false" text="Contig length" toggleGroup="$nodeSizeGroup" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="30.0" />
                                 <RadioButton fx:id="nodeSizeDefaultRadioButton" layoutX="41.0" layoutY="80.0" mnemonicParsing="false" selected="true" text="Default" toggleGroup="$nodeSizeGroup" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="60.0" />
                                 <RadioButton fx:id="nodeSizeManualRadioButton" layoutX="41.0" layoutY="112.0" mnemonicParsing="false" text="Manual" toggleGroup="$nodeSizeGroup" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="90.0" />
@@ -134,14 +135,17 @@
                                 <fx:define>
                                     <ToggleGroup fx:id="coloringGroup" />
                                 </fx:define>
-                                <ChoiceBox fx:id="coloringTaxonomyChoiceBox" disable="true" layoutX="14.0" layoutY="132.0" prefHeight="27.0" prefWidth="93.0" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="120.0" />
-                                <RadioButton fx:id="coloringDefaultRadioButton" disable="false" layoutX="53.0"
-                                             layoutY="29.0" mnemonicParsing="false" selected="true" text="None"
-                                             toggleGroup="$coloringGroup" AnchorPane.leftAnchor="30.0"
-                                             AnchorPane.topAnchor="0.0"/>
+                                <ChoiceBox fx:id="coloringTaxonomyChoiceBox" disable="true" layoutX="14.0" layoutY="132.0" prefHeight="27.0" prefWidth="93.0" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="150.0" />
+                                <RadioButton fx:id="coloringDefaultRadioButton" disable="false" layoutX="53.0" layoutY="29.0" mnemonicParsing="false" selected="true" text="None" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="0.0">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="coloringGroup" />
+                                 </toggleGroup></RadioButton>
                                 <RadioButton fx:id="coloringCoverageRadioButton" disable="true" layoutX="53.0" layoutY="29.0" mnemonicParsing="false" text="Coverage" toggleGroup="$coloringGroup" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="30.0" />
                                 <RadioButton fx:id="coloringGCcontentRadioButton" disable="true" layoutX="47.0" layoutY="106.0" mnemonicParsing="false" text="GC-content" toggleGroup="$coloringGroup" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="60.0" />
                                 <RadioButton fx:id="coloringTaxonomyRadioButton" disable="true" layoutX="26.0" layoutY="146.0" mnemonicParsing="false" text="Taxonomy" toggleGroup="$coloringGroup" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="90.0" />
+                                <RadioButton fx:id="coloringTransparencyRadioButton" disable="true" mnemonicParsing="false" text="Transparency" toggleGroup="$coloringGroup" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="180.0" />
+                                <RadioButton fx:id="coloringRankRadioButton" disable="true" layoutX="47.0" layoutY="166.0" mnemonicParsing="false" text="Rank" toggleGroup="$coloringGroup" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="120.0" />
+                                <Slider fx:id="coloringTransparencySlider" disable="true" layoutX="32.0" layoutY="129.0" max="1" min="0" value="1" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="210.0" />
                             </children>
                         </AnchorPane>
                      </content>
@@ -153,10 +157,10 @@
                             <fx:define>
                                 <ToggleGroup fx:id="orderGroup" />
                             </fx:define>
-                            <RadioButton fx:id="orderByNodeNumbersRadioButton" layoutX="56.0" layoutY="27.0"
-                                         mnemonicParsing="false" selected="true" text="Node numbers"
-                                         toggleGroup="$orderGroup" AnchorPane.leftAnchor="30.0"
-                                         AnchorPane.topAnchor="10.0"/>
+                            <RadioButton fx:id="orderByNodeNumbersRadioButton" layoutX="56.0" layoutY="27.0" mnemonicParsing="false" selected="true" text="Node numbers" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="10.0">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="orderGroup" />
+                                 </toggleGroup></RadioButton>
                             <RadioButton fx:id="orderByContigLengthRadioButton" layoutX="56.0" layoutY="51.0" mnemonicParsing="false" text="Contig length" toggleGroup="$orderGroup" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="40.0" />
                         </children>
                         </AnchorPane>
