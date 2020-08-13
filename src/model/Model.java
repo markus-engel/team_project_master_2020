@@ -343,7 +343,7 @@ public class Model {
     public int[] randomNumberColoring () {
         int[] rgbNumbers = new int[3];
         for (int i = 1; i <= rgbNumbers.length; i ++) {
-            rgbNumbers[i - 1] = (int) (Math.random() * ((255 - 0) + 1)) + 0;
+            rgbNumbers[i - 1] = (int) (Math.random() * ((255 - 0) + 1));
         }
         return rgbNumbers;
     }

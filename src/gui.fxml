@@ -160,7 +160,7 @@
                      <content>
                         <AnchorPane prefHeight="200.0" prefWidth="200.0">
                             <children>
-                                <ChoiceBox fx:id="coloringTaxonomyChoiceBox" disable="true" layoutX="14.0"
+                                <ChoiceBox fx:id="coloringRankChoiceBox" disable="true" layoutX="14.0"
                                            layoutY="132.0" prefHeight="27.0" prefWidth="93.0"
                                            AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="150.0"/>
                                 <RadioButton fx:id="coloringDefaultRadioButton" disable="false" layoutX="53.0"
@@ -186,7 +186,7 @@
                                              mnemonicParsing="false" text="Transparency" toggleGroup="$coloringGroup"
                                              AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="180.0"/>
                                 <RadioButton fx:id="coloringRankRadioButton" disable="true" layoutX="47.0"
-                                             layoutY="166.0" mnemonicParsing="false" text="Rank"
+                                             layoutY="166.0" mnemonicParsing="false" text="select Rank:"
                                              toggleGroup="$coloringGroup" AnchorPane.leftAnchor="30.0"
                                              AnchorPane.topAnchor="120.0"/>
                                 <Slider fx:id="coloringTransparencySlider" disable="true" layoutX="32.0" layoutY="129.0"

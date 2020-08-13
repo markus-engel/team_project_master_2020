@@ -106,7 +106,7 @@ public class View {
     private Slider coloringTransparencySlider;
 
     @FXML
-    private ChoiceBox<?> coloringTaxonomyChoiceBox;
+    private ChoiceBox<?> coloringRankChoiceBox;
 
     @FXML
     private RadioButton coloringCoverageRadioButton;
@@ -270,12 +270,12 @@ public class View {
 
     public RadioButton getColoringTransparencyRadioButton () { return  coloringTransparencyRadioButton; }
 
-    public ChoiceBox<?> getColoringTaxonomyChoiceBox() {
-        return coloringTaxonomyChoiceBox;
+    public ChoiceBox<?> getColoringRankChoiceBox() {
+        return coloringRankChoiceBox;
     }
 
-    public void setColoringTaxonomyChoiceBox(ChoiceBox<?> coloringTaxonomyChoiceBox) {
-        this.coloringTaxonomyChoiceBox = coloringTaxonomyChoiceBox;
+    public void setColoringRankChoiceBox(ChoiceBox<?> coloringTaxonomyChoiceBox) {
+        this.coloringRankChoiceBox = coloringRankChoiceBox;
     }
 
     public RadioButton getColoringCoverageRadioButton() {

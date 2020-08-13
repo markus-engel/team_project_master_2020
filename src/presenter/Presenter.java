@@ -2,6 +2,7 @@
 package presenter;
 
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
@@ -35,6 +36,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Presenter {
@@ -118,7 +120,7 @@ public class Presenter {
                     model.parseTaxId(f.getAbsolutePath());
                     view.setTaxaCountTextField("Taxa: " + model.getTaxaCount());
                     view.getColoringTaxonomyRadioButton().setDisable(false);
-                    view.getColoringTaxonomyChoiceBox().setDisable(false);
+//                    view.getColoringTaxonomyChoiceBox().setDisable(false);
                     view.getColoringRankRadioButton().setDisable(false);
                     view.getColoringTransparencyRadioButton().setDisable(false);
                 } catch (IOException e) {
@@ -264,22 +266,39 @@ public class Presenter {
             @Override
             public void handle(ActionEvent actionEvent) {
                 rankRGBCode = model.createColorRank(model.getRanks());
+                ObservableList rankNames = FXCollections.observableArrayList();
                 if (taxonomy) {
                     taxonomy = false;
                 }
 
+                rank = true;
+                view.getColoringRankChoiceBox().setDisable(false);
+                rankNames.add("none");
+
+                for (Object k : rankRGBCode.keySet()) {
+                    rankNames.add(k);
+                }
+                view.getColoringRankChoiceBox().setItems(rankNames);
+            }
+        });
+
+//        view.getColoringRankChoiceBox().disableProperty().bind(view.getColoringRankRadioButton().selectedProperty().not());
+        view.getColoringRankChoiceBox().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                String choosenRank = (String) view.getColoringRankChoiceBox().getValue();
+
                 for (MyVertex v : model.getGraph().getVertices()) {
                     Node taxNode = (Node) v.getProperty(ContigProperty.TAXONOMY);
-                    if (rankRGBCode.keySet().contains(taxNode.getRank()) && !rankRGBCode.keySet().equals("no rank")) {
-                        String rgb = rankRGBCode.get(taxNode.getRank());
-                        String[] rgbCodes = rgb.split("t");
-                        viewVertices.get(v.getID()).setColour(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2])));
+                    viewVertices.get(v.getID()).setColour(Color.CORAL);
+
+                    if (taxNode.getRank().equals(choosenRank) && choosenRank != "none") {
+                        viewVertices.get(v.getID()).setColour(Color.rgb(0, 0, 255));
                     }
-                    else if (rankRGBCode.keySet().contains(taxNode.getRank().equals("no rank"))) {
-                        viewVertices.get(v.getID()).setColour(Color.rgb(0,255,0));
+                    else if (choosenRank == "none") {
+                        viewVertices.get(v.getID()).setColour(Color.CORAL);
                     }
                 }
-                rank = true;
             }
         });
 
