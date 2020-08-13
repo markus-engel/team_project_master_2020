@@ -2,7 +2,6 @@
 package presenter;
 
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
-import edu.uci.ics.jung.graph.util.Pair;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
@@ -18,7 +17,6 @@ import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.WritableImage;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -37,8 +35,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class Presenter {
     Model model;
@@ -46,6 +42,7 @@ public class Presenter {
     HashMap<String, String> rankRGBCode;
     HashMap<Integer, String> taxIDRGBCode;
     Map<String, ViewVertex> viewVertices = new HashMap<>();  //Hashmap of view vertex objects
+    Map<String, ViewVertex> viewVerticesSelection = new HashMap<>();  //Hashmap of view vertex objects
     public final Dimension MAX_WINDOW_DIMENSION = new Dimension(775, 500); //gets passed to model to center layouts, gets passed to view to control size of window
     UndirectedSparseGraph<MyVertex,MyEdge> seleGraph = new UndirectedSparseGraph<>();
     Boolean rank = false, taxonomy = false;
@@ -91,7 +88,7 @@ public class Presenter {
                         }
                     };
                     parseGraphTask.setOnSucceeded(e -> {
-                        visualizeGraph(model.getGraph(), view.getInnerViewObjects().getChildren(),view.getInnerViewObjects());
+                        visualizeGraph(model.getGraph(), view.getInnerViewObjects().getChildren(), view.getInnerViewObjects());
                         view.getScrollPane().setDisable(false);
                         view.makeScrollPaneZoomable(view.getScrollPane());
                         view.getImportTaxonomyMenuItem().setDisable(false);
@@ -231,7 +228,7 @@ public class Presenter {
                 if (view.getTabSelection().isSelected()) {
                     System.out.println("Selection tab recognized");
                     model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), seleGraph);
-                    visualizeGraph(seleGraph, view.getInnerViewObjectsSele().getChildren(), view.getInnerViewObjectsSele());
+                    visualizeSelectionGraph(seleGraph, view.getInnerViewObjectsSele().getChildren(), view.getInnerViewObjectsSele());
                     view.getScrollPaneSele().setDisable(false);
                     view.makeScrollPaneZoomable(view.getScrollPaneSele());
                 }
@@ -252,10 +249,10 @@ public class Presenter {
                         if (taxIDRGBCode.keySet().contains(taxNode.getId())) {
                             String rgb = taxIDRGBCode.get(taxNode.getId());
                             String[] rgbCodes = rgb.split("t");
-                            viewVertices.get(v.getID()).getCircle().setFill(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2])));
+                            viewVertices.get(v.getID()).setColour(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2])));
                         }
                         else if (taxNode.getId() == -100) {
-                            viewVertices.get(v.getID()).getCircle().setFill(Color.rgb(0, 255, 0));
+                            viewVertices.get(v.getID()).setColour(Color.rgb(0, 255, 0));
                         }
                 }
                 taxonomy = true;
@@ -275,10 +272,10 @@ public class Presenter {
                     if (rankRGBCode.keySet().contains(taxNode.getRank()) && !rankRGBCode.keySet().equals("no rank")) {
                         String rgb = rankRGBCode.get(taxNode.getRank());
                         String[] rgbCodes = rgb.split("t");
-                        viewVertices.get(v.getID()).getCircle().setFill(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2])));
+                        viewVertices.get(v.getID()).setColour(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2])));
                     }
                     else if (rankRGBCode.keySet().contains(taxNode.getRank().equals("no rank"))) {
-                        viewVertices.get(v.getID()).getCircle().setFill(Color.rgb(0,255,0));
+                        viewVertices.get(v.getID()).setColour(Color.rgb(0,255,0));
                     }
                 }
                 rank = true;
@@ -289,7 +286,7 @@ public class Presenter {
             @Override
             public void handle(ActionEvent actionEvent) {
                 for (MyVertex v : model.getGraph().getVertices()){
-                    viewVertices.get(v.getID()).getCircle().setFill(Color.CORAL);
+                    viewVertices.get(v.getID()).setColour(Color.CORAL);
                 }
             }
         });
@@ -310,10 +307,10 @@ public class Presenter {
                         if (rankRGBCode.keySet().contains(taxNode.getRank()) && !rankRGBCode.keySet().equals("no rank")) {
                             String rgb = rankRGBCode.get(taxNode.getRank());
                             String[] rgbCodes = rgb.split("t");
-                            viewVertices.get(v.getID()).getCircle().setFill(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2])));
+                            viewVertices.get(v.getID()).setColour(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2])));
                         }
                         else if (rankRGBCode.keySet().contains(taxNode.getRank().equals("no rank"))) {
-                            viewVertices.get(v.getID()).getCircle().setFill(Color.rgb(0,255,0));
+                            viewVertices.get(v.getID()).setColour(Color.rgb(0,255,0));
                         }
                     }
                 }
@@ -323,10 +320,10 @@ public class Presenter {
                         if (taxIDRGBCode.keySet().contains(taxNode.getId())) {
                             String rgb = taxIDRGBCode.get(taxNode.getId());
                             String[] rgbCodes = rgb.split("t");
-                            viewVertices.get(v.getID()).getCircle().setFill(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2]), view.getColoringTransparencySlider().getValue()));
+                            viewVertices.get(v.getID()).setColour(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2]), view.getColoringTransparencySlider().getValue()));
                         }
                         else if (taxNode.getId() == -100) {
-                            viewVertices.get(v.getID()).getCircle().setFill(Color.rgb(0, 255, 0));
+                            viewVertices.get(v.getID()).setColour(Color.rgb(0, 255, 0));
                         }
                     }
                 }
@@ -412,6 +409,21 @@ public class Presenter {
                 }
             }
         });
+
+        view.getResetSelectionButton().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+
+                //unselects all vertices
+                for (ViewVertex vv: viewVertices.values()){
+                    if (vv.isSelected()){
+                        vv.setSelected();
+                        updateSelectionGraph(vv);
+                    }
+                }
+                resetTab();
+            }
+        });
     }
 
     private void visualizeGraph(UndirectedSparseGraph<MyVertex,MyEdge> currentGraph, ObservableList observableList, Group innerObjects) {
@@ -421,13 +433,32 @@ public class Presenter {
             ViewVertex vv = new ViewVertex(v1.getID(), 5, v1.getX(), v1.getY());
             view.addVertex(vv, observableList);
             viewVertices.put(v1.getID(), vv);
+            makeDraggable(vv, innerObjects);
             makeSelectable(vv);
-            makeDraggable(vv,innerObjects);
             Tooltip.install(vv, new Tooltip(vv.getID()));
         }
         // add view edges
         for (MyEdge edge : currentGraph.getEdges()) {
             ViewEdge ve = new ViewEdge(viewVertices.get(edge.getFirst().getID()), viewVertices.get(edge.getSecond().getID()));
+            view.addEdge(ve, observableList);
+            ve.toBack();
+        }
+    }
+
+    private void visualizeSelectionGraph(UndirectedSparseGraph<MyVertex,MyEdge> currentGraph, ObservableList observableList, Group innerObjects) {
+        // add view vertices
+        for (MyVertex v1 : currentGraph.getVertices()) {
+            // Save v1 in collection to check, it has already been created to avoid redundancies in loop below?
+            ViewVertex vv = new ViewVertex(v1.getID(), 5, v1.getX(), v1.getY());
+            view.addVertex(vv, observableList);
+            viewVerticesSelection.put(v1.getID(), vv);
+            makeDraggable(vv, innerObjects);
+            makeSelectable(vv);
+            Tooltip.install(vv, new Tooltip(vv.getID()));
+        }
+        // add view edges
+        for (MyEdge edge : currentGraph.getEdges()) {
+            ViewEdge ve = new ViewEdge(viewVerticesSelection.get(edge.getFirst().getID()), viewVerticesSelection.get(edge.getSecond().getID()));
             view.addEdge(ve, observableList);
             ve.toBack();
         }
@@ -537,7 +568,7 @@ public class Presenter {
                     }
                 };
                 parseGraphTask.setOnSucceeded(e -> {
-                    visualizeGraph(model.getGraph(), view.getInnerViewObjects().getChildren(),view.getInnerViewObjects());
+                    visualizeGraph(model.getGraph(), view.getInnerViewObjects().getChildren(), view.getInnerViewObjects());
                     view.getScrollPane().setDisable(false);
                     view.makeScrollPaneZoomable(view.getScrollPane());
                 });
