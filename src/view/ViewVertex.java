@@ -10,6 +10,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
 
@@ -42,7 +43,7 @@ public class ViewVertex extends Group {
         return ID.get();
     }
 
-    public boolean getSelected(){
+    public boolean isSelected(){
         return selected;
     }
 
@@ -60,6 +61,13 @@ public class ViewVertex extends Group {
             selected=true;
             circle.setStroke(Color.BLACK);
         }
+    }
+
+    public void setColour(Paint paint){
+            circle.setFill(paint);
+            if (!isSelected()){
+                circle.setStroke(paint);
+            }
     }
 
     public void animate(double shiftX, double shiftY){
