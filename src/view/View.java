@@ -94,6 +94,9 @@ public class View {
     private Slider nodeSizeManualSlider;
 
     @FXML
+    private Slider coloringTransparencySlider;
+
+    @FXML
     private ChoiceBox<?> coloringTaxonomyChoiceBox;
 
     @FXML
@@ -110,6 +113,9 @@ public class View {
 
     @FXML
     private RadioButton coloringRankRadioButton;
+
+    @FXML
+    private RadioButton coloringTransparencyRadioButton;
 
     @FXML
     private RadioButton orderByNodeNumbersRadioButton;
@@ -236,6 +242,8 @@ public class View {
 
     public RadioButton getColoringRankRadioButton () { return coloringRankRadioButton;}
 
+    public RadioButton getColoringTransparencyRadioButton () { return  coloringTransparencyRadioButton; }
+
     public ChoiceBox<?> getColoringTaxonomyChoiceBox() {
         return coloringTaxonomyChoiceBox;
     }
@@ -271,6 +279,8 @@ public class View {
     public Slider getNodeSizeManualSlider() {
         return nodeSizeManualSlider;
     }
+
+    public Slider getColoringTransparencySlider () { return coloringTransparencySlider; }
 
     public RadioButton getNodeSizeContigLengthRadioButton() {
         return nodeSizeContigLengthRadioButton;
