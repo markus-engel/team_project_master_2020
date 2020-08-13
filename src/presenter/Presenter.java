@@ -16,6 +16,7 @@ import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TreeItem;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -82,7 +83,7 @@ public class Presenter {
                         @Override
                         protected Void call() throws Exception {
                             model.parseGFA(f.getAbsolutePath());
-                            model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), model.getGraph());
+                            model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), model.getGraph(), view.getOrderByContigLengthRadioButton().isSelected());
                             view.getProgressIndicator().setVisible(false);
                             return null;
                         }
@@ -227,7 +228,7 @@ public class Presenter {
                 resetTab();
                 if (view.getTabSelection().isSelected()) {
                     System.out.println("Selection tab recognized");
-                    model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), seleGraph);
+                    model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), seleGraph, view.getOrderByContigLengthRadioButton().isSelected());
                     visualizeSelectionGraph(seleGraph, view.getInnerViewObjectsSele().getChildren(), view.getInnerViewObjectsSele());
                     view.getScrollPaneSele().setDisable(false);
                     view.makeScrollPaneZoomable(view.getScrollPaneSele());
@@ -340,20 +341,31 @@ public class Presenter {
                         view.getLayoutApplyButton().setDisable(true);
                         model.setRepulsionMultiplier(view.getLayoutRepulsionMultiplierSpinner());
                         model.setAttractionMultiplier(view.getLayoutAttractionMultiplierSpinner());
-                        model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), model.getGraph());
+                        model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), model.getGraph(), view.getOrderByContigLengthRadioButton().isSelected());
                         return null;
                     }
                 };
                 layoutApplyTask.setOnSucceeded(e ->{
                     for (MyVertex mv : model.getGraph().getVertices()) {
                         ViewVertex vv = viewVertices.get(mv.getID());
-                        vv.animate(mv.getX(),mv.getY());
+                        vv.animate(mv.getX(), mv.getY());
                     }
                     view.getLayoutApplyButton().setDisable(false);
                 });
                 Thread layoutApplyThread = new Thread(layoutApplyTask);
                 layoutApplyThread.setDaemon(true);
                 layoutApplyThread.start();
+            }
+        });
+
+        view.getNodeSizeScaleChoiceBox().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                view.getNodeSizeGroup().selectToggle(view.getNodeSizeDefaultRadioButton());
+                if (!viewVertices.isEmpty()) for (ViewVertex vv : viewVertices.values()) {
+                    vv.setSize(5);
+                }
+                view.getNodeSizeManualSlider().setValue(5);
             }
         });
 
@@ -367,8 +379,11 @@ public class Presenter {
                     for (MyVertex v : model.getGraph().getVertices()) {
                         ViewVertex vv = viewVertices.get(v.getID());
                         double relativeCoverage = ((double) v.getProperty(ContigProperty.COVERAGE) - lowestCoverage) / range;
-                        vv.setSize(2 + (6 * relativeCoverage));
-                        //vv.setSize(Math.log(2 * coverage));
+                        if (view.getNodeSizeScaleChoiceBox().getValue().equals("linear scale")) {
+                            vv.setSize(2 + (6 * relativeCoverage));
+                        } else if (view.getNodeSizeScaleChoiceBox().getValue().equals("logarithmic scale")) {
+                            vv.setSize(Math.log(2 * (double) v.getProperty(ContigProperty.COVERAGE)));
+                        }
                     }
                     view.getNodeSizeManualSlider().setValue(5);
                 }
@@ -383,9 +398,13 @@ public class Presenter {
                     double range = largestContigLength - smallestContigLength;
                     for (MyVertex v : model.getGraph().getVertices()) {
                         ViewVertex vv = viewVertices.get(v.getID());
-                        double relativeContigLength = ((double) v.getProperty(ContigProperty.LENGTH) - smallestContigLength) / range;
-                        vv.setSize(2 + (6 * relativeContigLength));
-                        //vv.setSize(Math.log(contigLength / 1000.0));
+                        double contigLength = (double) v.getProperty(ContigProperty.LENGTH);
+                        double relativeContigLength = (contigLength - smallestContigLength) / range;
+                        if (view.getNodeSizeScaleChoiceBox().getValue().equals("linear scale")) {
+                            vv.setSize(2 + (6 * relativeContigLength));
+                        } else if (view.getNodeSizeScaleChoiceBox().getValue().equals("logarithmic scale")) {
+                            vv.setSize(Math.log(contigLength / 1000.0));
+                        }
                     }
                     view.getNodeSizeManualSlider().setValue(5);
                 }
@@ -401,11 +420,82 @@ public class Presenter {
             }
         });
         view.getNodeSizeManualSlider().disableProperty().bind(view.getNodeSizeManualRadioButton().selectedProperty().not());
+        view.getNodeSizeManualRadioButton().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                if (!viewVertices.isEmpty()) for (ViewVertex vv : viewVertices.values()) {
+                    vv.setSize(5);
+                }
+                view.getNodeSizeManualSlider().setValue(5);
+            }
+        });
         view.getNodeSizeManualSlider().setOnMouseReleased(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                if (!viewVertices.isEmpty()) for (ViewVertex vv : viewVertices.values()) {
-                    vv.setSize(view.getNodeSizeManualSlider().getValue());
+                if (!viewVertices.isEmpty() & view.getNodeSizeScaleChoiceBox().getValue().equals("linear scale"))
+                    for (ViewVertex vv : viewVertices.values()) {
+                        vv.setSize(view.getNodeSizeManualSlider().getValue());
+                    }
+                else if (!viewVertices.isEmpty() & view.getNodeSizeScaleChoiceBox().getValue().equals("logarithmic scale"))
+                    for (ViewVertex vv : viewVertices.values()) {
+                        vv.setSize(Math.log(view.getNodeSizeManualSlider().getValue()));
+                    }
+            }
+        });
+
+        view.getOrderByNodeNumbersRadioButton().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                Task<Void> layoutApplyTask = new Task<Void>() {
+                    @Override
+                    protected Void call() {
+                        model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), model.getGraph(), false);
+                        return null;
+                    }
+                };
+                layoutApplyTask.setOnSucceeded(e -> {
+                    for (MyVertex mv : model.getGraph().getVertices()) {
+                        ViewVertex vv = viewVertices.get(mv.getID());
+                        vv.animate(mv.getX(), mv.getY());
+                    }
+                });
+                Thread layoutApplyThread = new Thread(layoutApplyTask);
+                layoutApplyThread.setDaemon(true);
+                layoutApplyThread.start();
+            }
+        });
+
+        view.getOrderByContigLengthRadioButton().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                Task<Void> layoutApplyTask = new Task<Void>() {
+                    @Override
+                    protected Void call() {
+                        model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), model.getGraph(), true);
+                        return null;
+                    }
+                };
+                layoutApplyTask.setOnSucceeded(e -> {
+                    for (MyVertex mv : model.getGraph().getVertices()) {
+                        ViewVertex vv = viewVertices.get(mv.getID());
+                        vv.animate(mv.getX(), mv.getY());
+                    }
+                    System.out.println("new layout with order by contig length done");
+                });
+                Thread layoutApplyThread = new Thread(layoutApplyTask);
+                layoutApplyThread.setDaemon(true);
+                layoutApplyThread.start();
+            }
+        });
+
+        view.getShowLegendMenuItem().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                if (view.getShowLegendMenuItem().isSelected()) {
+                    view.getLegendScrollPane().setMaxWidth(200);
+                    view.setLegendItems("Colouring", "Node size", "Order", "Layout", "File");
+                } else {
+                    view.getLegendScrollPane().setMaxWidth(0);
                 }
             }
         });
@@ -415,8 +505,8 @@ public class Presenter {
             public void handle(ActionEvent actionEvent) {
 
                 //unselects all vertices
-                for (ViewVertex vv: viewVertices.values()){
-                    if (vv.isSelected()){
+                for (ViewVertex vv : viewVertices.values()) {
+                    if (vv.isSelected()) {
                         vv.setSelected();
                         updateSelectionGraph(vv);
                     }
@@ -445,7 +535,7 @@ public class Presenter {
         }
     }
 
-    private void visualizeSelectionGraph(UndirectedSparseGraph<MyVertex,MyEdge> currentGraph, ObservableList observableList, Group innerObjects) {
+    private void visualizeSelectionGraph(UndirectedSparseGraph<MyVertex, MyEdge> currentGraph, ObservableList observableList, Group innerObjects) {
         // add view vertices
         for (MyVertex v1 : currentGraph.getVertices()) {
             // Save v1 in collection to check, it has already been created to avoid redundancies in loop below?
@@ -471,7 +561,7 @@ public class Presenter {
             Bounds bounds = innerObjects.localToScene(view.getInnerViewObjects().getBoundsInLocal());
             double minX = bounds.getMinX();
             double minY = bounds.getMinY();
-            if (x < minX ) {
+            if (x < minX) {
                 x = minX;
             }
             if (y < minY) {
@@ -563,7 +653,7 @@ public class Presenter {
                     protected Void call() throws Exception {
                         model.parseGFA(menuItem.getText());
                         view.getProgressIndicator().setVisible(false);
-                        model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), model.getGraph());
+                        model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), model.getGraph(), view.getOrderByContigLengthRadioButton().isSelected());
                         return null;
                     }
                 };

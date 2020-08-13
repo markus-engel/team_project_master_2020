@@ -79,6 +79,12 @@ public class View {
     private TextField selectionTextfield;
 
     @FXML
+    private ToggleGroup nodeSizeGroup;
+
+    @FXML
+    private ChoiceBox<String> nodeSizeScaleChoiceBox;
+
+    @FXML
     private Button resetSelectionButton;
 
     @FXML
@@ -192,6 +198,21 @@ public class View {
     @FXML
     private MenuItem AboutMenuItem;
 
+    @FXML
+    private CheckMenuItem showLegendMenuItem;
+
+    @FXML
+    private MenuItem showTaxLegendMenuItem;
+
+    @FXML
+    private ScrollPane legendScrollPane;
+
+    @FXML
+    private TreeView<String> legendTreeView;
+
+    @FXML
+    private TextArea graphInformationTextArea;
+
     // getter and setter Methods. More have to be implemented if needed
     public MenuItem getOpenFileMenuItem() {
         return openFileMenuItem;
@@ -229,7 +250,9 @@ public class View {
         return SelectionMenuItem;
     }
 
-    public MenuItem getSaveAsPNGMenuItem() {return SaveAsPNGMenuItem;}
+    public MenuItem getSaveAsPNGMenuItem() {
+        return SaveAsPNGMenuItem;
+    }
 
     public MenuItem getCloseMenuItem() {
         return CloseMenuItem;
@@ -297,6 +320,22 @@ public class View {
         return nodeSizeDefaultRadioButton;
     }
 
+    public ChoiceBox<?> getNodeSizeScaleChoiceBox() {
+        return nodeSizeScaleChoiceBox;
+    }
+
+    public ToggleGroup getNodeSizeGroup() {
+        return nodeSizeGroup;
+    }
+
+    public RadioButton getOrderByNodeNumbersRadioButton() {
+        return orderByNodeNumbersRadioButton;
+    }
+
+    public RadioButton getOrderByContigLengthRadioButton() {
+        return orderByContigLengthRadioButton;
+    }
+
     public void setTaxaCountTextField(String size) {
         taxaCountTextfield.setText(String.valueOf(size));
     }
@@ -305,6 +344,7 @@ public class View {
     public void setSequenceCountTextField(int sequenceCount) {
         sequenceCountTextField.setText("Sequences: " + sequenceCount);
     }
+
     public TextField getOverlapCountTextField() {
         return overlapCountTextField;
     }
@@ -314,33 +354,78 @@ public class View {
         overlapCountTextField.setText("Overlaps: " + overlapCount);
     }
 
-    public Group getViewObjects(){ return viewObjects;}
+    public Group getViewObjects() {
+        return viewObjects;
+    }
 
-    public Group getViewObjectsSele(){ return viewObjectsSele;}
+    public Group getViewObjectsSele() {
+        return viewObjectsSele;
+    }
 
-    public Group getInnerViewObjects() { return innerViewObjects;}
+    public Group getInnerViewObjects() {
+        return innerViewObjects;
+    }
 
-    public Group getInnerViewObjectsSele() { return innerViewObjectsSele;}
+    public Group getInnerViewObjectsSele() {
+        return innerViewObjectsSele;
+    }
 
-    public ProgressIndicator getProgressIndicator(){ return progressIndicator;}
+    public ProgressIndicator getProgressIndicator() {
+        return progressIndicator;
+    }
 
-    public void setInnerViewObjects(Group innerViewObjects) { this.innerViewObjects = viewObjects;}
+    public void setInnerViewObjects(Group innerViewObjects) {
+        this.innerViewObjects = viewObjects;
+    }
 
-    public void setInnerViewObjectsSele(Group innerViewObjectsSele) { this.innerViewObjectsSele = viewObjectsSele;}
+    public void setInnerViewObjectsSele(Group innerViewObjectsSele) {
+        this.innerViewObjectsSele = viewObjectsSele;
+    }
 
-    public MenuItem getLayoutSettingsMenuItem(){ return layoutSettingsMenuItem;}
+    public MenuItem getLayoutSettingsMenuItem() {
+        return layoutSettingsMenuItem;
+    }
 
-    public double getLayoutRepulsionMultiplierSpinner(){ return Double.parseDouble(layoutRepulsionMultiplierSpinner.getValueFactory().getValue().toString());}
+    public double getLayoutRepulsionMultiplierSpinner() {
+        return Double.parseDouble(layoutRepulsionMultiplierSpinner.getValueFactory().getValue().toString());
+    }
 
-    public double getLayoutAttractionMultiplierSpinner() {return Double.parseDouble(layoutAttractionMultiplierSpinner.getValueFactory().getValue().toString());}
+    public double getLayoutAttractionMultiplierSpinner() {
+        return Double.parseDouble(layoutAttractionMultiplierSpinner.getValueFactory().getValue().toString());
+    }
 
-    public Button getLayoutApplyButton() { return layoutApplyButton;}
+    public Button getLayoutApplyButton() {
+        return layoutApplyButton;
+    }
 
-    public Button getResetSelectionButton() {return resetSelectionButton;}
+    public void setScaleProperty(double scale) {
+        innerViewObjects.setScaleX(scale);
+    }
 
-    public void setScaleProperty(double scale){ innerViewObjects.setScaleX(scale); }
+    public Button getResetSelectionButton() {
+        return resetSelectionButton;
+    }
 
-    public double getScaleProperty(){ return innerViewObjects.getScaleX();}
+    public double getScaleProperty() {
+        return innerViewObjects.getScaleX();
+    }
+
+    public CheckMenuItem getShowLegendMenuItem() {
+        return showLegendMenuItem;
+    }
+
+    public ScrollPane getLegendScrollPane() {
+        return legendScrollPane;
+    }
+
+    public TreeView<String> getLegendTreeView() {
+        return legendTreeView;
+    }
+
+    public void setLegendItems(String... items) {
+        legendTreeView.setRoot(new TreeItem<>("Legend"));
+
+    }
 
     /*
     public void addVertex(ViewVertex vv) {
@@ -352,22 +437,26 @@ public class View {
     } */
 
     public void addVertex(ViewVertex vv, ObservableList observableList) {
-         observableList.add(vv);
+        observableList.add(vv);
     }
 
     public void addEdge(ViewEdge viewEdge, ObservableList observableList) {
         observableList.add(viewEdge);
     }
 
-    public ScrollPane getScrollPane(){ return scrollPane;}
+    public ScrollPane getScrollPane() {
+        return scrollPane;
+    }
 
-    public ScrollPane getScrollPaneSele(){ return scrollPaneSele;}
+    public ScrollPane getScrollPaneSele() {
+        return scrollPaneSele;
+    }
 
     public void makeScrollPaneZoomable(ScrollPane sp) {
         sp.addEventFilter(ScrollEvent.ANY, new EventHandler<ScrollEvent>() {
             @Override
             public void handle(ScrollEvent scrollEvent) {
-                if(scrollEvent.isControlDown()){ // wenn scrollen disabled werden soll, dann hier !scrollevent.isConsumed()
+                if (scrollEvent.isControlDown()) { // wenn scrollen disabled werden soll, dann hier !scrollevent.isConsumed()
                     double scale = calculateScaleForZooming(scrollEvent);
                     innerViewObjects.setScaleX(scale);
                     innerViewObjects.setScaleY(scale);
@@ -378,7 +467,7 @@ public class View {
     }
 
     private double calculateScaleForZooming(ScrollEvent scrollEvent) {
-        double scale = innerViewObjects.getScaleX() + scrollEvent.getDeltaY()/100;
+        double scale = innerViewObjects.getScaleX() + scrollEvent.getDeltaY() / 100;
         if (scale <= MIN_ZOOM_SCALE) {
             scale = MIN_ZOOM_SCALE;
         } else if (scale >= MAX_ZOOM_SCALE) {

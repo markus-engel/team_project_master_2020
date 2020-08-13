@@ -24,7 +24,7 @@ public class Model {
     private ObjectProperty<UndirectedSparseGraph<MyVertex, MyEdge>> graphProperty = new SimpleObjectProperty<>();
     private double lowestCoverage, highestCoverage;
     private double smallestContigLength, largestContigLength;
-    TreeSet<Integer> taxa = new TreeSet<>(); //TODO: define the type <T> (Caner)
+    TreeSet<Integer> taxa = new TreeSet<>();
     TreeSet<String> ranks = new TreeSet<>();
     private double repulsionMultiplier;
     private double attractionMultiplier;
@@ -64,6 +64,10 @@ public class Model {
     // create needed objects of the IO classes to use them in presenter
     public void parseGFA(String path) throws IOException {
         this.graphProperty = new SimpleObjectProperty<>(GraphParser.readFile(path));
+        calculateContigLengthRange();
+    }
+
+    private void calculateContigLengthRange() {
         double smallestContigLength = Double.MAX_VALUE;
         double largestContigLength = Double.MIN_VALUE;
         for (MyVertex v : graphProperty.get().getVertices()) {
@@ -76,33 +80,50 @@ public class Model {
         setContigLengthRange(smallestContigLength, largestContigLength);
     }
 
-    private SortedSet<Set<MyVertex>> clusterVertices(UndirectedSparseGraph<MyVertex,MyEdge> graph){
+    private SortedSet<Set<MyVertex>> clusterVertices(UndirectedSparseGraph<MyVertex, MyEdge> graph, boolean byContigLength) {
         // Store connected components in a Set of Set of Vertices using the JUNG lib algorithm
-        WeakComponentClusterer<MyVertex,MyEdge> weakComponentClusterer = new WeakComponentClusterer<>();
+        WeakComponentClusterer<MyVertex, MyEdge> weakComponentClusterer = new WeakComponentClusterer<>();
         Set<Set<MyVertex>> cluster = weakComponentClusterer.apply(graph);
         // Each Vertex knows in which connected component it is
-        for(Set<MyVertex> set: cluster){
-            for(MyVertex mv : set){
+        for (Set<MyVertex> set : cluster) {
+            for (MyVertex mv : set) {
                 mv.setConnectedComponent(set);
             }
         }
-        // The Comparator sorts the Set of Sets based on their size. In the SortedSet the sets with biggest size appear first
-        Comparator<Set<MyVertex>> comparator = new Comparator<Set<MyVertex>>() {
-            @Override
-            public int compare(Set<MyVertex> o1, Set<MyVertex> o2) {
-                if(o1.size() > o2.size()) {
-                    return -1;
-                }
-                else { return 1;}
+        // The comparatorByNodeNumber sorts the Set of Sets based on their size. In the SortedSet the sets with biggest size appear first
+        Comparator<Set<MyVertex>> comparatorByNodeNumber = (o1, o2) -> {
+            if (o1.size() > o2.size()) {
+                return -1;
+            } else {
+                return 1;
             }
         };
-        SortedSet<Set<MyVertex>> sortedSet = new TreeSet<>(comparator);
-        sortedSet.addAll(cluster);
-        return sortedSet;
+        // The comparatorByContigLength sorts the Set of Sets based on the sum of the contig lengths
+        Comparator<Set<MyVertex>> comparatorByContigLength = (o1, o2) -> {
+            double contigLengthSum1 = 0;
+            double contigLengthSum2 = 0;
+            for (MyVertex v : o1) contigLengthSum1 += (double) v.getProperty(ContigProperty.LENGTH);
+            for (MyVertex v : o2) contigLengthSum2 += (double) v.getProperty(ContigProperty.LENGTH);
+            return Double.compare(contigLengthSum2, contigLengthSum1);
+        };
+        try {
+            if (!byContigLength) {
+                SortedSet<Set<MyVertex>> sortedSet = new TreeSet<>(comparatorByNodeNumber);
+                sortedSet.addAll(cluster);
+                return sortedSet;
+            } else {
+                SortedSet<Set<MyVertex>> sortedSet = new TreeSet<>(comparatorByContigLength);
+                sortedSet.addAll(cluster);
+                return sortedSet;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
-    public void applyLayout(Dimension dimension, UndirectedSparseGraph<MyVertex, MyEdge> graph){
-        SortedSet<Set<MyVertex>> sortedSet = clusterVertices(graph);
+    public void applyLayout(Dimension dimension, UndirectedSparseGraph<MyVertex, MyEdge> graph, boolean byContigLength) {
+        SortedSet<Set<MyVertex>> sortedSet = clusterVertices(graph, byContigLength);
         double shiftX = 0.0;
         double shiftY = 0.0;
         double maxY = 0.0;
@@ -111,7 +132,7 @@ public class Model {
         int ratio = graph.getVertexCount() - getLonelyVertexCount(graph);
         int spaceInbetween = 15;
         // Apply the layout onto every set of vertices and update coordinates.
-        for(Set<MyVertex> set : sortedSet){
+        for (Set<MyVertex> set : sortedSet) {
             firstLonelyVertices = true;
             if(set.size() > 1){
                 UndirectedSparseGraph<MyVertex,MyEdge> auxGraph = createAuxiliarGraph(set, graph);
@@ -164,7 +185,7 @@ public class Model {
         return taxa.size();
     }
 
-    public TreeSet getTaxaID() {
+    public TreeSet<Integer> getTaxaID() {
         return taxa;
     }
 
@@ -268,9 +289,9 @@ public class Model {
         return count;
     }
 
-    public HashMap<Integer, String> createColor(Integer taxaCount, TreeSet taxaID) {
+    public HashMap<Integer, String> createColor(Integer taxaCount, TreeSet<Integer> taxaID) {
 //        int r = 5, g = 5, b = 5, rgbBorderHigh = 255;
-        int [] rgbNumbers;
+        int[] rgbNumbers;
         double alpha = 1;
         HashMap<Integer, String> taxIDRGBCode = new HashMap<>();
 
@@ -306,8 +327,8 @@ public class Model {
         return taxIDRGBCode;
     }
 
-    public HashMap<String, String> createColorRank(TreeSet ranks) {
-        int [] rgbNumbersRank;
+    public HashMap<String, String> createColorRank(TreeSet<String> ranks) {
+        int[] rgbNumbersRank;
         HashMap<String, String> rankIDRGBCode = new HashMap<>();
 
         for (Object i : ranks) {

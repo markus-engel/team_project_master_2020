@@ -12,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 /*
 This is the class containing the readFile method to construct a graph from a GFA file.
@@ -33,8 +34,7 @@ public class GraphParser {
         int count2 = 0;
         int count3 = 0;
 
-        //TODO: declare to the interface (Caner)
-        HashMap<String, MyVertex> vertices = new HashMap<>(); //Hashmap collecting all vertices added to graph, with ID as key, model.graph.MyVertex as object
+        Map<String, MyVertex> vertices = new HashMap<>(); //Hashmap collecting all vertices added to graph, with ID as key, model.graph.MyVertex as object
         UndirectedSparseGraph<MyVertex, MyEdge> graph = new UndirectedSparseGraph<>(); //UndirectedSparseGraph readfile returns
 
         while ((line = br.readLine()) != null) {
@@ -127,7 +127,7 @@ public class GraphParser {
         else return 0;
     }
 
-    public static MyVertex getVertexFromMapOrNew(String vertexID, HashMap<String, MyVertex> vertices) {
+    public static MyVertex getVertexFromMapOrNew(String vertexID, Map<String, MyVertex> vertices) {
         return vertices.getOrDefault(vertexID, new MyVertex(new SimpleStringProperty(vertexID)));
     }
 
