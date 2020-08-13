@@ -58,10 +58,10 @@ public class Model {
     }
 
 
-    //TODO: the name here is confusing. parsing the graph is only one of it, the rest is layout! (Caner): Hope thats better (Jonas)
+    //TODO: the name here is confusing. parsing the graph is only one of it, the rest is layout! (Caner) @Julia: export for loop in different method (Jonas)
 
     // create needed objects of the IO classes to use them in presenter
-    public void parseGraph(String path) throws IOException {
+    public void parseGFA(String path) throws IOException {
         this.graphProperty = new SimpleObjectProperty<>(GraphParser.readFile(path));
         double smallestContigLength = Double.MAX_VALUE;
         double largestContigLength = Double.MIN_VALUE;
@@ -75,10 +75,16 @@ public class Model {
         setContigLengthRange(smallestContigLength, largestContigLength);
     }
 
-    private SortedSet<Set<MyVertex>> clusterVertices(){
+    private SortedSet<Set<MyVertex>> clusterVertices(UndirectedSparseGraph<MyVertex,MyEdge> graph){
         // Store connected components in a Set of Set of Vertices using the JUNG lib algorithm
         WeakComponentClusterer<MyVertex,MyEdge> weakComponentClusterer = new WeakComponentClusterer<>();
-        Set<Set<MyVertex>> cluster = weakComponentClusterer.apply(graphProperty.get());
+        Set<Set<MyVertex>> cluster = weakComponentClusterer.apply(graph);
+        // Each Vertex knows in which connected component it is
+        for(Set<MyVertex> set: cluster){
+            for(MyVertex mv : set){
+                mv.setConnectedComponent(set);
+            }
+        }
         // The Comparator sorts the Set of Sets based on their size. In the SortedSet the sets with biggest size appear first
         Comparator<Set<MyVertex>> comparator = new Comparator<Set<MyVertex>>() {
             @Override
@@ -94,32 +100,27 @@ public class Model {
         return sortedSet;
     }
 
-    public void applyLayout(Dimension dimension, UndirectedSparseGraph<MyVertex, MyEdge> currentGraph){
-        SortedSet<Set<MyVertex>> sortedSet = clusterVertices();
+    public void applyLayout(Dimension dimension, UndirectedSparseGraph<MyVertex, MyEdge> graph){
+        SortedSet<Set<MyVertex>> sortedSet = clusterVertices(graph);
         double shiftX = 0.0;
         double shiftY = 0.0;
         double maxY = 0.0;
         boolean firstLonelyVertices;
         int firstLonelyVerticesShiftY = 0;
-        int ratio = currentGraph.getVertexCount() - getLonelyVertexCount(currentGraph);
-
-        //Stimmt das Logisch? dass es dann einfach 1 ist??
-        if (ratio<=0){
-            ratio=1;
-        }
-
+        int ratio = graph.getVertexCount() - getLonelyVertexCount(graph);
+        int spaceInbetween = 15;
         // Apply the layout onto every set of vertices and update coordinates.
         for(Set<MyVertex> set : sortedSet){
             firstLonelyVertices = true;
             if(set.size() > 1){
-                UndirectedSparseGraph<MyVertex,MyEdge> auxGraph = createAuxilliarGraph(set);
+                UndirectedSparseGraph<MyVertex,MyEdge> auxGraph = createAuxilliarGraph(set, graph);
                 // Calculate layout dimension for each set based on the set size
                 int dimensionX = (int) ((double)dimension.width*((double)set.size()/(double) ratio));
                 int dimensionY = (int) ((double)dimension.height*((double)set.size()/(double)ratio));
                 firstLonelyVerticesShiftY = dimensionY;
                 Dimension setDimension = new Dimension(dimensionX,dimensionY);
                 if(dimensionY > maxY) {
-                    maxY = (double) dimensionY + 15;
+                    maxY = (double) dimensionY + spaceInbetween;
                 }
                 if(dimensionX + shiftX > dimension.width){
                     shiftX = 0.0;
@@ -128,7 +129,7 @@ public class Model {
                     applyLayoutAndShiftCoords(auxGraph,setDimension,shiftX,shiftY);
                 } else {
                     applyLayoutAndShiftCoords(auxGraph,setDimension,shiftX,shiftY);
-                    shiftX += dimensionX + 15;
+                    shiftX += dimensionX + spaceInbetween;
                 }
             } else {
                 set.iterator().next().setX(shiftX);
@@ -136,12 +137,12 @@ public class Model {
                 shiftX += 10;
                 if(shiftX > dimension.width && firstLonelyVertices){
                     shiftX = 0.0;
-                    shiftY += firstLonelyVerticesShiftY + 15;
+                    shiftY += firstLonelyVerticesShiftY + spaceInbetween;
                     firstLonelyVertices = false;
                 }
                 else if(shiftX > dimension.width){
                     shiftX = 0.0;
-                    shiftY += 15;
+                    shiftY += spaceInbetween;
                 }
             }
         }
@@ -151,9 +152,7 @@ public class Model {
         return graphProperty.get();
     }
 
-    public void setGraphProperty(UndirectedSparseGraph<MyVertex, MyEdge> graph) {
-        this.graphProperty = new SimpleObjectProperty<>(graph) ;
-    }
+    public void setGraph(UndirectedSparseGraph<MyVertex,MyEdge> graph) {this.graphProperty.set(graph);}
 
     public void parseTaxId(String path) throws IOException {
         new TaxIdParser(graphProperty.get(), path, taxonomyTree, taxa);
@@ -252,19 +251,18 @@ public class Model {
         }
     }
 
-    private UndirectedSparseGraph<MyVertex,MyEdge> createAuxilliarGraph(Set<MyVertex> vertexSet){
+    private UndirectedSparseGraph<MyVertex,MyEdge> createAuxilliarGraph(Set<MyVertex> vertexSet, UndirectedSparseGraph<MyVertex, MyEdge> graph){
         UndirectedSparseGraph<MyVertex,MyEdge> auxGraph = new UndirectedSparseGraph<>();
         for(MyVertex v: vertexSet){
             v.setConnectedComponent(vertexSet);
             auxGraph.addVertex(v);
-            for(MyEdge edge : this.graphProperty.get().getInEdges(v)){
+            for(MyEdge edge : graph.getInEdges(v)){
                 auxGraph.addEdge(edge, edge.getVertices());
             }
         }
         return auxGraph;
     }
 
-    //cannot get lonely vertices, has to be graph specific, I believe..
     private int getLonelyVertexCount(UndirectedSparseGraph<MyVertex, MyEdge> graph){
         int count = 0;
         for (MyVertex v : graph.getVertices()){

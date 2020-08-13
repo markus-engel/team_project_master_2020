@@ -11,7 +11,6 @@ import javafx.beans.property.StringProperty;
 import javafx.scene.Group;
 import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
 
@@ -36,6 +35,22 @@ public class ViewVertex extends Group {
         this.getChildren().add(circle);
     }
 
+    public Circle getCircle() {
+        return circle;
+    }
+
+    public String getID() {
+        return ID.get();
+    }
+
+    public boolean getSelected(){
+        return selected;
+    }
+
+    public StringProperty getIDProperty() {
+        return ID;
+    }
+    
     public void setSelected(){
         if (selected){
             selected=false;
@@ -45,23 +60,6 @@ public class ViewVertex extends Group {
             selected=true;
             circle.setStroke(Color.BLACK);
         }
-    }
-
-    public Circle getCircle() {
-        return circle;
-    }
-
-    public String getID() {
-        return ID.get();
-    }
-
-    public void setColour(Paint paint){
-        this.circle.setFill(paint);
-        this.circle.setStroke(paint);
-    }
-
-    public StringProperty getIDProperty() {
-        return ID;
     }
 
     public void animate(double shiftX, double shiftY){

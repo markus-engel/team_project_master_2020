@@ -2,8 +2,6 @@
 package presenter;
 
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
@@ -41,11 +39,9 @@ public class Presenter {
     Model model;
     View view;
     Map<String, ViewVertex> viewVertices = new HashMap<>();  //Hashmap of view vertex objects
-    Map<String, MyVertex> selectedMyVertices = new HashMap<>(); //Hashmap of selected Vertices
+    Map<String, ViewVertex> viewVerticesSelection = new HashMap<>();  //Hashmap of view vertex objects
     public final Dimension MAX_WINDOW_DIMENSION = new Dimension(775, 500); //gets passed to model to center layouts, gets passed to view to control size of window
-
-    //Do we need this? Maybe its enough to save the view vertices, and look up the IDs each time we need the Infos.
-    ObjectProperty<UndirectedSparseGraph<MyVertex, MyEdge>> selectionGraphProperty = new SimpleObjectProperty<>();
+    UndirectedSparseGraph<MyVertex,MyEdge> seleGraph = new UndirectedSparseGraph<>();
 
     public Presenter(Model model, View view) {
         this.model = model;
@@ -81,7 +77,7 @@ public class Presenter {
                     Task<Void> parseGraphTask = new Task<Void>() {
                         @Override
                         protected Void call() throws Exception {
-                            model.parseGraph(f.getAbsolutePath());
+                            model.parseGFA(f.getAbsolutePath());
                             model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), model.getGraph());
                             view.getProgressIndicator().setVisible(false);
                             return null;
@@ -95,7 +91,7 @@ public class Presenter {
                         view.getImportCoverageMenuItem().setDisable(false);
                         view.getCustomizeMenuItem().setDisable(false);
                         MenuItem recentFile = new MenuItem(f.getAbsolutePath());
-                        if (!view.getOpenRecentFileMenu().getItems().contains(recentFile)) {
+                        if (!view.getOpenRecentFileMenu().getItems().contains(recentFile)){
                             setOpenRecentFileEventHandler(recentFile);
                             view.getOpenRecentFileMenu().getItems().add(recentFile);
                         }
@@ -187,11 +183,14 @@ public class Presenter {
                 if (!namePNG.getPath().endsWith(".png")) {
                     namePNG = new File(namePNG.getPath() + ".png");
                 }
-                try {
-                    if (namePNG != null) {
+                try
+                {
+                    if(namePNG != null)
+                    {
                         ImageIO.write(SwingFXUtils.fromFXImage(toSave, null), "png", namePNG);
                     }
-                } catch (IOException e) {
+                } catch (IOException e)
+                {
                     System.out.println(e.toString());
                 }
             }
@@ -216,19 +215,14 @@ public class Presenter {
             }
         }); */
 
-
-        //Also wir malen immer dem selegraph, wir müssen nur auf das tab gehen? yes.
         view.getTabSelection().setOnSelectionChanged(new EventHandler<Event>() {
             @Override
             public void handle(Event event) {
+                resetTab();
                 if (view.getTabSelection().isSelected()) {
                     System.out.println("Selection tab recognized");
-                    resetSelectionView();
-                    model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), selectionGraphProperty.get());
-
-                    //werden hier immer wieder neue view vertix objeccte gemacht???
-                    //warum haben wir kein getTabMain das benutzt wird??
-                    visualizeGraph(selectionGraphProperty.get(), view.getInnerViewObjectsSele().getChildren());
+                    model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), seleGraph);
+                    visualizeSelectionGraph(seleGraph, view.getInnerViewObjectsSele().getChildren());
                     view.getScrollPaneSele().setDisable(false);
                     view.makeScrollPaneZoomable(view.getScrollPaneSele());
                 }
@@ -245,13 +239,14 @@ public class Presenter {
                     Node taxNode = (Node) v.getProperty(ContigProperty.TAXONOMY);
 //                    System.out.println(taxIDRGBCode.size());
 //                    System.out.println("TaxParser :" + taxNode.getId() + " | " + "TaxIDMap: " + taxIDRGBCode.);
-                    if (taxIDRGBCode.keySet().contains(taxNode.getId())) {
-                        String rgb = taxIDRGBCode.get(taxNode.getId());
-                        String[] rgbCodes = rgb.split("t");
-                        viewVertices.get(v.getID()).setColour(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2]), Double.parseDouble(rgbCodes[3]))); //, rgbCodes[3]));
-                    } else if (taxNode.getId() == -100) {
-                        viewVertices.get(v.getID()).setColour(Color.rgb(255, 0, 255));
-                    }
+                        if (taxIDRGBCode.keySet().contains(taxNode.getId())) {
+                            String rgb = taxIDRGBCode.get(taxNode.getId());
+                            String[] rgbCodes = rgb.split("t");
+                            viewVertices.get(v.getID()).getCircle().setFill(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2]), Double.parseDouble(rgbCodes[3]))); //, rgbCodes[3]));
+                        }
+                        else if (taxNode.getId() == -100) {
+                            viewVertices.get(v.getID()).getCircle().setFill(Color.rgb(255, 0, 255));
+                        }
                 }
             }
         });
@@ -259,7 +254,7 @@ public class Presenter {
         view.getColoringDefaultRadioButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                for (MyVertex v : model.getGraph().getVertices()) {
+                for (MyVertex v : model.getGraph().getVertices()){
                     viewVertices.get(v.getID()).getCircle().setFill(Color.CORAL);
                 }
             }
@@ -271,17 +266,19 @@ public class Presenter {
                 Task<Void> layoutApplyTask = new Task<Void>() {
                     @Override
                     protected Void call() {
+                        view.getLayoutApplyButton().setDisable(true);
                         model.setRepulsionMultiplier(view.getLayoutRepulsionMultiplierSpinner());
                         model.setAttractionMultiplier(view.getLayoutAttractionMultiplierSpinner());
                         model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), model.getGraph());
                         return null;
                     }
                 };
-                layoutApplyTask.setOnSucceeded(e -> {
+                layoutApplyTask.setOnSucceeded(e ->{
                     for (MyVertex mv : model.getGraph().getVertices()) {
                         ViewVertex vv = viewVertices.get(mv.getID());
-                        vv.animate(mv.getX(), mv.getY());
+                        vv.animate(mv.getX(),mv.getY());
                     }
+                    view.getLayoutApplyButton().setDisable(false);
                 });
                 Thread layoutApplyThread = new Thread(layoutApplyTask);
                 layoutApplyThread.setDaemon(true);
@@ -341,10 +338,24 @@ public class Presenter {
                 }
             }
         });
+
+        view.getResetSelectionButton().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+
+                //unselects all vertices
+                for (ViewVertex vv: viewVertices.values()){
+                    if (vv.getSelected()){
+                        vv.setSelected();
+                        updateSelectionGraph(vv);
+                    }
+                }
+                resetTab();
+            }
+        });
     }
 
-    //Wir müssen zwischen Main tab und dem seine Kinder und dem Selection tab und dem seine Kinder differenzieren, wir brauchen zwei visualize graph methoden.
-    private void visualizeGraph(UndirectedSparseGraph<MyVertex, MyEdge> currentGraph, ObservableList observableList) {
+    private void visualizeGraph(UndirectedSparseGraph<MyVertex,MyEdge> currentGraph, ObservableList observableList) {
         // add view vertices
         for (MyVertex v1 : currentGraph.getVertices()) {
             // Save v1 in collection to check, it has already been created to avoid redundancies in loop below?
@@ -363,6 +374,25 @@ public class Presenter {
         }
     }
 
+    private void visualizeSelectionGraph(UndirectedSparseGraph<MyVertex,MyEdge> currentGraph, ObservableList observableList) {
+        // add view vertices
+        for (MyVertex v1 : currentGraph.getVertices()) {
+            // Save v1 in collection to check, it has already been created to avoid redundancies in loop below?
+            ViewVertex vv = new ViewVertex(v1.getID(), 5, v1.getX(), v1.getY());
+            view.addVertex(vv, observableList);
+            viewVerticesSelection.put(v1.getID(), vv);
+            makeDraggable(vv);
+            makeSelectable(vv);
+            Tooltip.install(vv, new Tooltip(vv.getID()));
+        }
+        // add view edges
+        for (MyEdge edge : currentGraph.getEdges()) {
+            ViewEdge ve = new ViewEdge(viewVerticesSelection.get(edge.getFirst().getID()), viewVerticesSelection.get(edge.getSecond().getID()));
+            view.addEdge(ve, observableList);
+            ve.toBack();
+        }
+    }
+
     private void makeDraggable(ViewVertex viewVertex) {
         viewVertex.setOnMouseDragged(event -> {
             double x = event.getSceneX();
@@ -370,7 +400,7 @@ public class Presenter {
             Bounds bounds = view.getInnerViewObjects().localToScene(view.getInnerViewObjects().getBoundsInLocal());
             double minX = bounds.getMinX();
             double minY = bounds.getMinY();
-            if (x < minX) {
+            if (x < minX ) {
                 x = minX;
             }
             if (y < minY) {
@@ -387,15 +417,15 @@ public class Presenter {
         });
     }
 
-    //maybe we also reset the selection graph in this method?
     private void reset() {
-        model.setGraphProperty(null);
+        model.setGraph(null);
         view.getInnerViewObjects().getChildren().clear();
         viewVertices = new HashMap<>();
     }
 
-    private void resetSelectionView() {
+    private void resetTab(){
         view.getInnerViewObjectsSele().getChildren().clear();
+
     }
 
     /*
@@ -411,72 +441,39 @@ public class Presenter {
         });
     } */
 
-    /*
-    private void chooseSelectionGraph(ViewVertex viewVertex) {
-        viewVertex.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2) {
-                for(MyVertex v : model.getGraph().getVertices()) {
-                    if (v.getID().equals(viewVertex.getID())) {
-                        if (!seleGraph.containsVertex(v)) {
-                            System.out.println("addded test: " + viewVertex.getID());
-                            seleGraph.addVertex(new MyVertex(v));
-                            for(MyEdge edge : this.model.getGraph().getInEdges(v)){
-                                seleGraph.addEdge(edge, edge.getVertices());
-                            }
-                        } else if (seleGraph.containsVertex(v)) {
-                            System.out.println("deleted test: " + viewVertex.getID());
-                            seleGraph.removeVertex(new MyVertex(v));
-                            for(MyEdge edge : this.model.getGraph().getInEdges(v)){
-                                seleGraph.removeEdge(edge);
-                            }
-                        }
-
-                    }
-                }
-            }
-        });
-    }
-
-     */
-
-    //okay. we need a graph, because we want to make a new layout, specific for the selected vertices, which we can generate at any time (hence the coupeling of clicking on selection tab.. but i dont like that.)
     private void makeSelectable(ViewVertex viewVertex) {
         viewVertex.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2) {
+            viewVertex.setSelected();
+            updateSelectionGraph(viewVertex);
 
-                //creates border, changes selected boolean accordingly
-                viewVertex.setSelected();
-                updateSelectionGraph(viewVertex);
-            }
         });
     }
 
-    private void updateSelectionGraph(ViewVertex viewVertex) {
-        for (MyVertex originVertex : model.getGraph().getVertices()) {
-
-            if (originVertex.getID().equals(viewVertex.getID())) {
-
-                if (selectedMyVertices.get(viewVertex.getID())==null){
-                    MyVertex vertex = new MyVertex(originVertex);
-                    selectionGraphProperty.get().addVertex(vertex);
-                    selectedMyVertices.put(vertex.getID(), vertex);
-
-                    for (MyEdge edge : this.model.getGraph().getInEdges(originVertex)) {
-
-                        if (selectedMyVertices.containsKey(edge.getFirst().getID()) && selectedMyVertices.containsKey(edge.getSecond().getID())) {
-                            selectionGraphProperty.get().addEdge(edge, edge.getVertices());
+    private void updateSelectionGraph(ViewVertex viewVertex){
+        for(MyVertex v : model.getGraph().getVertices()) {
+            if (v.getID().equals(viewVertex.getID())) {
+                if (!seleGraph.containsVertex(v)) {
+                    System.out.println("addded test: " + viewVertex.getID());
+                    seleGraph.addVertex(v);
+                    for(MyEdge edge : this.model.getGraph().getInEdges(v)){
+                        if (seleGraph.containsVertex(edge.getFirst()) && seleGraph.containsVertex(edge.getSecond())) {
+                            seleGraph.addEdge(edge, edge.getVertices());
+                            System.out.println("edge added");
                         }
                     }
+                } else if (seleGraph.containsVertex(v)) {
+                    System.out.println("deleted test: " + viewVertex.getID());
+                    seleGraph.removeVertex(v);
+                    for(MyEdge edge : this.model.getGraph().getInEdges(v)){
+                        seleGraph.removeEdge(edge);
+                    }
                 }
-                else{
-                    selectionGraphProperty.get().removeVertex(selectedMyVertices.get(viewVertex.getID()));
-                    selectedMyVertices.remove(viewVertex.getID()); }
+
             }
         }
     }
-
-
-    private void setOpenRecentFileEventHandler(MenuItem menuItem) {
+    
+    private void setOpenRecentFileEventHandler(MenuItem menuItem){
         menuItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -492,7 +489,7 @@ public class Presenter {
                 Task<Void> parseGraphTask = new Task<Void>() {
                     @Override
                     protected Void call() throws Exception {
-                        model.parseGraph(menuItem.getText());
+                        model.parseGFA(menuItem.getText());
                         view.getProgressIndicator().setVisible(false);
                         model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), model.getGraph());
                         return null;
