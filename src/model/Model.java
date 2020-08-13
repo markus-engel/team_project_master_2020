@@ -114,7 +114,7 @@ public class Model {
         for(Set<MyVertex> set : sortedSet){
             firstLonelyVertices = true;
             if(set.size() > 1){
-                UndirectedSparseGraph<MyVertex,MyEdge> auxGraph = createAuxilliarGraph(set, graph);
+                UndirectedSparseGraph<MyVertex,MyEdge> auxGraph = createAuxiliarGraph(set, graph);
                 // Calculate layout dimension for each set based on the set size
                 int dimensionX = (int) ((double)dimension.width*((double)set.size()/(double) ratio));
                 int dimensionY = (int) ((double)dimension.height*((double)set.size()/(double)ratio));
@@ -133,17 +133,18 @@ public class Model {
                     shiftX += dimensionX + spaceInbetween;
                 }
             } else {
-                set.iterator().next().setX(shiftX);
-                set.iterator().next().setY(shiftY);
-                shiftX += 10;
-                if(shiftX > dimension.width && firstLonelyVertices){
-                    shiftX = 0.0;
-                    shiftY += firstLonelyVerticesShiftY + spaceInbetween;
-                    firstLonelyVertices = false;
-                }
-                else if(shiftX > dimension.width){
-                    shiftX = 0.0;
-                    shiftY += spaceInbetween;
+                for(MyVertex lonelyVertex : set) {
+                    lonelyVertex.setX(shiftX);
+                    lonelyVertex.setY(shiftY);
+                    shiftX += 10;
+                    if (shiftX > dimension.width && firstLonelyVertices) {
+                        shiftX = 0.0;
+                        shiftY += firstLonelyVerticesShiftY + spaceInbetween;
+                        firstLonelyVertices = false;
+                    } else if (shiftX > dimension.width) {
+                        shiftX = 0.0;
+                        shiftY += spaceInbetween;
+                    }
                 }
             }
         }
@@ -227,17 +228,6 @@ public class Model {
         setCoverageRange(lowestCoverage, highestCoverage);
     }
 
-    private UndirectedSparseGraph<MyVertex, MyEdge> createAuxiliaryGraph(Set<MyVertex> vertices) {
-        UndirectedSparseGraph<MyVertex, MyEdge> auxGraph = new UndirectedSparseGraph<>();
-        for (MyVertex v : vertices) {
-            auxGraph.addVertex(v);
-            for (MyEdge edge : this.graphProperty.get().getInEdges(v)) {
-                auxGraph.addEdge(edge, edge.getVertices());
-            }
-        }
-        return auxGraph;
-    }
-
     public void applyLayoutAndShiftCoords(UndirectedSparseGraph<MyVertex, MyEdge> graph, Dimension dimension, double shiftX, double shiftY) {
         FRLayout<MyVertex, MyEdge> layout = new FRLayout<>(graph);
         layout.setRepulsionMultiplier(repulsionMultiplier);
@@ -256,7 +246,7 @@ public class Model {
         }
     }
 
-    private UndirectedSparseGraph<MyVertex,MyEdge> createAuxilliarGraph(Set<MyVertex> vertexSet, UndirectedSparseGraph<MyVertex, MyEdge> graph){
+    private UndirectedSparseGraph<MyVertex,MyEdge> createAuxiliarGraph(Set<MyVertex> vertexSet, UndirectedSparseGraph<MyVertex, MyEdge> graph){
         UndirectedSparseGraph<MyVertex,MyEdge> auxGraph = new UndirectedSparseGraph<>();
         for(MyVertex v: vertexSet){
             v.setConnectedComponent(vertexSet);

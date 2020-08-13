@@ -51,7 +51,7 @@
                      <children>
                         <StackPane fx:id="stackPaneSele" prefHeight="712.0" prefWidth="1000.0">
                            <children>
-                              <ScrollPane fx:id="scrollPaneSele" pannable="false" prefHeight="679.0" prefWidth="10000.0">
+                              <ScrollPane fx:id="scrollPaneSele" pannable="false" prefHeight="238.0" prefWidth="540.0">
                                  <content>
                                     <Group fx:id="viewObjectsSele">
                                        <children>
