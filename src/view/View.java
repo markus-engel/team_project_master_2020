@@ -197,6 +197,10 @@ public class View {
         return openFileMenuItem;
     }
 
+    public MenuItem getHelpMenu(){
+        return helpMenu;
+    }
+
     public Menu getOpenRecentFileMenu() {
         return openRecentFileMenu;
     }
@@ -301,12 +305,20 @@ public class View {
         taxaCountTextfield.setText(String.valueOf(size));
     }
 
+    public void setselectionTextfield(String number){
+        selectionTextfield.setText("Selected: " + number);
+    }
+
     // Number of Vertices
     public void setSequenceCountTextField(int sequenceCount) {
-        sequenceCountTextField.setText("Sequences: " + sequenceCount);
+        sequenceCountTextField.setText("Sequences: " + String.valueOf(sequenceCount));
     }
     public TextField getOverlapCountTextField() {
         return overlapCountTextField;
+    }
+
+    public TextField getselectionTextfield() {
+        return selectionTextfield;
     }
 
     // Number of Edges

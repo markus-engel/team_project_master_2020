@@ -9,7 +9,6 @@ import javafx.animation.TranslateTransition;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.Group;
-import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
@@ -50,7 +49,8 @@ public class ViewVertex extends Group {
     public StringProperty getIDProperty() {
         return ID;
     }
-    
+
+
     public void setSelected(){
         if (selected){
             selected=false;

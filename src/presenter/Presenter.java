@@ -15,6 +15,7 @@ import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.WritableImage;
@@ -49,6 +50,8 @@ public class Presenter {
     public final Dimension MAX_WINDOW_DIMENSION = new Dimension(775, 500); //gets passed to model to center layouts, gets passed to view to control size of window
     UndirectedSparseGraph<MyVertex,MyEdge> seleGraph = new UndirectedSparseGraph<>();
     Boolean rank = false, taxonomy = false;
+    int countSelected = 0;
+
 
     public Presenter(Model model, View view) {
         this.model = model;
@@ -91,14 +94,14 @@ public class Presenter {
                         }
                     };
                     parseGraphTask.setOnSucceeded(e -> {
-                        visualizeGraph(model.getGraph(), view.getInnerViewObjects().getChildren(),view.getInnerViewObjects());
+                        visualizeGraph(model.getGraph(), view.getInnerViewObjects().getChildren(), view.getInnerViewObjects());
                         view.getScrollPane().setDisable(false);
                         view.makeScrollPaneZoomable(view.getScrollPane());
                         view.getImportTaxonomyMenuItem().setDisable(false);
                         view.getImportCoverageMenuItem().setDisable(false);
                         view.getCustomizeMenuItem().setDisable(false);
                         MenuItem recentFile = new MenuItem(f.getAbsolutePath());
-                        if (!view.getOpenRecentFileMenu().getItems().contains(recentFile)){
+                        if (!view.getOpenRecentFileMenu().getItems().contains(recentFile)) {
                             setOpenRecentFileEventHandler(recentFile);
                             view.getOpenRecentFileMenu().getItems().add(recentFile);
                         }
@@ -192,14 +195,11 @@ public class Presenter {
                 if (!namePNG.getPath().endsWith(".png")) {
                     namePNG = new File(namePNG.getPath() + ".png");
                 }
-                try
-                {
-                    if(namePNG != null)
-                    {
+                try {
+                    if (namePNG != null) {
                         ImageIO.write(SwingFXUtils.fromFXImage(toSave, null), "png", namePNG);
                     }
-                } catch (IOException e)
-                {
+                } catch (IOException e) {
                     System.out.println(e.toString());
                 }
             }
@@ -249,14 +249,13 @@ public class Presenter {
 
                 for (MyVertex v : model.getGraph().getVertices()) {
                     Node taxNode = (Node) v.getProperty(ContigProperty.TAXONOMY);
-                        if (taxIDRGBCode.keySet().contains(taxNode.getId())) {
-                            String rgb = taxIDRGBCode.get(taxNode.getId());
-                            String[] rgbCodes = rgb.split("t");
-                            viewVertices.get(v.getID()).getCircle().setFill(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2])));
-                        }
-                        else if (taxNode.getId() == -100) {
-                            viewVertices.get(v.getID()).getCircle().setFill(Color.rgb(0, 255, 0));
-                        }
+                    if (taxIDRGBCode.keySet().contains(taxNode.getId())) {
+                        String rgb = taxIDRGBCode.get(taxNode.getId());
+                        String[] rgbCodes = rgb.split("t");
+                        viewVertices.get(v.getID()).getCircle().setFill(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2])));
+                    } else if (taxNode.getId() == -100) {
+                        viewVertices.get(v.getID()).getCircle().setFill(Color.rgb(0, 255, 0));
+                    }
                 }
                 taxonomy = true;
             }
@@ -276,9 +275,8 @@ public class Presenter {
                         String rgb = rankRGBCode.get(taxNode.getRank());
                         String[] rgbCodes = rgb.split("t");
                         viewVertices.get(v.getID()).getCircle().setFill(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2])));
-                    }
-                    else if (rankRGBCode.keySet().contains(taxNode.getRank().equals("no rank"))) {
-                        viewVertices.get(v.getID()).getCircle().setFill(Color.rgb(0,255,0));
+                    } else if (rankRGBCode.keySet().contains(taxNode.getRank().equals("no rank"))) {
+                        viewVertices.get(v.getID()).getCircle().setFill(Color.rgb(0, 255, 0));
                     }
                 }
                 rank = true;
@@ -288,9 +286,16 @@ public class Presenter {
         view.getColoringDefaultRadioButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                for (MyVertex v : model.getGraph().getVertices()){
+                for (MyVertex v : model.getGraph().getVertices()) {
                     viewVertices.get(v.getID()).getCircle().setFill(Color.CORAL);
                 }
+            }
+        });
+
+        view.getHelpMenu().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+            // popup with text
             }
         });
 
@@ -311,21 +316,18 @@ public class Presenter {
                             String rgb = rankRGBCode.get(taxNode.getRank());
                             String[] rgbCodes = rgb.split("t");
                             viewVertices.get(v.getID()).getCircle().setFill(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2])));
-                        }
-                        else if (rankRGBCode.keySet().contains(taxNode.getRank().equals("no rank"))) {
-                            viewVertices.get(v.getID()).getCircle().setFill(Color.rgb(0,255,0));
+                        } else if (rankRGBCode.keySet().contains(taxNode.getRank().equals("no rank"))) {
+                            viewVertices.get(v.getID()).getCircle().setFill(Color.rgb(0, 255, 0));
                         }
                     }
-                }
-                else if (taxonomy) {
+                } else if (taxonomy) {
                     for (MyVertex v : model.getGraph().getVertices()) {
                         Node taxNode = (Node) v.getProperty(ContigProperty.TAXONOMY);
                         if (taxIDRGBCode.keySet().contains(taxNode.getId())) {
                             String rgb = taxIDRGBCode.get(taxNode.getId());
                             String[] rgbCodes = rgb.split("t");
                             viewVertices.get(v.getID()).getCircle().setFill(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2]), view.getColoringTransparencySlider().getValue()));
-                        }
-                        else if (taxNode.getId() == -100) {
+                        } else if (taxNode.getId() == -100) {
                             viewVertices.get(v.getID()).getCircle().setFill(Color.rgb(0, 255, 0));
                         }
                     }
@@ -333,6 +335,7 @@ public class Presenter {
 
             }
         });
+
 
         view.getLayoutApplyButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -347,10 +350,10 @@ public class Presenter {
                         return null;
                     }
                 };
-                layoutApplyTask.setOnSucceeded(e ->{
+                layoutApplyTask.setOnSucceeded(e -> {
                     for (MyVertex mv : model.getGraph().getVertices()) {
                         ViewVertex vv = viewVertices.get(mv.getID());
-                        vv.animate(mv.getX(),mv.getY());
+                        vv.animate(mv.getX(), mv.getY());
                     }
                     view.getLayoutApplyButton().setDisable(false);
                 });
@@ -403,6 +406,7 @@ public class Presenter {
                 view.getNodeSizeManualSlider().setValue(5);
             }
         });
+
         view.getNodeSizeManualSlider().disableProperty().bind(view.getNodeSizeManualRadioButton().selectedProperty().not());
         view.getNodeSizeManualSlider().setOnMouseReleased(new EventHandler<MouseEvent>() {
             @Override
@@ -413,6 +417,7 @@ public class Presenter {
             }
         });
     }
+
 
     private void visualizeGraph(UndirectedSparseGraph<MyVertex,MyEdge> currentGraph, ObservableList observableList, Group innerObjects) {
         // add view vertices
@@ -458,7 +463,7 @@ public class Presenter {
     }
 
     private void reset() {
-        model.setGraphProperty(null);
+        model.setGraph(null);
         view.getInnerViewObjects().getChildren().clear();
         viewVertices = new HashMap<>();
     }
@@ -485,7 +490,6 @@ public class Presenter {
         viewVertex.setOnMouseClicked(event -> {
             viewVertex.setSelected();
             updateSelectionGraph(viewVertex);
-
         });
     }
 
@@ -495,6 +499,8 @@ public class Presenter {
                 if (!seleGraph.containsVertex(v)) {
                     System.out.println("addded test: " + viewVertex.getID());
                     seleGraph.addVertex(v);
+                    countSelected += 1;
+                    view.setselectionTextfield(String.valueOf(countSelected));
                     for(MyEdge edge : this.model.getGraph().getInEdges(v)){
                         if (seleGraph.containsVertex(edge.getFirst()) && seleGraph.containsVertex(edge.getSecond())) {
                             seleGraph.addEdge(edge, edge.getVertices());
@@ -504,12 +510,12 @@ public class Presenter {
                 } else if (seleGraph.containsVertex(v)) {
                     System.out.println("deleted test: " + viewVertex.getID());
                     seleGraph.removeVertex(v);
+                    countSelected -= 1;
+                    view.setselectionTextfield(String.valueOf(countSelected));
                     for(MyEdge edge : this.model.getGraph().getInEdges(v)){
                         seleGraph.removeEdge(edge);
                     }
-
                 }
-
             }
         }
     }
