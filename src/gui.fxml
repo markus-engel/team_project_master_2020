@@ -102,6 +102,7 @@
                   <ScrollPane prefHeight="200.0" prefWidth="200.0">
                     <content>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="252.0" prefWidth="200.0" />
+                        <Button fx:id="resetSelectionButton" layoutX="74.0" layoutY="110.0" mnemonicParsing="false" text="Reset Selection" />
                     </content>
                   </ScrollPane>
                </content>

@@ -114,7 +114,7 @@ public class Model {
         for(Set<MyVertex> set : sortedSet){
             firstLonelyVertices = true;
             if(set.size() > 1){
-                UndirectedSparseGraph<MyVertex,MyEdge> auxGraph = createAuxilliarGraph(set);
+                UndirectedSparseGraph<MyVertex,MyEdge> auxGraph = createAuxilliarGraph(set, graph);
                 // Calculate layout dimension for each set based on the set size
                 int dimensionX = (int) ((double)dimension.width*((double)set.size()/(double) ratio));
                 int dimensionY = (int) ((double)dimension.height*((double)set.size()/(double)ratio));
@@ -256,12 +256,12 @@ public class Model {
         }
     }
 
-    private UndirectedSparseGraph<MyVertex,MyEdge> createAuxilliarGraph(Set<MyVertex> vertexSet){
+    private UndirectedSparseGraph<MyVertex,MyEdge> createAuxilliarGraph(Set<MyVertex> vertexSet, UndirectedSparseGraph<MyVertex, MyEdge> graph){
         UndirectedSparseGraph<MyVertex,MyEdge> auxGraph = new UndirectedSparseGraph<>();
         for(MyVertex v: vertexSet){
             v.setConnectedComponent(vertexSet);
             auxGraph.addVertex(v);
-            for(MyEdge edge : this.graphProperty.get().getInEdges(v)){
+            for(MyEdge edge : graph.getInEdges(v)){
                 auxGraph.addEdge(edge, edge.getVertices());
             }
         }

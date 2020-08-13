@@ -79,6 +79,9 @@ public class View {
     private TextField selectionTextfield;
 
     @FXML
+    private Button resetSelectionButton;
+
+    @FXML
     private RadioButton nodeSizeCoverageRadioButton;
 
     @FXML
@@ -332,6 +335,8 @@ public class View {
     public double getLayoutAttractionMultiplierSpinner() {return Double.parseDouble(layoutAttractionMultiplierSpinner.getValueFactory().getValue().toString());}
 
     public Button getLayoutApplyButton() { return layoutApplyButton;}
+
+    public Button getResetSelectionButton() {return resetSelectionButton;}
 
     public void setScaleProperty(double scale){ innerViewObjects.setScaleX(scale); }
 
