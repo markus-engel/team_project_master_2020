@@ -283,24 +283,24 @@ public class Presenter {
         });
 
 //        view.getColoringRankChoiceBox().disableProperty().bind(view.getColoringRankRadioButton().selectedProperty().not());
-        view.getColoringRankChoiceBox().setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                String choosenRank = (String) view.getColoringRankChoiceBox().getValue();
-
-                for (MyVertex v : model.getGraph().getVertices()) {
-                    Node taxNode = (Node) v.getProperty(ContigProperty.TAXONOMY);
-                    viewVertices.get(v.getID()).setColour(Color.CORAL);
-
-                    if (taxNode.getRank().equals(choosenRank) && choosenRank != "none") {
-                        viewVertices.get(v.getID()).setColour(Color.rgb(0, 0, 255));
-                    }
-                    else if (choosenRank == "none") {
-                        viewVertices.get(v.getID()).setColour(Color.CORAL);
-                    }
-                }
-            }
-        });
+//        view.getColoringRankChoiceBox().setOnAction(new EventHandler<ActionEvent>() {
+//            @Override
+//            public void handle(ActionEvent actionEvent) {
+//                String choosenRank = (String) view.getColoringRankChoiceBox().getValue();
+//
+//                for (MyVertex v : model.getGraph().getVertices()) {
+//                    Node taxNode = (Node) v.getProperty(ContigProperty.TAXONOMY);
+//                    viewVertices.get(v.getID()).setColour(Color.CORAL);
+//
+//                    if (taxNode.getRank().equals(choosenRank) && choosenRank != "none") {
+//                        viewVertices.get(v.getID()).setColour(Color.rgb(0, 0, 255));
+//                    }
+//                    else if (choosenRank == "none") {
+//                        viewVertices.get(v.getID()).setColour(Color.CORAL);
+//                    }
+//                }
+//            }
+//        });
 
         view.getColoringDefaultRadioButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
