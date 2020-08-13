@@ -11,6 +11,7 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
+import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
@@ -45,7 +46,6 @@ public class Presenter {
     HashMap<String, String> rankRGBCode;
     HashMap<Integer, String> taxIDRGBCode;
     Map<String, ViewVertex> viewVertices = new HashMap<>();  //Hashmap of view vertex objects
-    Map<String, ViewVertex> viewVerticesSelection = new HashMap<>();  //Hashmap of view vertex objects
     public final Dimension MAX_WINDOW_DIMENSION = new Dimension(775, 500); //gets passed to model to center layouts, gets passed to view to control size of window
     UndirectedSparseGraph<MyVertex,MyEdge> seleGraph = new UndirectedSparseGraph<>();
     Boolean rank = false, taxonomy = false;
@@ -91,7 +91,7 @@ public class Presenter {
                         }
                     };
                     parseGraphTask.setOnSucceeded(e -> {
-                        visualizeGraph(model.getGraph(), view.getInnerViewObjects().getChildren());
+                        visualizeGraph(model.getGraph(), view.getInnerViewObjects().getChildren(),view.getInnerViewObjects());
                         view.getScrollPane().setDisable(false);
                         view.makeScrollPaneZoomable(view.getScrollPane());
                         view.getImportTaxonomyMenuItem().setDisable(false);
@@ -231,7 +231,7 @@ public class Presenter {
                 if (view.getTabSelection().isSelected()) {
                     System.out.println("Selection tab recognized");
                     model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), seleGraph);
-                    visualizeSelectionGraph(seleGraph, view.getInnerViewObjectsSele().getChildren());
+                    visualizeGraph(seleGraph, view.getInnerViewObjectsSele().getChildren(), view.getInnerViewObjectsSele());
                     view.getScrollPaneSele().setDisable(false);
                     view.makeScrollPaneZoomable(view.getScrollPaneSele());
                 }
@@ -412,32 +412,17 @@ public class Presenter {
                 }
             }
         });
-
-        view.getResetSelectionButton().setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-
-                //unselects all vertices
-                for (ViewVertex vv: viewVertices.values()){
-                    if (vv.getSelected()){
-                        vv.setSelected();
-                        updateSelectionGraph(vv);
-                    }
-                }
-                resetTab();
-            }
-        });
     }
 
-    private void visualizeGraph(UndirectedSparseGraph<MyVertex,MyEdge> currentGraph, ObservableList observableList) {
+    private void visualizeGraph(UndirectedSparseGraph<MyVertex,MyEdge> currentGraph, ObservableList observableList, Group innerObjects) {
         // add view vertices
         for (MyVertex v1 : currentGraph.getVertices()) {
             // Save v1 in collection to check, it has already been created to avoid redundancies in loop below?
             ViewVertex vv = new ViewVertex(v1.getID(), 5, v1.getX(), v1.getY());
             view.addVertex(vv, observableList);
             viewVertices.put(v1.getID(), vv);
-            makeDraggable(vv);
             makeSelectable(vv);
+            makeDraggable(vv,innerObjects);
             Tooltip.install(vv, new Tooltip(vv.getID()));
         }
         // add view edges
@@ -448,30 +433,11 @@ public class Presenter {
         }
     }
 
-    private void visualizeSelectionGraph(UndirectedSparseGraph<MyVertex,MyEdge> currentGraph, ObservableList observableList) {
-        // add view vertices
-        for (MyVertex v1 : currentGraph.getVertices()) {
-            // Save v1 in collection to check, it has already been created to avoid redundancies in loop below?
-            ViewVertex vv = new ViewVertex(v1.getID(), 5, v1.getX(), v1.getY());
-            view.addVertex(vv, observableList);
-            viewVerticesSelection.put(v1.getID(), vv);
-            makeDraggable(vv);
-            makeSelectable(vv);
-            Tooltip.install(vv, new Tooltip(vv.getID()));
-        }
-        // add view edges
-        for (MyEdge edge : currentGraph.getEdges()) {
-            ViewEdge ve = new ViewEdge(viewVerticesSelection.get(edge.getFirst().getID()), viewVerticesSelection.get(edge.getSecond().getID()));
-            view.addEdge(ve, observableList);
-            ve.toBack();
-        }
-    }
-
-    private void makeDraggable(ViewVertex viewVertex) {
+    private void makeDraggable(ViewVertex viewVertex, Group innerObjects) {
         viewVertex.setOnMouseDragged(event -> {
             double x = event.getSceneX();
             double y = event.getSceneY();
-            Bounds bounds = view.getInnerViewObjects().localToScene(view.getInnerViewObjects().getBoundsInLocal());
+            Bounds bounds = innerObjects.localToScene(view.getInnerViewObjects().getBoundsInLocal());
             double minX = bounds.getMinX();
             double minY = bounds.getMinY();
             if (x < minX ) {
@@ -571,7 +537,7 @@ public class Presenter {
                     }
                 };
                 parseGraphTask.setOnSucceeded(e -> {
-                    visualizeGraph(model.getGraph(), view.getInnerViewObjects().getChildren());
+                    visualizeGraph(model.getGraph(), view.getInnerViewObjects().getChildren(),view.getInnerViewObjects());
                     view.getScrollPane().setDisable(false);
                     view.makeScrollPaneZoomable(view.getScrollPane());
                 });
