@@ -237,17 +237,20 @@
                               <MenuItem fx:id="openFileMenuItem" mnemonicParsing="false" text="Open..." />
                               <Menu fx:id="openRecentFileMenu" mnemonicParsing="false" text="Open recent" />
                               <Menu fx:id="importMenu" mnemonicParsing="false" text="Import...">
-                                  <MenuItem fx:id="ImportTaxonomyMenuItem" disable="true" mnemonicParsing="false" text="Taxonomy IDs" />
-                                  <MenuItem fx:id="ImportCoverageMenuItem" disable="true" mnemonicParsing="false" text="Coverage" />
+                                  <MenuItem fx:id="importTaxonomyMenuItem" disable="true" mnemonicParsing="false" text="Taxonomy IDs" />
+                                  <MenuItem fx:id="importCoverageMenuItem" disable="true" mnemonicParsing="false" text="Coverage" />
                               </Menu>
-                              <MenuItem fx:id="SaveMenuItem" mnemonicParsing="false" text="Save" />
-                              <MenuItem fx:id="SaveAsPNGMenuItem" mnemonicParsing="false" text="Save as PNG" />
-                              <MenuItem fx:id="CloseMenuItem" mnemonicParsing="false" text="Close" />
+                              <MenuItem fx:id="saveMenuItem" mnemonicParsing="false" text="Save" />
+                              <MenuItem fx:id="saveAsPNGMenuItem" mnemonicParsing="false" text="Save as PNG" />
+                              <MenuItem fx:id="closeMenuItem" mnemonicParsing="false" text="Close" />
                           </items>
                       </Menu>
                       <Menu fx:id="editMenu" mnemonicParsing="false" text="Edit">
                           <items>
-                        <MenuItem fx:id="SelectionMenuItem" mnemonicParsing="false" text="Selection Graph" />
+                              <Menu fx:id="selectionMenu" mnemonicParsing="false" text="Selection...">
+                                    <MenuItem fx:id="exportSelectionSequencesMenuItem" mnemonicParsing="false" text="Export Sequences"
+                              </Menu>
+                              <
                               <MenuItem fx:id="layoutSettingsMenuItem" disable="true" mnemonicParsing="false" text="Layout Settings" />
                           </items>
                       </Menu>
@@ -257,14 +260,14 @@
                               <MenuItem fx:id="showTaxLegendMenuItem" disable="true" text="Show Taxonomy Legend"/>
                           </items>
                       </Menu>
-                      <Menu fx:id="PlotMenu" mnemonicParsing="false" text="Plot">
+                      <Menu fx:id="plotMenu" mnemonicParsing="false" text="Plot">
                           <items>
-                              <MenuItem fx:id="CoverageGCMenu" disable="true" mnemonicParsing="false" text="Coverage-GC" />
+                              <MenuItem fx:id="coverageGCMenu" disable="true" mnemonicParsing="false" text="Coverage-GC" />
                           </items>
                       </Menu>
                       <Menu fx:id="helpMenu" mnemonicParsing="false" text="Help">
                           <items>
-                              <MenuItem fx:id="AboutMenuItem" mnemonicParsing="false" text="About"/>
+                              <MenuItem fx:id="aboutMenuItem" mnemonicParsing="false" text="About"/>
                           </items>
                       </Menu>
                   </menus>
