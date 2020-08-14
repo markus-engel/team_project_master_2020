@@ -40,10 +40,6 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
 
@@ -120,6 +116,8 @@ public class Presenter {
                         view.getImportCoverageMenuItem().setDisable(false);
                         view.getCustomizeMenuItem().setDisable(false);
                         view.getSelectAllMenuItem().setDisable(false);
+                        view.setSequenceCountTextField(model.getGraph().getVertexCount());
+                        view.setOverlapCountTextField(model.getGraph().getEdgeCount());
                         MenuItem recentFile = new MenuItem(f.getAbsolutePath());
                         if (!view.getOpenRecentFileMenu().getItems().contains(recentFile)){
                             setOpenRecentFileEventHandler(recentFile);
@@ -700,10 +698,10 @@ public class Presenter {
 
     private void makeSelectable(ViewVertex viewVertex) {
         viewVertex.setOnMouseClicked(event -> {
-            view.getSelectionMenu().setDisable(false);
             viewVertex.setSelected();
             updateSelectionGraph(viewVertex);
-
+            view.getSelectionMenu().setDisable(false);
+            view.setSelectionTextfield(seleGraph.getVertexCount(),seleGraph.getEdgeCount(),0);
         });
     }
 
