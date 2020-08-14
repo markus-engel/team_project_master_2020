@@ -248,9 +248,11 @@
                       </Menu>
                       <Menu fx:id="editMenu" mnemonicParsing="false" text="Edit">
                           <items>
-                              <Menu fx:id="selectionMenu" mnemonicParsing="false" text="Selection...">
+                              <Menu fx:id="selectionMenu" mnemonicParsing="false" text="Selection..." disable="true">
                                     <MenuItem fx:id="exportSelectionSequencesMenuItem" mnemonicParsing="false" text="Export Sequences" />
                               </Menu>
+                              <MenuItem fx:id="selectAllMenuItem" mnemonicParsing="false" text="Select All" disable="true"/>
+                              <MenuItem fx:id="resetSelectionMenuItem" mnemonicParsing="false" text="Reset Selection" disable="true"/>
                               <MenuItem fx:id="layoutSettingsMenuItem" disable="true" mnemonicParsing="false" text="Layout Settings" />
                           </items>
                       </Menu>
