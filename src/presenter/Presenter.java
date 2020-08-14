@@ -531,10 +531,9 @@ public class Presenter {
             @Override
             public void handle(ActionEvent actionEvent) {
                 if (view.getShowLegendMenuItem().isSelected()) {
-                    view.getLegendScrollPane().setMaxWidth(200);
-                    view.setLegendItems("Colouring", "Node size", "Order", "Layout", "File");
+                    view.getLegendTableView().setPrefWidth(view.getLegendTableView().getMaxWidth());
                 } else {
-                    view.getLegendScrollPane().setMaxWidth(0);
+                    view.getLegendTableView().setPrefWidth(0);
                 }
             }
         });

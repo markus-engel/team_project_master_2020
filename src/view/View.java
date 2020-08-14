@@ -181,9 +181,6 @@ public class View {
     private Menu viewMenu;
 
     @FXML
-    private MenuItem showTaxLegend;
-
-    @FXML
     private Menu PlotMenu;
 
     @FXML
@@ -199,16 +196,10 @@ public class View {
     private CheckMenuItem showLegendMenuItem;
 
     @FXML
-    private MenuItem showTaxLegendMenuItem;
-
-    @FXML
-    private ScrollPane legendScrollPane;
-
-    @FXML
-    private TreeView<String> legendTreeView;
-
-    @FXML
     private TextArea graphInformationTextArea;
+
+    @FXML
+    private TableView<?> legendTableView;
 
     private Rectangle selectionRectangle;
 
@@ -425,16 +416,8 @@ public class View {
         return showLegendMenuItem;
     }
 
-    public ScrollPane getLegendScrollPane() {
-        return legendScrollPane;
-    }
-
-    public TreeView<String> getLegendTreeView() {
-        return legendTreeView;
-    }
-
-    public void setLegendItems(String... items) {
-        legendTreeView.setRoot(new TreeItem<>("Legend"));
+    public TableView<?> getLegendTableView() {
+        return legendTableView;
     }
 
     public void addVertex(ViewVertex vv, ObservableList observableList) {
