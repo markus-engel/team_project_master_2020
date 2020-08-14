@@ -13,6 +13,8 @@ import model.graph.MyVertex;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.TreeSet;
 
 public class TaxIdParser {
@@ -55,6 +57,14 @@ public class TaxIdParser {
                     ranks.add(tree.getTaxNode(taxID).getRank());
                 }
             }
+
+//            for (Object i : ranks) {
+//                ArrayList idNodes = new ArrayList();
+//                for (MyVertex v : graph.getVertices()) {
+//                    if (v.getProperty(ContigProperty.TAXONOMY))
+//                    idNodes.add(v.getID());
+//                }
+//            }
 
         }
         br.close();

@@ -327,11 +327,11 @@ public class Model {
         return taxIDRGBCode;
     }
 
-    public HashMap<String, String> createColorRank(TreeSet<String> ranks) {
+    public HashMap<String, String> createColorRank(ArrayList rankMembers) {
         int[] rgbNumbersRank;
         HashMap<String, String> rankIDRGBCode = new HashMap<>();
 
-        for (Object i : ranks) {
+        for (Object i : rankMembers) {
             String rgbCodeTaxa;
             rgbNumbersRank = randomNumberColoring();
             rgbCodeTaxa = rgbNumbersRank[0] + "t" + rgbNumbersRank[1] + "t" + rgbNumbersRank[2];
@@ -339,6 +339,32 @@ public class Model {
         }
         return rankIDRGBCode;
     }
+
+    public HashMap<String, ArrayList> getAllIndividualsPerRank () {
+        HashMap<String, ArrayList> membersPerRank = new HashMap<String, ArrayList>();
+        for (Object i : ranks) {
+            ArrayList idNodes = new ArrayList();
+            for (MyVertex v : getGraph().getVertices()) {
+                Node taxonomyV = (Node) v.getProperty(ContigProperty.TAXONOMY);
+                if (taxonomyV.getRank().equals(i)) {
+                    idNodes.add(v.getID());
+                }
+            }
+            membersPerRank.put((String) i, idNodes);
+        }
+
+        for (Object i : membersPerRank.keySet()) {
+            System.out.println("Key: " + i + " Value: " + membersPerRank.get(i));
+        }
+
+        return membersPerRank;
+    }
+
+
+
+
+
+
 
     public int[] randomNumberColoring () {
         int[] rgbNumbers = new int[3];
