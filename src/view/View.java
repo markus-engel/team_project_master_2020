@@ -1,29 +1,23 @@
 package view;
 
-import javafx.beans.Observable;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.Property;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-
-import java.net.URL;
-import java.util.ResourceBundle;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 public class View {
 
@@ -79,6 +73,12 @@ public class View {
     private TextField selectionTextfield;
 
     @FXML
+    private ToggleGroup nodeSizeGroup;
+
+    @FXML
+    private ChoiceBox<String> nodeSizeScaleChoiceBox;
+
+    @FXML
     private Button resetSelectionButton;
 
     @FXML
@@ -100,7 +100,7 @@ public class View {
     private Slider coloringTransparencySlider;
 
     @FXML
-    private ChoiceBox<?> coloringTaxonomyChoiceBox;
+    private ChoiceBox<?> coloringRankChoiceBox;
 
     @FXML
     private RadioButton coloringCoverageRadioButton;
@@ -142,6 +142,9 @@ public class View {
     private Menu fileMenu;
 
     @FXML
+    private MenuItem newFileMenuItem;
+
+    @FXML
     private MenuItem openFileMenuItem;
 
     @FXML
@@ -151,25 +154,28 @@ public class View {
     private Menu importMenu;
 
     @FXML
-    private MenuItem ImportTaxonomyMenuItem;
+    private MenuItem importTaxonomyMenuItem;
 
     @FXML
-    private MenuItem ImportCoverageMenuItem;
+    private MenuItem importCoverageMenuItem;
 
     @FXML
-    private MenuItem SaveMenuItem;
+    private MenuItem saveMenuItem;
 
     @FXML
-    private MenuItem SaveAsPNGMenuItem;
+    private MenuItem saveAsPNGMenuItem;
 
     @FXML
-    private MenuItem CloseMenuItem;
+    private MenuItem closeMenuItem;
 
     @FXML
     private Menu editMenu;
 
     @FXML
-    private MenuItem SelectionMenuItem;
+    private Menu selectionMenu;
+
+    @FXML
+    private MenuItem exportSelectionSequencesMenuItem;
 
     @FXML
     private MenuItem layoutSettingsMenuItem;
@@ -181,18 +187,39 @@ public class View {
     private MenuItem showTaxLegend;
 
     @FXML
-    private Menu PlotMenu;
+    private Menu plotMenu;
 
     @FXML
-    private MenuItem CoverageGCMenu;
+    private MenuItem coverageGCMenu;
 
     @FXML
     private Menu helpMenu;
 
     @FXML
-    private MenuItem AboutMenuItem;
+    private MenuItem aboutMenuItem;
+
+    @FXML
+    private CheckMenuItem showLegendMenuItem;
+
+    @FXML
+    private MenuItem showTaxLegendMenuItem;
+
+    @FXML
+    private ScrollPane legendScrollPane;
+
+    @FXML
+    private TreeView<String> legendTreeView;
+
+    @FXML
+    private TextArea graphInformationTextArea;
+
+    private Rectangle selectionRectangle;
 
     // getter and setter Methods. More have to be implemented if needed
+    public MenuItem getNewFileMenuItem() {
+        return newFileMenuItem;
+    }
+
     public MenuItem getOpenFileMenuItem() {
         return openFileMenuItem;
     }
@@ -218,25 +245,31 @@ public class View {
     }
 
     public MenuItem getImportTaxonomyMenuItem() {
-        return ImportTaxonomyMenuItem;
+        return importTaxonomyMenuItem;
     }
 
     public MenuItem getImportCoverageMenuItem() {
-        return ImportCoverageMenuItem;
+        return importCoverageMenuItem;
     }
 
     public MenuItem getCoverageGCMenu() {
-        return CoverageGCMenu;
+        return coverageGCMenu;
     }
 
-    public MenuItem getSelectionMenuItem() {
-        return SelectionMenuItem;
+    public Menu getSelectionMenu() {
+        return selectionMenu;
     }
 
-    public MenuItem getSaveAsPNGMenuItem() {return SaveAsPNGMenuItem;}
+    public MenuItem getExportSelectionSequencesMenuItem() {
+        return exportSelectionSequencesMenuItem;
+    }
+
+    public MenuItem getSaveAsPNGMenuItem() {
+        return saveAsPNGMenuItem;
+    }
 
     public MenuItem getCloseMenuItem() {
-        return CloseMenuItem;
+        return closeMenuItem;
     }
 
     public RadioButton getColoringTaxonomyRadioButton() {
@@ -251,12 +284,12 @@ public class View {
 
     public RadioButton getColoringTransparencyRadioButton () { return  coloringTransparencyRadioButton; }
 
-    public ChoiceBox<?> getColoringTaxonomyChoiceBox() {
-        return coloringTaxonomyChoiceBox;
+    public ChoiceBox<?> getColoringRankChoiceBox() {
+        return coloringRankChoiceBox;
     }
 
-    public void setColoringTaxonomyChoiceBox(ChoiceBox<?> coloringTaxonomyChoiceBox) {
-        this.coloringTaxonomyChoiceBox = coloringTaxonomyChoiceBox;
+    public void setColoringRankChoiceBox(ChoiceBox<?> coloringTaxonomyChoiceBox) {
+        this.coloringRankChoiceBox = coloringRankChoiceBox;
     }
 
     public RadioButton getColoringCoverageRadioButton() {
@@ -301,6 +334,22 @@ public class View {
         return nodeSizeDefaultRadioButton;
     }
 
+    public ChoiceBox<?> getNodeSizeScaleChoiceBox() {
+        return nodeSizeScaleChoiceBox;
+    }
+
+    public ToggleGroup getNodeSizeGroup() {
+        return nodeSizeGroup;
+    }
+
+    public RadioButton getOrderByNodeNumbersRadioButton() {
+        return orderByNodeNumbersRadioButton;
+    }
+
+    public RadioButton getOrderByContigLengthRadioButton() {
+        return orderByContigLengthRadioButton;
+    }
+
     public void setTaxaCountTextField(String size) {
         taxaCountTextfield.setText(String.valueOf(size));
     }
@@ -313,6 +362,7 @@ public class View {
     public void setSequenceCountTextField(int sequenceCount) {
         sequenceCountTextField.setText("Sequences: " + String.valueOf(sequenceCount));
     }
+
     public TextField getOverlapCountTextField() {
         return overlapCountTextField;
     }
@@ -326,60 +376,107 @@ public class View {
         overlapCountTextField.setText("Overlaps: " + overlapCount);
     }
 
-    public Group getViewObjects(){ return viewObjects;}
-
-    public Group getViewObjectsSele(){ return viewObjectsSele;}
-
-    public Group getInnerViewObjects() { return innerViewObjects;}
-
-    public Group getInnerViewObjectsSele() { return innerViewObjectsSele;}
-
-    public ProgressIndicator getProgressIndicator(){ return progressIndicator;}
-
-    public void setInnerViewObjects(Group innerViewObjects) { this.innerViewObjects = viewObjects;}
-
-    public void setInnerViewObjectsSele(Group innerViewObjectsSele) { this.innerViewObjectsSele = viewObjectsSele;}
-
-    public MenuItem getLayoutSettingsMenuItem(){ return layoutSettingsMenuItem;}
-
-    public double getLayoutRepulsionMultiplierSpinner(){ return Double.parseDouble(layoutRepulsionMultiplierSpinner.getValueFactory().getValue().toString());}
-
-    public double getLayoutAttractionMultiplierSpinner() {return Double.parseDouble(layoutAttractionMultiplierSpinner.getValueFactory().getValue().toString());}
-
-    public Button getLayoutApplyButton() { return layoutApplyButton;}
-
-    public Button getResetSelectionButton() {return resetSelectionButton;}
-
-    public void setScaleProperty(double scale){ innerViewObjects.setScaleX(scale); }
-
-    public double getScaleProperty(){ return innerViewObjects.getScaleX();}
-
-    /*
-    public void addVertex(ViewVertex vv) {
-         innerViewObjects.getChildren().add(vv);
+    public Group getViewObjects() {
+        return viewObjects;
     }
 
-    public void addEdge(ViewEdge viewEdge) {
-        innerViewObjects.getChildren().add(viewEdge);
-    } */
+    public Group getViewObjectsSele() {
+        return viewObjectsSele;
+    }
+
+    public Group getInnerViewObjects() {
+        return innerViewObjects;
+    }
+
+    public Group getInnerViewObjectsSele() {
+        return innerViewObjectsSele;
+    }
+
+    public ProgressIndicator getProgressIndicator() {
+        return progressIndicator;
+    }
+
+    public void setInnerViewObjects(Group innerViewObjects) {
+        this.innerViewObjects = viewObjects;
+    }
+
+    public void setInnerViewObjectsSele(Group innerViewObjectsSele) {
+        this.innerViewObjectsSele = viewObjectsSele;
+    }
+
+    public MenuItem getLayoutSettingsMenuItem() {
+        return layoutSettingsMenuItem;
+    }
+
+    public double getLayoutRepulsionMultiplierSpinnerValue() {
+        return Double.parseDouble(layoutRepulsionMultiplierSpinner.getValueFactory().getValue().toString());
+    }
+
+    public Spinner getLayoutRepulsionMultiplierSpinner() {
+        return layoutRepulsionMultiplierSpinner;
+    }
+
+    public double getLayoutAttractionMultiplierSpinnerValue() {
+        return Double.parseDouble(layoutAttractionMultiplierSpinner.getValueFactory().getValue().toString());
+    }
+
+    public Spinner getLayoutAttractionMultiplierSpinner() {
+        return layoutAttractionMultiplierSpinner;
+    }
+
+    public Button getLayoutApplyButton() {
+        return layoutApplyButton;
+    }
+
+    public void setScaleProperty(double scale) {
+        innerViewObjects.setScaleX(scale);
+    }
+
+    public Button getResetSelectionButton() {
+        return resetSelectionButton;
+    }
+
+    public double getScaleProperty() {
+        return innerViewObjects.getScaleX();
+    }
+
+    public CheckMenuItem getShowLegendMenuItem() {
+        return showLegendMenuItem;
+    }
+
+    public ScrollPane getLegendScrollPane() {
+        return legendScrollPane;
+    }
+
+    public TreeView<String> getLegendTreeView() {
+        return legendTreeView;
+    }
+
+    public void setLegendItems(String... items) {
+        legendTreeView.setRoot(new TreeItem<>("Legend"));
+    }
 
     public void addVertex(ViewVertex vv, ObservableList observableList) {
-         observableList.add(vv);
+        observableList.add(vv);
     }
 
     public void addEdge(ViewEdge viewEdge, ObservableList observableList) {
         observableList.add(viewEdge);
     }
 
-    public ScrollPane getScrollPane(){ return scrollPane;}
+    public ScrollPane getScrollPane() {
+        return scrollPane;
+    }
 
-    public ScrollPane getScrollPaneSele(){ return scrollPaneSele;}
+    public ScrollPane getScrollPaneSele() {
+        return scrollPaneSele;
+    }
 
     public void makeScrollPaneZoomable(ScrollPane sp) {
         sp.addEventFilter(ScrollEvent.ANY, new EventHandler<ScrollEvent>() {
             @Override
             public void handle(ScrollEvent scrollEvent) {
-                if(scrollEvent.isControlDown()){ // wenn scrollen disabled werden soll, dann hier !scrollevent.isConsumed()
+                if (scrollEvent.isControlDown()) { // wenn scrollen disabled werden soll, dann hier !scrollevent.isConsumed()
                     double scale = calculateScaleForZooming(scrollEvent);
                     innerViewObjects.setScaleX(scale);
                     innerViewObjects.setScaleY(scale);
@@ -390,12 +487,45 @@ public class View {
     }
 
     private double calculateScaleForZooming(ScrollEvent scrollEvent) {
-        double scale = innerViewObjects.getScaleX() + scrollEvent.getDeltaY()/100;
+        double scale = innerViewObjects.getScaleX() + scrollEvent.getDeltaY() / 100;
         if (scale <= MIN_ZOOM_SCALE) {
             scale = MIN_ZOOM_SCALE;
         } else if (scale >= MAX_ZOOM_SCALE) {
             scale = MAX_ZOOM_SCALE;
         }
         return scale;
+    }
+
+    public void applyDragSelectRectangleFunctionality(){
+       scrollPane.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                selectionRectangle = new Rectangle(0,0, Color.TRANSPARENT);
+                selectionRectangle.setStroke(Color.BLACK);
+                selectionRectangle.setTranslateX(event.getX());
+                selectionRectangle.setTranslateY(event.getY());
+                innerViewObjects.getChildren().add(selectionRectangle);
+            }
+        });
+        scrollPane.setOnMouseMoved(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if(selectionRectangle != null){
+                    selectionRectangle.widthProperty().set(event.getX() - selectionRectangle.getTranslateX());
+                    selectionRectangle.heightProperty().set(event.getY() - selectionRectangle.getTranslateY());
+                    System.out.println("Width: "+ event.getX());
+                    System.out.println("Height: "+ event.getY());
+                }
+            }
+        });
+        scrollPane.setOnMouseReleased(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if(selectionRectangle != null){
+                    selectionRectangle = null;
+                    System.out.println("released");
+                }
+            }
+        });
     }
 }

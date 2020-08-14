@@ -35,8 +35,6 @@ public class TaxIdParser {
     private void parseTaxIDs(UndirectedSparseGraph<MyVertex, MyEdge> graph, String path, TaxonomyTree tree, TreeSet taxons, TreeSet ranks) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(path));
         String line;
-        Integer counterMEJL = 0;
-        int counter123 = 0;
 
         while ((line = br.readLine()) != null) {
             String[] temp = line.split("\t");
@@ -50,7 +48,6 @@ public class TaxIdParser {
             // Comparing the IDs of the vertices to the contig ID in this line of the file
             for (MyVertex v : graph.getVertices()) {
                 if (v.getID().equals(conID)) {
-                    counterMEJL += 1;
                     v.addProperty(ContigProperty.TAXONOMY, tree.getTaxNode(taxID));
                 }
 
@@ -60,17 +57,13 @@ public class TaxIdParser {
             }
 
         }
-        System.out.println(counterMEJL);
-        System.out.println(graph.getVertices().size());
         br.close();
 
 //        handel vertices which are not occur in the TaxonomyID file
         for (MyVertex v : graph.getVertices()) {
             if (v.getProperty(ContigProperty.TAXONOMY).equals("no entry")) {
-                counter123 += 1;
                 v.addProperty(ContigProperty.TAXONOMY, new Node(-100, "-100"));
             }
         }
-        System.out.println("-100: " + counter123);
     }
 }
