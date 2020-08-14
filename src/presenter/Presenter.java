@@ -40,20 +40,8 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 public class Presenter {
     Model model;
@@ -83,6 +71,12 @@ public class Presenter {
         view.getNewFileMenuItem().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                view.getScrollPane().setDisable(true);
+                view.getImportTaxonomyMenuItem().setDisable(true);
+                view.getImportCoverageMenuItem().setDisable(true);
+                view.getCustomizeMenuItem().setDisable(true);
+                view.getSelectAllMenuItem().setDisable(true);
+                view.getSelectionMenu().setDisable(true);
                 reset();
             }
         });
@@ -121,6 +115,9 @@ public class Presenter {
                         view.getImportTaxonomyMenuItem().setDisable(false);
                         view.getImportCoverageMenuItem().setDisable(false);
                         view.getCustomizeMenuItem().setDisable(false);
+                        view.getSelectAllMenuItem().setDisable(false);
+                        view.setSequenceCountTextField(model.getGraph().getVertexCount());
+                        view.setOverlapCountTextField(model.getGraph().getEdgeCount());
                         MenuItem recentFile = new MenuItem(f.getAbsolutePath());
                         if (!view.getOpenRecentFileMenu().getItems().contains(recentFile)){
                             setOpenRecentFileEventHandler(recentFile);
@@ -252,10 +249,21 @@ public class Presenter {
                 resetTab();
                 if (view.getTabSelection().isSelected()) {
                     System.out.println("Selection tab recognized");
-                    model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), seleGraph, view.getOrderByContigLengthRadioButton().isSelected());
-                    visualizeSelectionGraph(seleGraph, view.getInnerViewObjectsSele().getChildren(), view.getInnerViewObjectsSele());
-                    view.getScrollPaneSele().setDisable(false);
-                    view.makeScrollPaneZoomable(view.getScrollPaneSele());
+                    Task<Void> tabSelectionTask = new Task<Void>() {
+                        @Override
+                        protected Void call() throws Exception {
+                            model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), seleGraph, view.getOrderByContigLengthRadioButton().isSelected());
+                            return null;
+                        }
+                    };
+                    tabSelectionTask.setOnSucceeded(e -> {
+                        visualizeSelectionGraph(seleGraph, view.getInnerViewObjectsSele().getChildren(), view.getInnerViewObjectsSele());
+                        view.getScrollPaneSele().setDisable(false);
+                        view.makeScrollPaneZoomable(view.getScrollPaneSele());
+                    });
+                    Thread tabSelectionThread = new Thread(tabSelectionTask);
+                    tabSelectionThread.setDaemon(true);
+                    tabSelectionThread.start();
                 }
             }
         });
@@ -370,6 +378,40 @@ public class Presenter {
                     }
                 }
 
+            }
+        });
+
+        view.getExportSelectionSequencesMenuItem().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                StringBuilder content = new StringBuilder("");
+                for(MyVertex mv : seleGraph.getVertices()){
+                    content.append(">"+ mv.getID() + "\n");
+                    content.append(mv.getSequenceprop() + "\n");
+                }
+                FileChooser fc = new FileChooser();
+                File file = fc.showSaveDialog(null);
+                FileChooser.ExtensionFilter extensionFilter = new FileChooser.ExtensionFilter("FASTA files (*.fasta)","*.fasta");
+                fc.getExtensionFilters().add(extensionFilter);
+               if(file != null){
+                   try {
+                       FileWriter fileWriter = new FileWriter(file);
+                       fileWriter.write(content.toString());
+                       fileWriter.close();
+                   } catch (IOException e) {
+                       e.printStackTrace();
+                   }
+               }
+            }
+        });
+
+        view.getSelectAllMenuItem().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                seleGraph = model.getGraph();
+                for(MyVertex mv : model.getGraph().getVertices()){
+                    viewVertices.get(mv.getID()).setSelected();
+                }
             }
         });
 
@@ -565,6 +607,7 @@ public class Presenter {
                 resetTab();
             }
         });
+
     }
 
     private void visualizeGraph(UndirectedSparseGraph<MyVertex,MyEdge> currentGraph, ObservableList observableList, Group innerObjects) {
@@ -657,11 +700,13 @@ public class Presenter {
         viewVertex.setOnMouseClicked(event -> {
             viewVertex.setSelected();
             updateSelectionGraph(viewVertex);
-
+            view.getSelectionMenu().setDisable(false);
+            view.setSelectionTextfield(seleGraph.getVertexCount(),seleGraph.getEdgeCount(),0);
         });
     }
 
     private void updateSelectionGraph(ViewVertex viewVertex){
+        List<MyVertex> removeList = new ArrayList<>();
         for(MyVertex v : model.getGraph().getVertices()) {
             if (v.getID().equals(viewVertex.getID())) {
                 if (!seleGraph.containsVertex(v)) {
@@ -675,14 +720,15 @@ public class Presenter {
                     }
                 } else if (seleGraph.containsVertex(v)) {
                     System.out.println("deleted test: " + viewVertex.getID());
-                    seleGraph.removeVertex(v);
-                    for(MyEdge edge : this.model.getGraph().getInEdges(v)){
-                        seleGraph.removeEdge(edge);
-                    }
-
+                    removeList.add(v);
+                    //for(MyEdge edge : this.model.getGraph().getInEdges(v)){
+                      //  seleGraph.removeEdge(edge);
+                    //}
                 }
-
             }
+        }
+        for (MyVertex v : removeList){
+            seleGraph.removeVertex(v);
         }
     }
 

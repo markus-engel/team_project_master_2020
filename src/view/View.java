@@ -369,6 +369,10 @@ public class View {
         overlapCountTextField.setText("Overlaps: " + overlapCount);
     }
 
+    public void setSelectionTextfield(int vertexCount, int edgeCount, int taxaCount){
+        selectionTextfield.setText("Selected: "+vertexCount+" Sequences  "+edgeCount+" Overlaps  "+taxaCount+" Taxa");
+    }
+
     public Group getViewObjects() {
         return viewObjects;
     }
