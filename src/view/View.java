@@ -178,6 +178,12 @@ public class View {
     private MenuItem exportSelectionSequencesMenuItem;
 
     @FXML
+    private MenuItem selectAllMenuItem;
+
+    @FXML
+    private MenuItem resetSelectionMenuItem;
+
+    @FXML
     private MenuItem layoutSettingsMenuItem;
 
     @FXML
@@ -249,6 +255,14 @@ public class View {
 
     public MenuItem getExportSelectionSequencesMenuItem() {
         return exportSelectionSequencesMenuItem;
+    }
+
+    public MenuItem getSelectAllMenuItem() {
+        return selectAllMenuItem;
+    }
+
+    public MenuItem getResetSelectionMenuItem() {
+        return resetSelectionMenuItem;
     }
 
     public MenuItem getSaveAsPNGMenuItem() {
