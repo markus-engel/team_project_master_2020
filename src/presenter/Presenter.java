@@ -249,14 +249,14 @@ public class Presenter {
 
                 for (MyVertex v : model.getGraph().getVertices()) {
                     Node taxNode = (Node) v.getProperty(ContigProperty.TAXONOMY);
-                        if (taxIDRGBCode.keySet().contains(taxNode.getId())) {
-                            String rgb = taxIDRGBCode.get(taxNode.getId());
-                            String[] rgbCodes = rgb.split("t");
-                            viewVertices.get(v.getID()).setColour(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2])));
-                        }
-                        else if (taxNode.getId() == -100) {
-                            viewVertices.get(v.getID()).setColour(Color.rgb(0, 255, 0));
-                        }
+                    if (taxIDRGBCode.keySet().contains(taxNode.getId())) {
+                        String rgb = taxIDRGBCode.get(taxNode.getId());
+                        String[] rgbCodes = rgb.split("t");
+                        viewVertices.get(v.getID()).setColour(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2])));
+                    }
+                    else if (taxNode.getId() == -100) {
+                        viewVertices.get(v.getID()).setColour(Color.rgb(0, 255, 0));
+                    }
                 }
                 taxonomy = true;
             }
@@ -327,7 +327,7 @@ public class Presenter {
                         if (rankRGBCode.keySet().contains(taxNode.getRank()) && !rankRGBCode.keySet().equals("no rank")) {
                             String rgb = rankRGBCode.get(taxNode.getRank());
                             String[] rgbCodes = rgb.split("t");
-                            viewVertices.get(v.getID()).setColour(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2])));
+                            viewVertices.get(v.getID()).setColour(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2]), view.getColoringTransparencySlider().getValue()));
                         }
                         else if (rankRGBCode.keySet().contains(taxNode.getRank().equals("no rank"))) {
                             viewVertices.get(v.getID()).setColour(Color.rgb(0,255,0));
