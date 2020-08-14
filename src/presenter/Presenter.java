@@ -112,7 +112,7 @@ public class Presenter {
                         visualizeGraph(model.getGraph(), view.getInnerViewObjects().getChildren(), view.getInnerViewObjects());
                         view.getScrollPane().setDisable(false);
                         view.makeScrollPaneZoomable(view.getScrollPane());
-                        view.applyDragSelectRectangleFunctionality();
+                        applyDragSelectRectangleFunctionality();
                         view.getImportTaxonomyMenuItem().setDisable(false);
                         view.getImportCoverageMenuItem().setDisable(false);
                         view.getCustomizeMenuItem().setDisable(false);
@@ -808,6 +808,42 @@ public class Presenter {
         Thread layoutApplyThread = new Thread(layoutApplyTask);
         layoutApplyThread.setDaemon(true);
         layoutApplyThread.start();
+    }
+
+    public void applyDragSelectRectangleFunctionality(){
+        view.getScrollPane().addEventFilter(MouseEvent.MOUSE_PRESSED,new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                view.initSelectionRectangle(0,0);
+                view.getSelectionRectangle().setStroke(Color.BLACK);
+                view.getSelectionRectangle().setTranslateX(event.getX());
+                view.getSelectionRectangle().setTranslateY(event.getY());
+                view.getInnerViewObjects().getChildren().add(view.getSelectionRectangle());
+            }
+        });
+        view.getScrollPane().addEventFilter(MouseEvent.MOUSE_DRAGGED,new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if(view.getSelectionRectangle() != null){
+                    view.getSelectionRectangle().widthProperty().set(event.getX() - view.getSelectionRectangle().getTranslateX());
+                    view.getSelectionRectangle().heightProperty().set(event.getY() - view.getSelectionRectangle().getTranslateY());
+                }
+            }
+        });
+        view.getScrollPane().addEventFilter(MouseEvent.MOUSE_RELEASED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if(view.getSelectionRectangle() != null){
+                    for(ViewVertex vv : viewVertices.values()){
+                        if(view.getSelectionRectangle().getBoundsInParent().intersects(vv.getBoundsInParent())) {
+                            vv.setSelected();
+                            updateSelectionGraph(vv);
+                        }
+                    }
+                    view.getInnerViewObjects().getChildren().remove(view.getSelectionRectangle());
+                }
+            }
+        });
     }
 
     private void setOpenRecentFileEventHandler(MenuItem menuItem){

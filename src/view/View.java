@@ -450,6 +450,14 @@ public class View {
         return innerViewObjects.getScaleX();
     }
 
+    public Rectangle getSelectionRectangle() {
+        return selectionRectangle;
+    }
+
+    public void initSelectionRectangle(double width, double height){
+        selectionRectangle = new Rectangle(width,height,Color.TRANSPARENT);
+    }
+
     public CheckMenuItem getShowLegendMenuItem() {
         return showLegendMenuItem;
     }
@@ -507,38 +515,5 @@ public class View {
 
 public void updateLabelCol(String labelType){
     labelCol.setText(labelType);
-}
-
-    public void applyDragSelectRectangleFunctionality(){
-       scrollPane.setOnMousePressed(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                selectionRectangle = new Rectangle(0,0, Color.TRANSPARENT);
-                selectionRectangle.setStroke(Color.BLACK);
-                selectionRectangle.setTranslateX(event.getX());
-                selectionRectangle.setTranslateY(event.getY());
-                innerViewObjects.getChildren().add(selectionRectangle);
-            }
-        });
-        scrollPane.setOnMouseMoved(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                if(selectionRectangle != null){
-                    selectionRectangle.widthProperty().set(event.getX() - selectionRectangle.getTranslateX());
-                    selectionRectangle.heightProperty().set(event.getY() - selectionRectangle.getTranslateY());
-                    System.out.println("Width: "+ event.getX());
-                    System.out.println("Height: "+ event.getY());
-                }
-            }
-        });
-        scrollPane.setOnMouseReleased(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                if(selectionRectangle != null){
-                    selectionRectangle = null;
-                    System.out.println("released");
-                }
-            }
-        });
     }
 }
