@@ -154,25 +154,28 @@ public class View {
     private Menu importMenu;
 
     @FXML
-    private MenuItem ImportTaxonomyMenuItem;
+    private MenuItem importTaxonomyMenuItem;
 
     @FXML
-    private MenuItem ImportCoverageMenuItem;
+    private MenuItem importCoverageMenuItem;
 
     @FXML
-    private MenuItem SaveMenuItem;
+    private MenuItem saveMenuItem;
 
     @FXML
-    private MenuItem SaveAsPNGMenuItem;
+    private MenuItem saveAsPNGMenuItem;
 
     @FXML
-    private MenuItem CloseMenuItem;
+    private MenuItem closeMenuItem;
 
     @FXML
     private Menu editMenu;
 
     @FXML
-    private MenuItem SelectionMenuItem;
+    private Menu selectionMenu;
+
+    @FXML
+    private MenuItem exportSelectionSequencesMenuItem;
 
     @FXML
     private MenuItem layoutSettingsMenuItem;
@@ -181,16 +184,16 @@ public class View {
     private Menu viewMenu;
 
     @FXML
-    private Menu PlotMenu;
+    private Menu plotMenu;
 
     @FXML
-    private MenuItem CoverageGCMenu;
+    private MenuItem coverageGCMenu;
 
     @FXML
     private Menu helpMenu;
 
     @FXML
-    private MenuItem AboutMenuItem;
+    private MenuItem aboutMenuItem;
 
     @FXML
     private CheckMenuItem showLegendMenuItem;
@@ -229,27 +232,31 @@ public class View {
     }
 
     public MenuItem getImportTaxonomyMenuItem() {
-        return ImportTaxonomyMenuItem;
+        return importTaxonomyMenuItem;
     }
 
     public MenuItem getImportCoverageMenuItem() {
-        return ImportCoverageMenuItem;
+        return importCoverageMenuItem;
     }
 
     public MenuItem getCoverageGCMenu() {
-        return CoverageGCMenu;
+        return coverageGCMenu;
     }
 
-    public MenuItem getSelectionMenuItem() {
-        return SelectionMenuItem;
+    public Menu getSelectionMenu() {
+        return selectionMenu;
+    }
+
+    public MenuItem getExportSelectionSequencesMenuItem() {
+        return exportSelectionSequencesMenuItem;
     }
 
     public MenuItem getSaveAsPNGMenuItem() {
-        return SaveAsPNGMenuItem;
+        return saveAsPNGMenuItem;
     }
 
     public MenuItem getCloseMenuItem() {
-        return CloseMenuItem;
+        return closeMenuItem;
     }
 
     public RadioButton getColoringTaxonomyRadioButton() {
