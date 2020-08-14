@@ -25,6 +25,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -283,11 +284,19 @@ public class Presenter {
                         String rgb = taxIDRGBCode.get(taxNode.getId());
                         String[] rgbCodes = rgb.split("t");
                         viewVertices.get(v.getID()).setColour(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2])));
+
+                        //updating legend
+                        LegendItem legendItem = new LegendItem(new Circle(5,Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2]))), taxNode.toString());
+                        if (!view.getLegendItems().contains(legendItem)){
+                            view.getLegendItems().add(legendItem);
+                        }
                     }
                     else if (taxNode.getId() == -100) {
                         viewVertices.get(v.getID()).setColour(Color.rgb(0, 255, 0));
                     }
                 }
+                view.updateLabelCol("Taxonomy");
+
                 taxonomy = true;
             }
         });

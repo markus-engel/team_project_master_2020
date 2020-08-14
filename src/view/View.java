@@ -1,5 +1,7 @@
 package view;
 
+import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -12,11 +14,13 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
 public class View {
@@ -208,7 +212,16 @@ public class View {
     private TextArea graphInformationTextArea;
 
     @FXML
-    private TableView<?> legendTableView;
+    private TableView<LegendItem> legendTableView;
+
+    @FXML
+    private TableColumn<LegendItem, Circle> colourCol;
+
+    @FXML
+    private TableColumn<LegendItem, String> labelCol;
+
+    @FXML
+    private ObservableList<LegendItem> legendItems;
 
     private Rectangle selectionRectangle;
 
@@ -445,6 +458,13 @@ public class View {
         return legendTableView;
     }
 
+    public ObservableList<LegendItem> getLegendItems(){
+        if (legendItems==null){
+            legendItems = FXCollections.observableArrayList();
+        }
+        return legendItems;
+    }
+
     public void addVertex(ViewVertex vv, ObservableList observableList) {
         observableList.add(vv);
     }
@@ -484,6 +504,10 @@ public class View {
         }
         return scale;
     }
+
+public void updateLabelCol(String labelType){
+    labelCol.setText(labelType);
+}
 
     public void applyDragSelectRectangleFunctionality(){
        scrollPane.setOnMousePressed(new EventHandler<MouseEvent>() {
