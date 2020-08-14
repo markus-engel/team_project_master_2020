@@ -295,7 +295,7 @@ public class Presenter {
         view.getColoringRankRadioButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                rankRGBCode = model.createColorRank(model.getRanks());
+//                rankRGBCode = model.createColorRank(model.getRanks());
                 ObservableList rankNames = FXCollections.observableArrayList();
                 if (taxonomy) {
                     taxonomy = false;
@@ -305,7 +305,9 @@ public class Presenter {
                 view.getColoringRankChoiceBox().setDisable(false);
                 rankNames.add("none");
 
-                for (Object k : rankRGBCode.keySet()) {
+                Set ranks = model.getAllIndividualsPerRank().keySet();
+
+                for (Object k : ranks) {
                     rankNames.add(k);
                 }
                 view.getColoringRankChoiceBox().setItems(rankNames);
@@ -332,6 +334,20 @@ public class Presenter {
 //            }
 //        });
 
+        view.getColoringRankChoiceBox().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                String chosenRank = (String) view.getColoringRankChoiceBox().getValue();
+                ArrayList differentRankMembers = new ArrayList();
+                HashMap test = model.getAllIndividualsPerRank();
+                differentRankMembers = (ArrayList) test.get(chosenRank);
+                System.out.println("ChosenRank: " + chosenRank + " Members: " + differentRankMembers);
+
+                HashMap<String, String> colorRankMember = model.createColorRank(differentRankMembers);
+                System.out.println(colorRankMember);
+            }
+        });
+        
         view.getColoringDefaultRadioButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
