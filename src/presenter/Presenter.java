@@ -29,6 +29,7 @@ import model.graph.MyEdge;
 import model.graph.MyVertex;
 import model.io.ContigProperty;
 import model.io.Node;
+import javafx.scene.shape.Rectangle;
 import view.*;
 
 import javax.imageio.ImageIO;
@@ -94,6 +95,7 @@ public class Presenter {
                         visualizeGraph(model.getGraph(), view.getInnerViewObjects().getChildren(), view.getInnerViewObjects());
                         view.getScrollPane().setDisable(false);
                         view.makeScrollPaneZoomable(view.getScrollPane());
+                        view.applyDragSelectRectangleFunctionality();
                         view.getImportTaxonomyMenuItem().setDisable(false);
                         view.getImportCoverageMenuItem().setDisable(false);
                         view.getCustomizeMenuItem().setDisable(false);
@@ -601,11 +603,11 @@ public class Presenter {
         model.setGraph(null);
         view.getInnerViewObjects().getChildren().clear();
         viewVertices = new HashMap<>();
+        seleGraph = new UndirectedSparseGraph<>();
     }
 
     private void resetTab(){
         view.getInnerViewObjectsSele().getChildren().clear();
-
     }
 
     /*
@@ -653,7 +655,7 @@ public class Presenter {
             }
         }
     }
-    
+
     private void setOpenRecentFileEventHandler(MenuItem menuItem){
         menuItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override

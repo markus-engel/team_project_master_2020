@@ -1,29 +1,23 @@
 package view;
 
-import javafx.beans.Observable;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.Property;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-
-import java.net.URL;
-import java.util.ResourceBundle;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 public class View {
 
@@ -212,6 +206,8 @@ public class View {
 
     @FXML
     private TextArea graphInformationTextArea;
+
+    private Rectangle selectionRectangle;
 
     // getter and setter Methods. More have to be implemented if needed
     public MenuItem getOpenFileMenuItem() {
@@ -424,17 +420,7 @@ public class View {
 
     public void setLegendItems(String... items) {
         legendTreeView.setRoot(new TreeItem<>("Legend"));
-
     }
-
-    /*
-    public void addVertex(ViewVertex vv) {
-         innerViewObjects.getChildren().add(vv);
-    }
-
-    public void addEdge(ViewEdge viewEdge) {
-        innerViewObjects.getChildren().add(viewEdge);
-    } */
 
     public void addVertex(ViewVertex vv, ObservableList observableList) {
         observableList.add(vv);
@@ -474,5 +460,38 @@ public class View {
             scale = MAX_ZOOM_SCALE;
         }
         return scale;
+    }
+
+    public void applyDragSelectRectangleFunctionality(){
+       scrollPane.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                selectionRectangle = new Rectangle(0,0, Color.TRANSPARENT);
+                selectionRectangle.setStroke(Color.BLACK);
+                selectionRectangle.setTranslateX(event.getX());
+                selectionRectangle.setTranslateY(event.getY());
+                innerViewObjects.getChildren().add(selectionRectangle);
+            }
+        });
+        scrollPane.setOnMouseMoved(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if(selectionRectangle != null){
+                    selectionRectangle.widthProperty().set(event.getX() - selectionRectangle.getTranslateX());
+                    selectionRectangle.heightProperty().set(event.getY() - selectionRectangle.getTranslateY());
+                    System.out.println("Width: "+ event.getX());
+                    System.out.println("Height: "+ event.getY());
+                }
+            }
+        });
+        scrollPane.setOnMouseReleased(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if(selectionRectangle != null){
+                    selectionRectangle = null;
+                    System.out.println("released");
+                }
+            }
+        });
     }
 }
