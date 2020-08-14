@@ -304,12 +304,18 @@ public class Presenter {
                 rank = true;
                 view.getColoringRankChoiceBox().setDisable(false);
                 rankNames.add("none");
-
-                Set ranks = model.getAllIndividualsPerRank().keySet();
-
-                for (Object k : ranks) {
-                    rankNames.add(k);
-                }
+                rankNames.add("superkingdom");
+                rankNames.add("kingdom");
+                rankNames.add("phylum");
+                rankNames.add("class");
+                rankNames.add("order");
+                rankNames.add("family");
+                rankNames.add("genus");
+                rankNames.add("species");
+//                ArrayList ranks = model.getAllIndividualsPerRank();
+//                for (Object k : ranks) { //ranks static
+//                    rankNames.add(k);
+//                }
                 view.getColoringRankChoiceBox().setItems(rankNames);
             }
         });
@@ -339,15 +345,39 @@ public class Presenter {
             public void handle(ActionEvent actionEvent) {
                 String chosenRank = (String) view.getColoringRankChoiceBox().getValue();
                 ArrayList differentRankMembers = new ArrayList();
-                HashMap test = model.getAllIndividualsPerRank();
-                differentRankMembers = (ArrayList) test.get(chosenRank);
-                System.out.println("ChosenRank: " + chosenRank + " Members: " + differentRankMembers);
+                ArrayList test = model.getAllIndividualsPerRank(chosenRank);
 
-                HashMap<String, String> colorRankMember = model.createColorRank(differentRankMembers);
-                System.out.println(colorRankMember);
+                System.out.println(test);
+
+
+
+
+//                differentRankMembers = (ArrayList) test.get(chosenRank);
+//                System.out.println("ChosenRank: " + chosenRank + " Members: " + differentRankMembers);
+//
+//                HashMap<String, String> colorRankMember = model.createColorRank(differentRankMembers);
+//                Set actualRankMembers = colorRankMember.keySet();
+//                System.out.println(colorRankMember);
+//
+//                for (Object i : actualRankMembers) {
+//                    for (MyVertex v : model.getGraph().getVertices()) {
+//                        if (v.getID().equals(i)) {
+//
+//                        }
+//                    }
+//                    for (MyVertex v : model.getGraph().getVertices()) {
+//                        Node temp = (Node) v.getProperty(ContigProperty.TAXONOMY);
+//                        int ancestorIDCurrent = temp.getAncestorId(chosenRank);
+////                        if ()
+//                    }
+//                }
+//
+//                for (MyVertex v : model.getGraph().getVertices()) {
+////                    if (v.getID().equals())
+//                }
             }
         });
-        
+
         view.getColoringDefaultRadioButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {

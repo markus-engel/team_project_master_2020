@@ -340,24 +340,25 @@ public class Model {
         return rankIDRGBCode;
     }
 
-    public HashMap<String, ArrayList> getAllIndividualsPerRank () {
-        HashMap<String, ArrayList> membersPerRank = new HashMap<String, ArrayList>();
-        for (Object i : ranks) {
-            ArrayList idNodes = new ArrayList();
-            for (MyVertex v : getGraph().getVertices()) {
-                Node taxonomyV = (Node) v.getProperty(ContigProperty.TAXONOMY);
-                if (taxonomyV.getRank().equals(i)) {
-                    idNodes.add(v.getID());
-                }
+    public ArrayList getAllIndividualsPerRank (String chosenRank) {
+//        HashMap<String, ArrayList> membersPerRank = new HashMap<String, ArrayList>();
+        ArrayList idNodes = new ArrayList();
+        for (MyVertex v : getGraph().getVertices()) {
+            Node taxonomyV = (Node) v.getProperty(ContigProperty.TAXONOMY);
+            if (taxonomyV.getAncestorId(chosenRank) != -1) {
+                idNodes.add(v.getID());
             }
-            membersPerRank.put((String) i, idNodes);
+
+        }
+//        for (Object i : membersPerRank.keySet()) {
+//            System.out.println("Key: " + i + " Value: " + membersPerRank.get(i));
+//        }
+
+        for (Object i : idNodes) {
+            System.out.println(i);
         }
 
-        for (Object i : membersPerRank.keySet()) {
-            System.out.println("Key: " + i + " Value: " + membersPerRank.get(i));
-        }
-
-        return membersPerRank;
+        return idNodes;
     }
 
 
