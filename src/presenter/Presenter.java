@@ -2,6 +2,7 @@
 package presenter;
 
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -15,11 +16,14 @@ import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.TreeItem;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
@@ -29,7 +33,6 @@ import model.graph.MyEdge;
 import model.graph.MyVertex;
 import model.io.ContigProperty;
 import model.io.Node;
-import javafx.scene.shape.Rectangle;
 import view.*;
 
 import javax.imageio.ImageIO;
@@ -37,7 +40,6 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Presenter {
@@ -64,6 +66,13 @@ public class Presenter {
     private void setUpBindings() {
 
         //TODO: For all actions, we need to handle the exceptions, maybe show an error window (Caner)
+
+        view.getNewFileMenuItem().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                reset();
+            }
+        });
 
         view.getOpenFileMenuItem().setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -174,12 +183,10 @@ public class Presenter {
             }
         });
 
-        //TODO: does this actually work? :) (Caner)
-        // for me it does (Anna)
         view.getCloseMenuItem().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                reset();
+                Platform.exit();
             }
         });
 
@@ -356,28 +363,39 @@ public class Presenter {
         view.getLayoutApplyButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                Task<Void> layoutApplyTask = new Task<Void>() {
-                    @Override
-                    protected Void call() {
-                        view.getLayoutApplyButton().setDisable(true);
-                        model.setRepulsionMultiplier(view.getLayoutRepulsionMultiplierSpinner());
-                        model.setAttractionMultiplier(view.getLayoutAttractionMultiplierSpinner());
-                        model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), model.getGraph(), view.getOrderByContigLengthRadioButton().isSelected());
-                        return null;
-                    }
-                };
-                layoutApplyTask.setOnSucceeded(e ->{
-                    for (MyVertex mv : model.getGraph().getVertices()) {
-                        ViewVertex vv = viewVertices.get(mv.getID());
-                        vv.animate(mv.getX(), mv.getY());
-                    }
-                    view.getLayoutApplyButton().setDisable(false);
-                });
-                Thread layoutApplyThread = new Thread(layoutApplyTask);
-                layoutApplyThread.setDaemon(true);
-                layoutApplyThread.start();
+                changeLayoutParameters(view.getLayoutApplyButton());
             }
         });
+
+        view.getLayoutSettingsMenuItem().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                Stage popupWindow = new Stage();
+                popupWindow.initModality(Modality.APPLICATION_MODAL);
+                popupWindow.setTitle("Layout Settings");
+
+                Label repulsionLabel = new Label("Repulsion multiplier");
+                Label attractionLabel = new Label("Attraction multiplier");
+                Button applyButton = new Button("Apply");
+                applyButton.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+                        changeLayoutParameters(applyButton);
+
+                    }
+                });
+                VBox layout = new VBox(5);
+                layout.getChildren().addAll(repulsionLabel,view.getLayoutRepulsionMultiplierSpinner(),attractionLabel,view.getLayoutAttractionMultiplierSpinner(), applyButton);
+                BorderPane bp = new BorderPane();
+                bp.setCenter(layout);
+                bp.getCenter().setTranslateX(60);
+                bp.getCenter().setTranslateZ(60);
+                Scene scene = new Scene(bp, 200, 150);
+                popupWindow.setScene(scene);
+                popupWindow.show();
+            }
+        });
+
 
         view.getNodeSizeScaleChoiceBox().setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -654,6 +672,29 @@ public class Presenter {
 
             }
         }
+    }
+
+    private void changeLayoutParameters(Button button) {
+        Task<Void> layoutApplyTask = new Task<Void>() {
+            @Override
+            protected Void call() {
+                button.setDisable(true);
+                model.setRepulsionMultiplier(view.getLayoutRepulsionMultiplierSpinnerValue());
+                model.setAttractionMultiplier(view.getLayoutAttractionMultiplierSpinnerValue());
+                model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), model.getGraph(), view.getOrderByContigLengthRadioButton().isSelected());
+                return null;
+            }
+        };
+        layoutApplyTask.setOnSucceeded(e ->{
+            for (MyVertex mv : model.getGraph().getVertices()) {
+                ViewVertex vv = viewVertices.get(mv.getID());
+                vv.animate(mv.getX(), mv.getY());
+            }
+            button.setDisable(false);
+        });
+        Thread layoutApplyThread = new Thread(layoutApplyTask);
+        layoutApplyThread.setDaemon(true);
+        layoutApplyThread.start();
     }
 
     private void setOpenRecentFileEventHandler(MenuItem menuItem){

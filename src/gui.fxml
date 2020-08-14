@@ -233,6 +233,7 @@
                   <menus>
                       <Menu fx:id="fileMenu" mnemonicParsing="false" text="File">
                           <items>
+                              <MenuItem fx:id="newFileMenuItem" mnemonicParsing="false" text="New"/>
                               <MenuItem fx:id="openFileMenuItem" mnemonicParsing="false" text="Open..." />
                               <Menu fx:id="openRecentFileMenu" mnemonicParsing="false" text="Open recent" />
                               <Menu fx:id="importMenu" mnemonicParsing="false" text="Import...">

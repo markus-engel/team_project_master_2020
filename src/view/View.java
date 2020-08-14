@@ -142,6 +142,9 @@ public class View {
     private Menu fileMenu;
 
     @FXML
+    private MenuItem newFileMenuItem;
+
+    @FXML
     private MenuItem openFileMenuItem;
 
     @FXML
@@ -210,6 +213,10 @@ public class View {
     private Rectangle selectionRectangle;
 
     // getter and setter Methods. More have to be implemented if needed
+    public MenuItem getNewFileMenuItem() {
+        return newFileMenuItem;
+    }
+
     public MenuItem getOpenFileMenuItem() {
         return openFileMenuItem;
     }
@@ -382,12 +389,20 @@ public class View {
         return layoutSettingsMenuItem;
     }
 
-    public double getLayoutRepulsionMultiplierSpinner() {
+    public double getLayoutRepulsionMultiplierSpinnerValue() {
         return Double.parseDouble(layoutRepulsionMultiplierSpinner.getValueFactory().getValue().toString());
     }
 
-    public double getLayoutAttractionMultiplierSpinner() {
+    public Spinner getLayoutRepulsionMultiplierSpinner() {
+        return layoutRepulsionMultiplierSpinner;
+    }
+
+    public double getLayoutAttractionMultiplierSpinnerValue() {
         return Double.parseDouble(layoutAttractionMultiplierSpinner.getValueFactory().getValue().toString());
+    }
+
+    public Spinner getLayoutAttractionMultiplierSpinner() {
+        return layoutAttractionMultiplierSpinner;
     }
 
     public Button getLayoutApplyButton() {
