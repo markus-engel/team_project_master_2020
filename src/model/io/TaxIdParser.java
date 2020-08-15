@@ -61,7 +61,8 @@ public class TaxIdParser {
 //            for (Object i : ranks) {
 //                ArrayList idNodes = new ArrayList();
 //                for (MyVertex v : graph.getVertices()) {
-//                    if (v.getProperty(ContigProperty.TAXONOMY))
+//                    Node tempME = (Node) v.getProperty(ContigProperty.TAXONOMY);
+//                    if (tempME.getRank() == i)
 //                    idNodes.add(v.getID());
 //                }
 //            }

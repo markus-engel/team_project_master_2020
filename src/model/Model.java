@@ -327,29 +327,73 @@ public class Model {
         return taxIDRGBCode;
     }
 
-    public HashMap<String, String> createColorRank(ArrayList rankMembers) {
-        int[] rgbNumbersRank;
-        HashMap<String, String> rankIDRGBCode = new HashMap<>();
+//    public HashMap<String, String> createColorRank(ArrayList rankMembers) {
+//        int[] rgbNumbersRank;
+//        HashMap<String, String> rankIDRGBCode = new HashMap<>();
+//
+//        for (Object i : rankMembers) {
+//            String rgbCodeTaxa;
+//            rgbNumbersRank = randomNumberColoring();
+//            rgbCodeTaxa = rgbNumbersRank[0] + "t" + rgbNumbersRank[1] + "t" + rgbNumbersRank[2];
+//            rankIDRGBCode.put((String) i, rgbCodeTaxa);
+//        }
+//        return rankIDRGBCode;
+//    }
 
-        for (Object i : rankMembers) {
-            String rgbCodeTaxa;
-            rgbNumbersRank = randomNumberColoring();
-            rgbCodeTaxa = rgbNumbersRank[0] + "t" + rgbNumbersRank[1] + "t" + rgbNumbersRank[2];
-            rankIDRGBCode.put((String) i, rgbCodeTaxa);
-        }
-        return rankIDRGBCode;
-    }
-
-    public ArrayList getAllIndividualsPerRank (String chosenRank) {
-//        HashMap<String, ArrayList> membersPerRank = new HashMap<String, ArrayList>();
-        ArrayList idNodes = new ArrayList();
-        for (MyVertex v : getGraph().getVertices()) {
-            Node taxonomyV = (Node) v.getProperty(ContigProperty.TAXONOMY);
-            if (taxonomyV.getAncestorId(chosenRank) != -1) {
-                idNodes.add(v.getID());
+    public HashMap<Integer, ArrayList> getAllIndividualsPerRank (String chosenRank) {
+//        individual members per rank
+        HashMap<String, ArrayList> membersPerRank = new HashMap<String, ArrayList>();
+        for (Object i : ranks) {
+            ArrayList tempME = new ArrayList();
+            for (MyVertex v : getGraph().getVertices()) {
+                Node taxonomyV = (Node) v.getProperty(ContigProperty.TAXONOMY);
+                if (taxonomyV.getRank().equals(i)) {
+//                    tempME.add(v.getID());
+                    tempME.add(taxonomyV.getId());
+                }
             }
-
+            membersPerRank.put((String) i, tempME);
         }
+
+        ArrayList differentRankMembers = membersPerRank.get(chosenRank);
+        HashMap<Integer, ArrayList> familyMembersPerRankEntry = new HashMap<>();
+
+//        System.out.println("chosen Rank, TaxIDS: " + differentRankMembers);
+
+        for (Object i : differentRankMembers) {
+            ArrayList temp1 = new ArrayList();
+            for (MyVertex v : getGraph().getVertices()) {
+                Node taxonomyActualVertex = (Node) v.getProperty(ContigProperty.TAXONOMY);
+//                if (taxonomyActualVertex.getAncestorId(chosenRank) != -1) {
+//                    Object temp2 = taxonomyActualVertex.getId();
+//                    if (temp2 == i) {
+//                        temp1.add(v.getID());
+//                    }
+//                }
+                if (taxonomyActualVertex.getAncestorId(chosenRank) != -1 && taxonomyActualVertex.getAncestorId(chosenRank) == (Integer) i) {
+                    temp1.add(v.getID());
+                }
+            }
+            familyMembersPerRankEntry.put((Integer) i, temp1);
+        }
+
+//        for (Object i : familyMembersPerRankEntry.keySet()) {
+//            System.out.println("Key: " + i + " Value: " + familyMembersPerRankEntry.get(i));
+//        }
+
+
+//        ArrayList idNodes = new ArrayList();
+//        for (MyVertex v : getGraph().getVertices()) {
+//            Node taxonomyV = (Node) v.getProperty(ContigProperty.TAXONOMY);
+//            if (taxonomyV.getAncestorId(chosenRank) != -1) {
+//                idNodes.add(v.getID());
+//            }
+//        }
+
+
+
+
+
 //        for (Object i : membersPerRank.keySet()) {
 //            System.out.println("Key: " + i + " Value: " + membersPerRank.get(i));
 //        }
@@ -358,7 +402,21 @@ public class Model {
 //            System.out.println(i);
 //        }
 
-        return idNodes;
+        return familyMembersPerRankEntry;
+    }
+
+    public HashMap<Integer, String> createColorRank(HashMap familyMembersPerRankEntry) {
+        Set rankMembersTaxID = familyMembersPerRankEntry.keySet();
+        int[] rgbNumbersRank;
+        HashMap<Integer, String> rankIDRGBCode = new HashMap<>();
+
+        for (Object i : rankMembersTaxID) {
+            String rgbCodeTaxa;
+            rgbNumbersRank = randomNumberColoring();
+            rgbCodeTaxa = rgbNumbersRank[0] + "t" + rgbNumbersRank[1] + "t" + rgbNumbersRank[2];
+            rankIDRGBCode.put((Integer) i, rgbCodeTaxa);
+        }
+        return rankIDRGBCode;
     }
 
 
