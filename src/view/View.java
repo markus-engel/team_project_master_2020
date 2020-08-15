@@ -1,5 +1,7 @@
 package view;
 
+import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -12,11 +14,13 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
 public class View {
@@ -178,13 +182,16 @@ public class View {
     private MenuItem exportSelectionSequencesMenuItem;
 
     @FXML
+    private MenuItem selectAllMenuItem;
+
+    @FXML
+    private MenuItem resetSelectionMenuItem;
+
+    @FXML
     private MenuItem layoutSettingsMenuItem;
 
     @FXML
     private Menu viewMenu;
-
-    @FXML
-    private MenuItem showTaxLegend;
 
     @FXML
     private Menu plotMenu;
@@ -202,16 +209,19 @@ public class View {
     private CheckMenuItem showLegendMenuItem;
 
     @FXML
-    private MenuItem showTaxLegendMenuItem;
-
-    @FXML
-    private ScrollPane legendScrollPane;
-
-    @FXML
-    private TreeView<String> legendTreeView;
-
-    @FXML
     private TextArea graphInformationTextArea;
+
+    @FXML
+    private TableView<LegendItem> legendTableView;
+
+    @FXML
+    private TableColumn<LegendItem, Circle> colourCol;
+
+    @FXML
+    private TableColumn<LegendItem, String> labelCol;
+
+    @FXML
+    private ObservableList<LegendItem> legendItems;
 
     private Rectangle selectionRectangle;
 
@@ -262,6 +272,14 @@ public class View {
 
     public MenuItem getExportSelectionSequencesMenuItem() {
         return exportSelectionSequencesMenuItem;
+    }
+
+    public MenuItem getSelectAllMenuItem() {
+        return selectAllMenuItem;
+    }
+
+    public MenuItem getResetSelectionMenuItem() {
+        return resetSelectionMenuItem;
     }
 
     public MenuItem getSaveAsPNGMenuItem() {
@@ -376,6 +394,10 @@ public class View {
         overlapCountTextField.setText("Overlaps: " + overlapCount);
     }
 
+    public void setSelectionTextfield(int vertexCount, int edgeCount, int taxaCount){
+        selectionTextfield.setText("Selected: "+vertexCount+" Sequences  "+edgeCount+" Overlaps  "+taxaCount+" Taxa");
+    }
+
     public Group getViewObjects() {
         return viewObjects;
     }
@@ -440,20 +462,27 @@ public class View {
         return innerViewObjects.getScaleX();
     }
 
+    public Rectangle getSelectionRectangle() {
+        return selectionRectangle;
+    }
+
+    public void initSelectionRectangle(double width, double height){
+        selectionRectangle = new Rectangle(width,height,Color.TRANSPARENT);
+    }
+
     public CheckMenuItem getShowLegendMenuItem() {
         return showLegendMenuItem;
     }
 
-    public ScrollPane getLegendScrollPane() {
-        return legendScrollPane;
+    public TableView<?> getLegendTableView() {
+        return legendTableView;
     }
 
-    public TreeView<String> getLegendTreeView() {
-        return legendTreeView;
-    }
-
-    public void setLegendItems(String... items) {
-        legendTreeView.setRoot(new TreeItem<>("Legend"));
+    public ObservableList<LegendItem> getLegendItems(){
+        if (legendItems==null){
+            legendItems = FXCollections.observableArrayList();
+        }
+        return legendItems;
     }
 
     public void addVertex(ViewVertex vv, ObservableList observableList) {
@@ -496,36 +525,7 @@ public class View {
         return scale;
     }
 
-    public void applyDragSelectRectangleFunctionality(){
-       scrollPane.setOnMousePressed(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                selectionRectangle = new Rectangle(0,0, Color.TRANSPARENT);
-                selectionRectangle.setStroke(Color.BLACK);
-                selectionRectangle.setTranslateX(event.getX());
-                selectionRectangle.setTranslateY(event.getY());
-                innerViewObjects.getChildren().add(selectionRectangle);
-            }
-        });
-        scrollPane.setOnMouseMoved(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                if(selectionRectangle != null){
-                    selectionRectangle.widthProperty().set(event.getX() - selectionRectangle.getTranslateX());
-                    selectionRectangle.heightProperty().set(event.getY() - selectionRectangle.getTranslateY());
-                    System.out.println("Width: "+ event.getX());
-                    System.out.println("Height: "+ event.getY());
-                }
-            }
-        });
-        scrollPane.setOnMouseReleased(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                if(selectionRectangle != null){
-                    selectionRectangle = null;
-                    System.out.println("released");
-                }
-            }
-        });
+public void updateLabelCol(String labelType){
+    labelCol.setText(labelType);
     }
 }

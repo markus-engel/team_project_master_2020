@@ -25,6 +25,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -38,9 +39,10 @@ import view.*;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.List;
 
 public class Presenter {
     Model model;
@@ -72,6 +74,12 @@ public class Presenter {
         view.getNewFileMenuItem().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                view.getScrollPane().setDisable(true);
+                view.getImportTaxonomyMenuItem().setDisable(true);
+                view.getImportCoverageMenuItem().setDisable(true);
+                view.getCustomizeMenuItem().setDisable(true);
+                view.getSelectAllMenuItem().setDisable(true);
+                view.getSelectionMenu().setDisable(true);
                 reset();
             }
         });
@@ -106,10 +114,13 @@ public class Presenter {
                         visualizeGraph(model.getGraph(), view.getInnerViewObjects().getChildren(), view.getInnerViewObjects());
                         view.getScrollPane().setDisable(false);
                         view.makeScrollPaneZoomable(view.getScrollPane());
-                        view.applyDragSelectRectangleFunctionality();
+                        applyDragSelectRectangleFunctionality();
                         view.getImportTaxonomyMenuItem().setDisable(false);
                         view.getImportCoverageMenuItem().setDisable(false);
                         view.getCustomizeMenuItem().setDisable(false);
+                        view.getSelectAllMenuItem().setDisable(false);
+                        view.setSequenceCountTextField(model.getGraph().getVertexCount());
+                        view.setOverlapCountTextField(model.getGraph().getEdgeCount());
                         MenuItem recentFile = new MenuItem(f.getAbsolutePath());
                         if (!view.getOpenRecentFileMenu().getItems().contains(recentFile)){
                             setOpenRecentFileEventHandler(recentFile);
@@ -243,10 +254,21 @@ public class Presenter {
                 resetTab();
                 if (view.getTabSelection().isSelected()) {
                     System.out.println("Selection tab recognized");
-                    model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), seleGraph, view.getOrderByContigLengthRadioButton().isSelected());
-                    visualizeSelectionGraph(seleGraph, view.getInnerViewObjectsSele().getChildren(), view.getInnerViewObjectsSele());
-                    view.getScrollPaneSele().setDisable(false);
-                    view.makeScrollPaneZoomable(view.getScrollPaneSele());
+                    Task<Void> tabSelectionTask = new Task<Void>() {
+                        @Override
+                        protected Void call() throws Exception {
+                            model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), seleGraph, view.getOrderByContigLengthRadioButton().isSelected());
+                            return null;
+                        }
+                    };
+                    tabSelectionTask.setOnSucceeded(e -> {
+                        visualizeSelectionGraph(seleGraph, view.getInnerViewObjectsSele().getChildren(), view.getInnerViewObjectsSele());
+                        view.getScrollPaneSele().setDisable(false);
+                        view.makeScrollPaneZoomable(view.getScrollPaneSele());
+                    });
+                    Thread tabSelectionThread = new Thread(tabSelectionTask);
+                    tabSelectionThread.setDaemon(true);
+                    tabSelectionThread.start();
                 }
             }
         });
@@ -266,11 +288,20 @@ public class Presenter {
                         String rgb = taxIDRGBCode.get(taxNode.getId());
                         String[] rgbCodes = rgb.split("t");
                         viewVertices.get(v.getID()).setColour(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2])));
+
+                        //updating legend
+                        LegendItem legendItem = new LegendItem(new Circle(5,Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2]))), taxNode.getScientificName());
+                        if (!view.getLegendItems().contains(legendItem)){
+                            view.getLegendItems().add(legendItem);
+                        }
                     }
                     else if (taxNode.getId() == -100) {
                         viewVertices.get(v.getID()).setColour(Color.rgb(0, 255, 0));
                     }
                 }
+                view.updateLabelCol("Taxonomy");
+                view.getShowLegendMenuItem().setDisable(false);
+
                 taxonomy = true;
             }
         });
@@ -278,7 +309,7 @@ public class Presenter {
         view.getColoringRankRadioButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                rankRGBCode = model.createColorRank(model.getRanks());
+//                rankRGBCode = model.createColorRank(model.getRanks());
                 ObservableList rankNames = FXCollections.observableArrayList();
                 if (taxonomy) {
                     taxonomy = false;
@@ -287,11 +318,20 @@ public class Presenter {
                 rank = true;
                 view.getColoringRankChoiceBox().setDisable(false);
                 rankNames.add("none");
-
-                for (Object k : rankRGBCode.keySet()) {
-                    rankNames.add(k);
-                }
+                rankNames.add("superkingdom");
+                rankNames.add("kingdom");
+                rankNames.add("phylum");
+                rankNames.add("class");
+                rankNames.add("order");
+                rankNames.add("family");
+                rankNames.add("genus");
+                rankNames.add("species");
+//                ArrayList ranks = model.getAllIndividualsPerRank();
+//                for (Object k : ranks) { //ranks static
+//                    rankNames.add(k);
+//                }
                 view.getColoringRankChoiceBox().setItems(rankNames);
+                view.getShowLegendMenuItem().setDisable(false);
             }
         });
 
@@ -315,12 +355,54 @@ public class Presenter {
 //            }
 //        });
 
+        view.getColoringRankChoiceBox().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                String chosenRank = (String) view.getColoringRankChoiceBox().getValue();
+                ArrayList differentRankMembers = new ArrayList();
+                ArrayList test = model.getAllIndividualsPerRank(chosenRank);
+
+                System.out.println(test);
+
+
+
+
+//                differentRankMembers = (ArrayList) test.get(chosenRank);
+//                System.out.println("ChosenRank: " + chosenRank + " Members: " + differentRankMembers);
+//
+//                HashMap<String, String> colorRankMember = model.createColorRank(differentRankMembers);
+//                Set actualRankMembers = colorRankMember.keySet();
+//                System.out.println(colorRankMember);
+//
+//                for (Object i : actualRankMembers) {
+//                    for (MyVertex v : model.getGraph().getVertices()) {
+//                        if (v.getID().equals(i)) {
+//
+//                        }
+//                    }
+//                    for (MyVertex v : model.getGraph().getVertices()) {
+//                        Node temp = (Node) v.getProperty(ContigProperty.TAXONOMY);
+//                        int ancestorIDCurrent = temp.getAncestorId(chosenRank);
+////                        if ()
+//                    }
+//                }
+//
+//                for (MyVertex v : model.getGraph().getVertices()) {
+////                    if (v.getID().equals())
+//                }
+            }
+        });
+
         view.getColoringDefaultRadioButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
                 for (MyVertex v : model.getGraph().getVertices()){
                     viewVertices.get(v.getID()).setColour(Color.CORAL);
                 }
+
+                //Updates Legend on the side.
+                view.getShowLegendMenuItem().setDisable(true);
+                view.getLegendTableView().setPrefWidth(0);
             }
         });
 
@@ -368,6 +450,40 @@ public class Presenter {
                     }
                 }
 
+            }
+        });
+
+        view.getExportSelectionSequencesMenuItem().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                StringBuilder content = new StringBuilder("");
+                for(MyVertex mv : seleGraph.getVertices()){
+                    content.append(">"+ mv.getID() + "\n");
+                    content.append(mv.getSequenceprop() + "\n");
+                }
+                FileChooser fc = new FileChooser();
+                File file = fc.showSaveDialog(null);
+                FileChooser.ExtensionFilter extensionFilter = new FileChooser.ExtensionFilter("FASTA files (*.fasta)","*.fasta");
+                fc.getExtensionFilters().add(extensionFilter);
+               if(file != null){
+                   try {
+                       FileWriter fileWriter = new FileWriter(file);
+                       fileWriter.write(content.toString());
+                       fileWriter.close();
+                   } catch (IOException e) {
+                       e.printStackTrace();
+                   }
+               }
+            }
+        });
+
+        view.getSelectAllMenuItem().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                seleGraph = model.getGraph();
+                for(MyVertex mv : model.getGraph().getVertices()){
+                    viewVertices.get(mv.getID()).setSelected();
+                }
             }
         });
 
@@ -543,10 +659,9 @@ public class Presenter {
             @Override
             public void handle(ActionEvent actionEvent) {
                 if (view.getShowLegendMenuItem().isSelected()) {
-                    view.getLegendScrollPane().setMaxWidth(200);
-                    view.setLegendItems("Colouring", "Node size", "Order", "Layout", "File");
+                    view.getLegendTableView().setPrefWidth(view.getLegendTableView().getMaxWidth());
                 } else {
-                    view.getLegendScrollPane().setMaxWidth(0);
+                    view.getLegendTableView().setPrefWidth(0);
                 }
             }
         });
@@ -565,6 +680,7 @@ public class Presenter {
                 resetTab();
             }
         });
+
     }
 
 
@@ -658,11 +774,13 @@ public class Presenter {
         viewVertex.setOnMouseClicked(event -> {
             viewVertex.setSelected();
             updateSelectionGraph(viewVertex);
-
+            view.getSelectionMenu().setDisable(false);
+            view.setSelectionTextfield(seleGraph.getVertexCount(),seleGraph.getEdgeCount(),0);
         });
     }
 
     private void updateSelectionGraph(ViewVertex viewVertex){
+        List<MyVertex> removeList = new ArrayList<>();
         for(MyVertex v : model.getGraph().getVertices()) {
             if (v.getID().equals(viewVertex.getID())) {
                 if (!seleGraph.containsVertex(v)) {
@@ -676,14 +794,15 @@ public class Presenter {
                     }
                 } else if (seleGraph.containsVertex(v)) {
                     System.out.println("deleted test: " + viewVertex.getID());
-                    seleGraph.removeVertex(v);
-                    for(MyEdge edge : this.model.getGraph().getInEdges(v)){
-                        seleGraph.removeEdge(edge);
-                    }
-
+                    removeList.add(v);
+                    //for(MyEdge edge : this.model.getGraph().getInEdges(v)){
+                      //  seleGraph.removeEdge(edge);
+                    //}
                 }
-
             }
+        }
+        for (MyVertex v : removeList){
+            seleGraph.removeVertex(v);
         }
     }
 
@@ -708,6 +827,42 @@ public class Presenter {
         Thread layoutApplyThread = new Thread(layoutApplyTask);
         layoutApplyThread.setDaemon(true);
         layoutApplyThread.start();
+    }
+
+    public void applyDragSelectRectangleFunctionality(){
+        view.getScrollPane().addEventFilter(MouseEvent.MOUSE_PRESSED,new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                view.initSelectionRectangle(0,0);
+                view.getSelectionRectangle().setStroke(Color.BLACK);
+                view.getSelectionRectangle().setTranslateX(event.getX());
+                view.getSelectionRectangle().setTranslateY(event.getY());
+                view.getInnerViewObjects().getChildren().add(view.getSelectionRectangle());
+            }
+        });
+        view.getScrollPane().addEventFilter(MouseEvent.MOUSE_DRAGGED,new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if(view.getSelectionRectangle() != null){
+                    view.getSelectionRectangle().widthProperty().set(event.getX() - view.getSelectionRectangle().getTranslateX());
+                    view.getSelectionRectangle().heightProperty().set(event.getY() - view.getSelectionRectangle().getTranslateY());
+                }
+            }
+        });
+        view.getScrollPane().addEventFilter(MouseEvent.MOUSE_RELEASED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if(view.getSelectionRectangle() != null){
+                    for(ViewVertex vv : viewVertices.values()){
+                        if(view.getSelectionRectangle().getBoundsInParent().intersects(vv.getBoundsInParent())) {
+                            vv.setSelected();
+                            updateSelectionGraph(vv);
+                        }
+                    }
+                    view.getInnerViewObjects().getChildren().remove(view.getSelectionRectangle());
+                }
+            }
+        });
     }
 
     private void setOpenRecentFileEventHandler(MenuItem menuItem){

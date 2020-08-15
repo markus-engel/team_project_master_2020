@@ -50,7 +50,17 @@ public class Node {
     } // single value
 
     public Node getAncestor() {
-        return edgeToAncestor.getAncestor();
+        Object output = new Object();
+        if (edgeToAncestor == null) {
+            output = null;
+        }
+        else if (edgeToAncestor.getAncestor() == null) {
+            output = null;
+        }
+        else if (edgeToAncestor.getAncestor() != null) {
+            output = edgeToAncestor.getAncestor();
+        }
+        return (Node) output;
     }
 
     public List<Edge> getEdges() {
@@ -81,22 +91,36 @@ public class Node {
     // Method to get the id of an ancestor of a specific rank, e.g. id of the order of node 11
     public int getAncestorId(String rank) {
         Node current = this;
-        while (!current.getRank().equals(rank) & current.getAncestor() != null) {
+        while (current != null && current.getAncestor() != null && !current.getRank().equals(rank)) {
             current = current.getAncestor();
         }
-        if (current.getRank().equals(rank)) {
+
+        if (current == null) {
+            return -1;
+        }
+        else if (current.getRank() == null) {
+            return -1;
+        }
+        else if (current.getRank().equals(rank)) {
             return current.getId();
         } else return -1;
     }
 
     // Method to get the name of an ancestor of a specific rank, e.g. id of the order of node 11
-    public String getAncestorName(String rank) {
+    public Object getAncestorName(String rank) {
         Node current = this;
-        while (!current.getRank().equals(rank) & current.getAncestor() != null) {
+        while (current != null && current.getAncestor() != null && !current.getRank().equals(rank)) {
             current = current.getAncestor();
         }
-        if (current.getRank().equals(rank)) {
+
+        if (current == null) {
+            return -1;
+        }
+        else if (current.getRank() == null) {
+            return -1;
+        }
+        else if (current.getRank().equals(rank)) {
             return current.getScientificName();
-        } else return null;
+        } else return -1;
     }
 }

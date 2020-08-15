@@ -18,11 +18,12 @@
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.ToggleGroup?>
-<?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -30,60 +31,71 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.View">
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+            prefHeight="650.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/11.0.1"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.View">
     <center>
-         <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
-           <tabs>
-             <Tab fx:id="tabMain" text="Main">
-               <content>
-                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                        <children>
-                            <StackPane fx:id="stackPane" prefHeight="712.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
-                                <ProgressIndicator fx:id="progressIndicator" layoutX="500.0" layoutY="250.0" prefHeight="94.0" prefWidth="100.0" translateX="-85.0" translateY="-85.0" visible="false" />
-                                <ScrollPane fx:id="scrollPane" pannable="false" prefHeight="238.0" prefWidth="540.0">
-                                  <Group fx:id="viewObjects">
-                                      <Group fx:id="innerViewObjects" />
-                                  </Group>
-                              </ScrollPane>
-                            </StackPane>
-                        </children>
-                     </AnchorPane>
-               </content>
-             </Tab>
-             <Tab fx:id="tabSelection" text="Selection">
-               <content>
-                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                     <children>
-                        <StackPane fx:id="stackPaneSele" prefHeight="712.0" prefWidth="1000.0">
-                           <children>
-                              <ScrollPane fx:id="scrollPaneSele" pannable="false" prefHeight="238.0" prefWidth="540.0">
-                                 <content>
-                                    <Group fx:id="viewObjectsSele">
-                                       <children>
-                                          <Group fx:id="innerViewObjectsSele" />
-                                       </children>
-                                    </Group>
-                                 </content>
-                              </ScrollPane>
-                           </children>
-                        </StackPane>
-                     </children></AnchorPane>
-               </content>
-             </Tab>
-           </tabs>
-         </TabPane>
+        <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
+            <tabs>
+                <Tab fx:id="tabMain" text="Main">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                            <children>
+                                <StackPane fx:id="stackPane" prefHeight="712.0" prefWidth="1000.0"
+                                           BorderPane.alignment="CENTER">
+                                    <ProgressIndicator fx:id="progressIndicator" layoutX="500.0" layoutY="250.0"
+                                                       prefHeight="94.0" prefWidth="100.0" translateX="-85.0"
+                                                       translateY="-85.0" visible="false"/>
+                                    <ScrollPane fx:id="scrollPane" pannable="false" prefHeight="238.0"
+                                                prefWidth="540.0">
+                                        <Group fx:id="viewObjects">
+                                            <Group fx:id="innerViewObjects"/>
+                                        </Group>
+                                    </ScrollPane>
+                                </StackPane>
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+                <Tab fx:id="tabSelection" text="Selection">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                            <children>
+                                <StackPane fx:id="stackPaneSele" prefHeight="712.0" prefWidth="1000.0">
+                                    <children>
+                                        <ScrollPane fx:id="scrollPaneSele" pannable="false" prefHeight="238.0"
+                                                    prefWidth="540.0">
+                                            <content>
+                                                <Group fx:id="viewObjectsSele">
+                                                    <children>
+                                                        <Group fx:id="innerViewObjectsSele"/>
+                                                    </children>
+                                                </Group>
+                                            </content>
+                                        </ScrollPane>
+                                    </children>
+                                </StackPane>
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
     </center>
     <bottom>
         <HBox prefHeight="27.0" prefWidth="823.0" BorderPane.alignment="CENTER">
             <children>
-                <TextField fx:id="sequenceCountTextField" editable="false" prefHeight="27.0" prefWidth="103.0" text="Sequences:">
+                <TextField fx:id="sequenceCountTextField" editable="false" prefHeight="27.0" prefWidth="103.0"
+                           text="Sequences:">
                     <font>
-                        <Font name="Candara" size="10.0" />
+                        <Font name="Candara" size="10.0"/>
                     </font>
                 </TextField>
-                <TextField fx:id="overlapCountTextField" editable="false" prefHeight="27.0" prefWidth="102.0" text="Overlaps:">
+                <TextField fx:id="overlapCountTextField" editable="false" prefHeight="27.0" prefWidth="102.0"
+                           text="Overlaps:">
                     <font>
-                        <Font name="Cambria" size="10.0" />
+                        <Font name="Cambria" size="10.0"/>
                     </font>
                 </TextField>
             <TextField fx:id="taxaCountTextfield" editable="false" prefHeight="27.0" prefWidth="96.0" text="Taxa: ">
@@ -96,6 +108,17 @@
                   <Font size="10.0" />
                </font>
             </TextField>
+                <TextField fx:id="taxaCountTextfield" editable="false" prefHeight="27.0" prefWidth="96.0" text="Taxa: ">
+                    <font>
+                        <Font name="Candara" size="10.0"/>
+                    </font>
+                </TextField>
+                <TextField fx:id="selectionTextfield" prefHeight="27.0" prefWidth="226.0"
+                           text="Selected:  0 sequences   0 overlaps   0 taxa">
+                    <font>
+                        <Font size="10.0"/>
+                    </font>
+                </TextField>
             </children>
         </HBox>
     </bottom>
@@ -159,9 +182,9 @@
                      <content>
                         <AnchorPane prefHeight="200.0" prefWidth="200.0">
                             <children>
-                                <ChoiceBox fx:id="coloringRankChoiceBox" disable="true" layoutX="14.0"
-                                           layoutY="132.0" prefHeight="27.0" prefWidth="93.0"
-                                           AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="150.0"/>
+                                <ChoiceBox fx:id="coloringRankChoiceBox" disable="true" layoutX="14.0" layoutY="132.0"
+                                           prefHeight="27.0" prefWidth="93.0" AnchorPane.leftAnchor="30.0"
+                                           AnchorPane.topAnchor="150.0"/>
                                 <RadioButton fx:id="coloringDefaultRadioButton" disable="false" layoutX="53.0"
                                              layoutY="29.0" mnemonicParsing="false" selected="true" text="None"
                                              AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="0.0">
@@ -247,16 +270,17 @@
                       </Menu>
                       <Menu fx:id="editMenu" mnemonicParsing="false" text="Edit">
                           <items>
-                              <Menu fx:id="selectionMenu" mnemonicParsing="false" text="Selection...">
+                              <Menu fx:id="selectionMenu" mnemonicParsing="false" text="Selection..." disable="true">
                                     <MenuItem fx:id="exportSelectionSequencesMenuItem" mnemonicParsing="false" text="Export Sequences" />
                               </Menu>
+                              <MenuItem fx:id="selectAllMenuItem" mnemonicParsing="false" text="Select All" disable="true"/>
+                              <MenuItem fx:id="resetSelectionMenuItem" mnemonicParsing="false" text="Reset Selection" disable="true"/>
                               <MenuItem fx:id="layoutSettingsMenuItem" disable="true" mnemonicParsing="false" text="Layout Settings" />
                           </items>
                       </Menu>
                       <Menu fx:id="viewMenu" mnemonicParsing="false" text="View">
                           <items>
-                              <CheckMenuItem fx:id="showLegendMenuItem" mnemonicParsing="false" text="Show Legend"/>
-                              <MenuItem fx:id="showTaxLegendMenuItem" disable="true" text="Show Taxonomy Legend"/>
+                              <CheckMenuItem fx:id="showLegendMenuItem" mnemonicParsing="false" text="Show Legend" disable="true"/>
                           </items>
                       </Menu>
                       <Menu fx:id="plotMenu" mnemonicParsing="false" text="Plot">
@@ -276,14 +300,22 @@
       </HBox>
    </top>
     <right>
-        <ScrollPane fx:id="legendScrollPane" maxWidth="0" minWidth="0.0" visible="false" BorderPane.alignment="CENTER">
-            <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0">
-                    <children>
-                        <TreeView fx:id="legendTreeView" prefHeight="200.0" prefWidth="200.0"/>
-                    </children>
-                </AnchorPane>
-            </content>
-        </ScrollPane>
+        <TableView fx:id="legendTableView" minWidth="0.0" prefWidth="0.0" BorderPane.alignment="CENTER" items="${controller.legendItems}">
+            <columns>
+                <TableColumn fx:id="colourCol" prefWidth="20">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="circle"/>
+                    </cellValueFactory>
+                </TableColumn>
+                <TableColumn fx:id="labelCol" prefWidth="75.0">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="label"/>
+                    </cellValueFactory>
+                </TableColumn>
+            </columns>
+            <sortOrder>
+                <fx:reference source="labelCol"/>
+            </sortOrder>
+        </TableView>
     </right>
 </BorderPane>
