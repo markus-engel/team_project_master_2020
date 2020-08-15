@@ -286,7 +286,7 @@ public class Presenter {
                         viewVertices.get(v.getID()).setColour(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2])));
 
                         //updating legend
-                        LegendItem legendItem = new LegendItem(new Circle(5,Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2]))), taxNode.toString());
+                        LegendItem legendItem = new LegendItem(new Circle(5,Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2]))), taxNode.getScientificName());
                         if (!view.getLegendItems().contains(legendItem)){
                             view.getLegendItems().add(legendItem);
                         }
@@ -296,6 +296,7 @@ public class Presenter {
                     }
                 }
                 view.updateLabelCol("Taxonomy");
+                view.getShowLegendMenuItem().setDisable(false);
 
                 taxonomy = true;
             }
@@ -326,6 +327,7 @@ public class Presenter {
 //                    rankNames.add(k);
 //                }
                 view.getColoringRankChoiceBox().setItems(rankNames);
+                view.getShowLegendMenuItem().setDisable(false);
             }
         });
 
@@ -393,6 +395,10 @@ public class Presenter {
                 for (MyVertex v : model.getGraph().getVertices()){
                     viewVertices.get(v.getID()).setColour(Color.CORAL);
                 }
+
+                //Updates Legend on the side.
+                view.getShowLegendMenuItem().setDisable(true);
+                view.getLegendTableView().setPrefWidth(0);
             }
         });
 

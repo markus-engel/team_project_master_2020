@@ -270,7 +270,7 @@
                       </Menu>
                       <Menu fx:id="viewMenu" mnemonicParsing="false" text="View">
                           <items>
-                              <CheckMenuItem fx:id="showLegendMenuItem" mnemonicParsing="false" text="Show Legend"/>
+                              <CheckMenuItem fx:id="showLegendMenuItem" mnemonicParsing="false" text="Show Legend" disable="true"/>
                           </items>
                       </Menu>
                       <Menu fx:id="plotMenu" mnemonicParsing="false" text="Plot">
@@ -292,7 +292,7 @@
     <right>
         <TableView fx:id="legendTableView" minWidth="0.0" prefWidth="0.0" BorderPane.alignment="CENTER" items="${controller.legendItems}">
             <columns>
-                <TableColumn fx:id="colourCol" prefWidth="75.0" text="Colour">
+                <TableColumn fx:id="colourCol" prefWidth="20">
                     <cellValueFactory>
                         <PropertyValueFactory property="circle"/>
                     </cellValueFactory>
