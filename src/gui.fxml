@@ -24,6 +24,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -31,10 +32,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<?import javafx.scene.control.cell.PropertyValueFactory?>
-<BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-            prefHeight="650.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/11.0.1"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.View">
+<BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.View">
     <center>
         <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
             <tabs>
@@ -42,15 +40,11 @@
                     <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                             <children>
-                                <StackPane fx:id="stackPane" prefHeight="712.0" prefWidth="1000.0"
-                                           BorderPane.alignment="CENTER">
-                                    <ProgressIndicator fx:id="progressIndicator" layoutX="500.0" layoutY="250.0"
-                                                       prefHeight="94.0" prefWidth="100.0" translateX="-85.0"
-                                                       translateY="-85.0" visible="false"/>
-                                    <ScrollPane fx:id="scrollPane" pannable="false" prefHeight="238.0"
-                                                prefWidth="540.0">
+                                <StackPane fx:id="stackPane" prefHeight="712.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
+                                    <ProgressIndicator fx:id="progressIndicator" layoutX="500.0" layoutY="250.0" prefHeight="94.0" prefWidth="100.0" translateX="-85.0" translateY="-85.0" visible="false" />
+                                    <ScrollPane fx:id="scrollPane" pannable="false" prefHeight="238.0" prefWidth="540.0">
                                         <Group fx:id="viewObjects">
-                                            <Group fx:id="innerViewObjects"/>
+                                            <Group fx:id="innerViewObjects" />
                                         </Group>
                                     </ScrollPane>
                                 </StackPane>
@@ -64,12 +58,11 @@
                             <children>
                                 <StackPane fx:id="stackPaneSele" prefHeight="712.0" prefWidth="1000.0">
                                     <children>
-                                        <ScrollPane fx:id="scrollPaneSele" pannable="false" prefHeight="238.0"
-                                                    prefWidth="540.0">
+                                        <ScrollPane fx:id="scrollPaneSele" pannable="false" prefHeight="238.0" prefWidth="540.0">
                                             <content>
                                                 <Group fx:id="viewObjectsSele">
                                                     <children>
-                                                        <Group fx:id="innerViewObjectsSele"/>
+                                                        <Group fx:id="innerViewObjectsSele" />
                                                     </children>
                                                 </Group>
                                             </content>
@@ -86,16 +79,14 @@
     <bottom>
         <HBox prefHeight="27.0" prefWidth="823.0" BorderPane.alignment="CENTER">
             <children>
-                <TextField fx:id="sequenceCountTextField" editable="false" prefHeight="27.0" prefWidth="103.0"
-                           text="Sequences:">
+                <TextField fx:id="sequenceCountTextField" editable="false" prefHeight="27.0" prefWidth="103.0" text="Sequences:">
                     <font>
-                        <Font name="Candara" size="10.0"/>
+                        <Font name="Candara" size="10.0" />
                     </font>
                 </TextField>
-                <TextField fx:id="overlapCountTextField" editable="false" prefHeight="27.0" prefWidth="102.0"
-                           text="Overlaps:">
+                <TextField fx:id="overlapCountTextField" editable="false" prefHeight="27.0" prefWidth="102.0" text="Overlaps:">
                     <font>
-                        <Font name="Cambria" size="10.0"/>
+                        <Font name="Cambria" size="10.0" />
                     </font>
                 </TextField>
             <TextField fx:id="taxaCountTextfield" editable="false" prefHeight="27.0" prefWidth="96.0" text="Taxa: ">
@@ -108,17 +99,6 @@
                   <Font size="10.0" />
                </font>
             </TextField>
-                <TextField fx:id="taxaCountTextfield" editable="false" prefHeight="27.0" prefWidth="96.0" text="Taxa: ">
-                    <font>
-                        <Font name="Candara" size="10.0"/>
-                    </font>
-                </TextField>
-                <TextField fx:id="selectionTextfield" prefHeight="27.0" prefWidth="226.0"
-                           text="Selected:  0 sequences   0 overlaps   0 taxa">
-                    <font>
-                        <Font size="10.0"/>
-                    </font>
-                </TextField>
             </children>
         </HBox>
     </bottom>
@@ -131,11 +111,10 @@
                       <content>
                           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="252.0" prefWidth="200.0">
                               <children>
-                                  <TextArea fx:id="graphInformationTextArea" prefHeight="200.0" prefWidth="200.0"/>
+                                  <TextArea fx:id="graphInformationTextArea" prefHeight="200.0" prefWidth="200.0" />
                               </children>
                           </AnchorPane>
-                          <Button fx:id="resetSelectionButton" layoutX="74.0" layoutY="110.0" mnemonicParsing="false"
-                                  text="Reset Selection"/>
+                          <Button fx:id="resetSelectionButton" layoutX="74.0" layoutY="110.0" mnemonicParsing="false" text="Reset Selection" />
                       </content>
                   </ScrollPane>
                </content>
@@ -146,34 +125,23 @@
                       <content>
                           <AnchorPane prefHeight="200.0" prefWidth="200.0">
                               <children>
-                                  <ChoiceBox fx:id="nodeSizeScaleChoiceBox" prefWidth="150.0" value="linear scale"
-                                             AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="0.0">
+                                  <ChoiceBox fx:id="nodeSizeScaleChoiceBox" prefWidth="150.0" value="linear scale" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="0.0">
                                       <items>
                                           <FXCollections fx:factory="observableArrayList">
-                                              <String fx:value="linear scale"/>
-                                              <String fx:value="logarithmic scale"/>
+                                              <String fx:value="linear scale" />
+                                              <String fx:value="logarithmic scale" />
                                           </FXCollections>
                                       </items>
                                   </ChoiceBox>
-                                  <RadioButton fx:id="nodeSizeCoverageRadioButton" disable="true" layoutX="41.0"
-                                               layoutY="21.0" mnemonicParsing="false" text="Coverage"
-                                               AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="30.0">
+                                  <RadioButton fx:id="nodeSizeCoverageRadioButton" disable="true" layoutX="41.0" layoutY="21.0" mnemonicParsing="false" text="Coverage" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="30.0">
                                       <toggleGroup>
-                                          <ToggleGroup fx:id="nodeSizeGroup"/>
+                                          <ToggleGroup fx:id="nodeSizeGroup" />
                                       </toggleGroup>
                                   </RadioButton>
-                                  <RadioButton fx:id="nodeSizeContigLengthRadioButton" layoutX="41.0" layoutY="54.0"
-                                               mnemonicParsing="false" text="Contig length" toggleGroup="$nodeSizeGroup"
-                                               AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="60.0"/>
-                                  <RadioButton fx:id="nodeSizeDefaultRadioButton" layoutX="41.0" layoutY="80.0"
-                                               mnemonicParsing="false" selected="true" text="Default"
-                                               toggleGroup="$nodeSizeGroup" AnchorPane.leftAnchor="30.0"
-                                               AnchorPane.topAnchor="90.0"/>
-                                  <RadioButton fx:id="nodeSizeManualRadioButton" layoutX="41.0" layoutY="112.0"
-                                               mnemonicParsing="false" text="Manual" toggleGroup="$nodeSizeGroup"
-                                               AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="120.0"/>
-                                  <Slider fx:id="nodeSizeManualSlider" disable="true" layoutX="32.0" layoutY="129.0"
-                                          max="8" min="2" value="5" AnchorPane.topAnchor="140.0"/>
+                                  <RadioButton fx:id="nodeSizeContigLengthRadioButton" layoutX="41.0" layoutY="54.0" mnemonicParsing="false" text="Contig length" toggleGroup="$nodeSizeGroup" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="60.0" />
+                                  <RadioButton fx:id="nodeSizeDefaultRadioButton" layoutX="41.0" layoutY="80.0" mnemonicParsing="false" selected="true" text="Default" toggleGroup="$nodeSizeGroup" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="90.0" />
+                                  <RadioButton fx:id="nodeSizeManualRadioButton" layoutX="41.0" layoutY="112.0" mnemonicParsing="false" text="Manual" toggleGroup="$nodeSizeGroup" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="120.0" />
+                                  <Slider fx:id="nodeSizeManualSlider" disable="true" layoutX="32.0" layoutY="129.0" max="8" min="2" value="5" AnchorPane.topAnchor="140.0" />
                               </children>
                         </AnchorPane>
                      </content>
@@ -182,38 +150,18 @@
                      <content>
                         <AnchorPane prefHeight="200.0" prefWidth="200.0">
                             <children>
-                                <ChoiceBox fx:id="coloringRankChoiceBox" disable="true" layoutX="14.0" layoutY="132.0"
-                                           prefHeight="27.0" prefWidth="93.0" AnchorPane.leftAnchor="30.0"
-                                           AnchorPane.topAnchor="150.0"/>
-                                <RadioButton fx:id="coloringDefaultRadioButton" disable="false" layoutX="53.0"
-                                             layoutY="29.0" mnemonicParsing="false" selected="true" text="None"
-                                             AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="0.0">
+                                <ChoiceBox fx:id="coloringRankChoiceBox" disable="true" layoutX="14.0" layoutY="132.0" prefHeight="27.0" prefWidth="93.0" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="150.0" />
+                                <RadioButton fx:id="coloringDefaultRadioButton" disable="false" layoutX="53.0" layoutY="29.0" mnemonicParsing="false" selected="true" text="None" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="0.0">
                                     <toggleGroup>
-                                        <ToggleGroup fx:id="coloringGroup"/>
+                                        <ToggleGroup fx:id="coloringGroup" />
                                     </toggleGroup>
                                 </RadioButton>
-                                <RadioButton fx:id="coloringCoverageRadioButton" disable="true" layoutX="53.0"
-                                             layoutY="29.0" mnemonicParsing="false" text="Coverage"
-                                             toggleGroup="$coloringGroup" AnchorPane.leftAnchor="30.0"
-                                             AnchorPane.topAnchor="30.0"/>
-                                <RadioButton fx:id="coloringGCcontentRadioButton" disable="true" layoutX="47.0"
-                                             layoutY="106.0" mnemonicParsing="false" text="GC-content"
-                                             toggleGroup="$coloringGroup" AnchorPane.leftAnchor="30.0"
-                                             AnchorPane.topAnchor="60.0"/>
-                                <RadioButton fx:id="coloringTaxonomyRadioButton" disable="true" layoutX="26.0"
-                                             layoutY="146.0" mnemonicParsing="false" text="Taxonomy"
-                                             toggleGroup="$coloringGroup" AnchorPane.leftAnchor="30.0"
-                                             AnchorPane.topAnchor="90.0"/>
-                                <RadioButton fx:id="coloringTransparencyRadioButton" disable="true"
-                                             mnemonicParsing="false" text="Transparency" toggleGroup="$coloringGroup"
-                                             AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="180.0"/>
-                                <RadioButton fx:id="coloringRankRadioButton" disable="true" layoutX="47.0"
-                                             layoutY="166.0" mnemonicParsing="false" text="select Rank:"
-                                             toggleGroup="$coloringGroup" AnchorPane.leftAnchor="30.0"
-                                             AnchorPane.topAnchor="120.0"/>
-                                <Slider fx:id="coloringTransparencySlider" disable="true" layoutX="32.0" layoutY="129.0"
-                                        max="1" min="0" value="1" AnchorPane.leftAnchor="30.0"
-                                        AnchorPane.topAnchor="210.0"/>
+                                <RadioButton fx:id="coloringCoverageRadioButton" disable="true" layoutX="53.0" layoutY="29.0" mnemonicParsing="false" text="Coverage" toggleGroup="$coloringGroup" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="30.0" />
+                                <RadioButton fx:id="coloringGCcontentRadioButton" disable="true" layoutX="47.0" layoutY="106.0" mnemonicParsing="false" text="GC-content" toggleGroup="$coloringGroup" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="60.0" />
+                                <RadioButton fx:id="coloringTaxonomyRadioButton" disable="true" layoutX="26.0" layoutY="146.0" mnemonicParsing="false" text="Taxonomy" toggleGroup="$coloringGroup" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="90.0" />
+                                <RadioButton fx:id="coloringTransparencyRadioButton" disable="true" mnemonicParsing="false" text="Transparency" toggleGroup="$coloringGroup" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="180.0" />
+                                <RadioButton fx:id="coloringRankRadioButton" disable="true" layoutX="47.0" layoutY="166.0" mnemonicParsing="false" text="select Rank:" toggleGroup="$coloringGroup" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="120.0" />
+                                <Slider fx:id="coloringTransparencySlider" disable="true" layoutX="32.0" layoutY="129.0" max="1" min="0" value="1" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="210.0" />
                             </children>
                         </AnchorPane>
                      </content>
@@ -256,7 +204,7 @@
                   <menus>
                       <Menu fx:id="fileMenu" mnemonicParsing="false" text="File">
                           <items>
-                              <MenuItem fx:id="newFileMenuItem" mnemonicParsing="false" text="New"/>
+                              <MenuItem fx:id="newFileMenuItem" mnemonicParsing="false" text="New" />
                               <MenuItem fx:id="openFileMenuItem" mnemonicParsing="false" text="Open..." />
                               <Menu fx:id="openRecentFileMenu" mnemonicParsing="false" text="Open recent" />
                               <Menu fx:id="importMenu" mnemonicParsing="false" text="Import...">
@@ -270,17 +218,17 @@
                       </Menu>
                       <Menu fx:id="editMenu" mnemonicParsing="false" text="Edit">
                           <items>
-                              <Menu fx:id="selectionMenu" mnemonicParsing="false" text="Selection..." disable="true">
+                              <Menu fx:id="selectionMenu" disable="true" mnemonicParsing="false" text="Selection...">
                                     <MenuItem fx:id="exportSelectionSequencesMenuItem" mnemonicParsing="false" text="Export Sequences" />
                               </Menu>
-                              <MenuItem fx:id="selectAllMenuItem" mnemonicParsing="false" text="Select All" disable="true"/>
-                              <MenuItem fx:id="resetSelectionMenuItem" mnemonicParsing="false" text="Reset Selection" disable="true"/>
+                              <MenuItem fx:id="selectAllMenuItem" disable="true" mnemonicParsing="false" text="Select All" />
+                              <MenuItem fx:id="resetSelectionMenuItem" disable="true" mnemonicParsing="false" text="Reset Selection" />
                               <MenuItem fx:id="layoutSettingsMenuItem" disable="true" mnemonicParsing="false" text="Layout Settings" />
                           </items>
                       </Menu>
                       <Menu fx:id="viewMenu" mnemonicParsing="false" text="View">
                           <items>
-                              <CheckMenuItem fx:id="showLegendMenuItem" mnemonicParsing="false" text="Show Legend" disable="true"/>
+                              <CheckMenuItem fx:id="showLegendMenuItem" disable="true" mnemonicParsing="false" text="Show Legend" />
                           </items>
                       </Menu>
                       <Menu fx:id="plotMenu" mnemonicParsing="false" text="Plot">
@@ -290,31 +238,31 @@
                       </Menu>
                       <Menu fx:id="helpMenu" mnemonicParsing="false" text="Help">
                           <items>
-                              <MenuItem fx:id="aboutMenuItem" mnemonicParsing="false" text="About"/>
+                              <MenuItem fx:id="aboutMenuItem" mnemonicParsing="false" text="About" />
                           </items>
                       </Menu>
                   </menus>
               </MenuBar>
-             <TextField fx:id="searchField" disable="true" prefHeight="29.0" prefWidth="273.0" promptText="Search"/>
+             <TextField fx:id="searchField" disable="true" prefHeight="29.0" prefWidth="273.0" promptText="Search" />
          </children>
       </HBox>
    </top>
     <right>
-        <TableView fx:id="legendTableView" minWidth="0.0" prefWidth="0.0" BorderPane.alignment="CENTER" items="${controller.legendItems}">
+        <TableView fx:id="legendTableView" items="${controller.legendItems}" minWidth="0.0" prefWidth="0.0" BorderPane.alignment="CENTER">
             <columns>
                 <TableColumn fx:id="colourCol" prefWidth="20">
                     <cellValueFactory>
-                        <PropertyValueFactory property="circle"/>
+                        <PropertyValueFactory property="circle" />
                     </cellValueFactory>
                 </TableColumn>
                 <TableColumn fx:id="labelCol" prefWidth="75.0">
                     <cellValueFactory>
-                        <PropertyValueFactory property="label"/>
+                        <PropertyValueFactory property="label" />
                     </cellValueFactory>
                 </TableColumn>
             </columns>
             <sortOrder>
-                <fx:reference source="labelCol"/>
+                <fx:reference source="labelCol" />
             </sortOrder>
         </TableView>
     </right>

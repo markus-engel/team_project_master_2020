@@ -21,6 +21,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
@@ -43,6 +44,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Presenter {
     Model model;
@@ -201,7 +206,7 @@ public class Presenter {
         view.getCloseMenuItem().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                Platform.exit();
+                reset();
             }
         });
 
@@ -254,21 +259,10 @@ public class Presenter {
                 resetTab();
                 if (view.getTabSelection().isSelected()) {
                     System.out.println("Selection tab recognized");
-                    Task<Void> tabSelectionTask = new Task<Void>() {
-                        @Override
-                        protected Void call() throws Exception {
-                            model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), seleGraph, view.getOrderByContigLengthRadioButton().isSelected());
-                            return null;
-                        }
-                    };
-                    tabSelectionTask.setOnSucceeded(e -> {
-                        visualizeSelectionGraph(seleGraph, view.getInnerViewObjectsSele().getChildren(), view.getInnerViewObjectsSele());
-                        view.getScrollPaneSele().setDisable(false);
-                        view.makeScrollPaneZoomable(view.getScrollPaneSele());
-                    });
-                    Thread tabSelectionThread = new Thread(tabSelectionTask);
-                    tabSelectionThread.setDaemon(true);
-                    tabSelectionThread.start();
+                    model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), seleGraph, view.getOrderByContigLengthRadioButton().isSelected());
+                    visualizeSelectionGraph(seleGraph, view.getInnerViewObjectsSele().getChildren(), view.getInnerViewObjectsSele());
+                    view.getScrollPaneSele().setDisable(false);
+                    view.makeScrollPaneZoomable(view.getScrollPaneSele());
                 }
             }
         });
@@ -288,12 +282,6 @@ public class Presenter {
                         String rgb = taxIDRGBCode.get(taxNode.getId());
                         String[] rgbCodes = rgb.split("t");
                         viewVertices.get(v.getID()).setColour(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2])));
-
-                        //updating legend
-                        LegendItem legendItem = new LegendItem(new Circle(5,Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2]))), taxNode.getScientificName());
-                        if (!view.getLegendItems().contains(legendItem)){
-                            view.getLegendItems().add(legendItem);
-                        }
                     }
                     else if (taxNode.getId() == -100) {
                         viewVertices.get(v.getID()).setColour(Color.rgb(0, 255, 0));
@@ -415,8 +403,8 @@ public class Presenter {
         view.getColoringDefaultRadioButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                for (MyVertex v : model.getGraph().getVertices()){
-                    viewVertices.get(v.getID()).setColour(Color.CORAL);
+                for (MyVertex v : model.getGraph().getVertices()) {
+                    viewVertices.get(v.getID()).getCircle().setFill(Color.CORAL);
                 }
 
                 //Updates Legend on the side.
@@ -426,9 +414,10 @@ public class Presenter {
         });
 
         view.getHelpMenu().setOnAction(new EventHandler<ActionEvent>() {
+
             @Override
             public void handle(ActionEvent actionEvent) {
-            // popup with text
+
             }
         });
 
@@ -454,17 +443,15 @@ public class Presenter {
                             viewVertices.get(v.getID()).setColour(Color.rgb(0,255,0));
                         }
                     }
-                }
-                else if (taxonomy) {
+                } else if (taxonomy) {
                     for (MyVertex v : model.getGraph().getVertices()) {
                         Node taxNode = (Node) v.getProperty(ContigProperty.TAXONOMY);
                         if (taxIDRGBCode.keySet().contains(taxNode.getId())) {
                             String rgb = taxIDRGBCode.get(taxNode.getId());
                             String[] rgbCodes = rgb.split("t");
-                            viewVertices.get(v.getID()).setColour(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2]), view.getColoringTransparencySlider().getValue()));
-                        }
-                        else if (taxNode.getId() == -100) {
-                            viewVertices.get(v.getID()).setColour(Color.rgb(0, 255, 0));
+                            viewVertices.get(v.getID()).getCircle().setFill(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2]), view.getColoringTransparencySlider().getValue()));
+                        } else if (taxNode.getId() == -100) {
+                            viewVertices.get(v.getID()).getCircle().setFill(Color.rgb(0, 255, 0));
                         }
                     }
                 }
@@ -774,6 +761,7 @@ public class Presenter {
 
     private void resetTab(){
         view.getInnerViewObjectsSele().getChildren().clear();
+
     }
 
     /*
@@ -805,6 +793,8 @@ public class Presenter {
                 if (!seleGraph.containsVertex(v)) {
                     System.out.println("addded test: " + viewVertex.getID());
                     seleGraph.addVertex(v);
+                    countSelected += 1;
+                    view.setselectionTextfield(String.valueOf(countSelected));
                     for(MyEdge edge : this.model.getGraph().getInEdges(v)){
                         if (seleGraph.containsVertex(edge.getFirst()) && seleGraph.containsVertex(edge.getSecond())) {
                             seleGraph.addEdge(edge, edge.getVertices());
@@ -813,17 +803,22 @@ public class Presenter {
                     }
                 } else if (seleGraph.containsVertex(v)) {
                     System.out.println("deleted test: " + viewVertex.getID());
-                    removeList.add(v);
-                    //for(MyEdge edge : this.model.getGraph().getInEdges(v)){
-                      //  seleGraph.removeEdge(edge);
-                    //}
+                    seleGraph.removeVertex(v);
+                    countSelected -= 1;
+                    view.setselectionTextfield(String.valueOf(countSelected));
+                    for(MyEdge edge : this.model.getGraph().getInEdges(v)){
+                        seleGraph.removeEdge(edge);
+                    }
                 }
             }
-        }
-        for (MyVertex v : removeList){
-            seleGraph.removeVertex(v);
+        removeList.add(v);
+        //for(MyEdge edge : this.model.getGraph().getInEdges(v)){
+        //  seleGraph.removeEdge(edge);
+        //}
         }
     }
+
+
 
     private void changeLayoutParameters(Button button) {
         Task<Void> layoutApplyTask = new Task<Void>() {

@@ -4,6 +4,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
+import javafx.scene.Node;
 import model.io.ContigProperty;
 
 import java.util.Objects;
@@ -16,7 +17,7 @@ Modified by Anna: Object properties with getters & setters
 Modified by Julia: further optional ContigProperties storable in a map "furtherProperties"
  */
 
-public class MyVertex {
+public class MyVertex extends Node {
     private StringProperty IDprop = new SimpleStringProperty(this, "ID", "");
     private StringProperty sequenceprop = new SimpleStringProperty(this, "Sequence", "");
     private ObservableMap<ContigProperty, Object> furtherProperties = FXCollections.observableHashMap();
@@ -108,4 +109,9 @@ public class MyVertex {
     public double getY() { return y; }
 
     public void setY(double y) { this.y = y; }
+
+    @Override
+    public Node getStyleableNode() {
+        return null;
+    }
 }
