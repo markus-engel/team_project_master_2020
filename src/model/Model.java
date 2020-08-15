@@ -354,9 +354,9 @@ public class Model {
 //            System.out.println("Key: " + i + " Value: " + membersPerRank.get(i));
 //        }
 
-        for (Object i : idNodes) {
-            System.out.println(i);
-        }
+//        for (Object i : idNodes) {
+//            System.out.println(i);
+//        }
 
         return idNodes;
     }

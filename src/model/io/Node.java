@@ -51,7 +51,10 @@ public class Node {
 
     public Node getAncestor() {
         Object output = new Object();
-        if (edgeToAncestor.getAncestor() == null) {
+        if (edgeToAncestor == null) {
+            output = null;
+        }
+        else if (edgeToAncestor.getAncestor() == null) {
             output = null;
         }
         else if (edgeToAncestor.getAncestor() != null) {
@@ -91,19 +94,33 @@ public class Node {
         while (current != null && current.getAncestor() != null && !current.getRank().equals(rank)) {
             current = current.getAncestor();
         }
-        if (current.getRank().equals(rank)) {
+
+        if (current == null) {
+            return -1;
+        }
+        else if (current.getRank() == null) {
+            return -1;
+        }
+        else if (current.getRank().equals(rank)) {
             return current.getId();
         } else return -1;
     }
 
     // Method to get the name of an ancestor of a specific rank, e.g. id of the order of node 11
-    public String getAncestorName(String rank) {
+    public Object getAncestorName(String rank) {
         Node current = this;
         while (current != null && current.getAncestor() != null && !current.getRank().equals(rank)) {
             current = current.getAncestor();
         }
-        if (current.getRank().equals(rank)) {
+
+        if (current == null) {
+            return -1;
+        }
+        else if (current.getRank() == null) {
+            return -1;
+        }
+        else if (current.getRank().equals(rank)) {
             return current.getScientificName();
-        } else return null;
+        } else return -1;
     }
 }
