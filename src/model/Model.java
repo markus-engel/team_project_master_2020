@@ -358,7 +358,7 @@ public class Model {
         ArrayList differentRankMembers = membersPerRank.get(chosenRank);
         HashMap<Integer, ArrayList> familyMembersPerRankEntry = new HashMap<>();
 
-        System.out.println("chosen Rank, TaxIDS: " + differentRankMembers);
+//        System.out.println("chosen Rank, TaxIDS: " + differentRankMembers);
 
         for (Object i : differentRankMembers) {
             ArrayList temp1 = new ArrayList();
