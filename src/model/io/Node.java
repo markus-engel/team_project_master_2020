@@ -123,4 +123,23 @@ public class Node {
             return current.getScientificName();
         } else return -1;
     }
+
+    // Method to get the id of an ancestor of a specific rank, e.g. id of the order of node 11
+    // test ME
+    public int getSpecificAncestorId(String rank) {
+        Node current = this;
+        while (current != null && current.getAncestor() != null && !current.getRank().equals(rank)) {
+            current = current.getAncestor();
+        }
+
+        if (current == null) {
+            return -1;
+        }
+        else if (current.getRank() == null) {
+            return -1;
+        }
+        else if (current.getRank().equals(rank)) {
+            return current.getId();
+        } else return -1;
+    }
 }
