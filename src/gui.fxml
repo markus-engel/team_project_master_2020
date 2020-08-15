@@ -201,7 +201,7 @@
                                              layoutY="166.0" mnemonicParsing="false" text="select Rank:"
                                              toggleGroup="$coloringGroup" AnchorPane.leftAnchor="30.0"
                                              AnchorPane.topAnchor="120.0"/>
-                                <Slider fx:id="coloringTransparencySlider" disable="true" layoutX="32.0" layoutY="129.0"
+                                <Slider fx:id="coloringTransparencySlider" disable="true" layoutX="31.0" layoutY="129.0"
                                         max="1" min="0" value="1" AnchorPane.leftAnchor="30.0"
                                         AnchorPane.topAnchor="210.0"/>
                             </children>
