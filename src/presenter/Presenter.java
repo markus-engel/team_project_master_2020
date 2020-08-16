@@ -362,8 +362,8 @@ public class Presenter {
             public void handle(ActionEvent actionEvent) {
                 String chosenRank = (String) view.getColoringRankChoiceBox().getValue();
                 ArrayList differentRankMembers = new ArrayList();
-                HashMap<Integer, ArrayList> test = model.getAllIndividualsPerRank(chosenRank);
-                HashMap<Integer, String> colorTest = model.createColorRank(test);
+                HashMap<Integer, ArrayList> rankMembers = model.getAllIndividualsPerRank(chosenRank);
+                HashMap<Integer, String> colorIndividualRank = model.createColorRank(rankMembers);
 
 //                System.out.println(test);
 //                for (Object i : test.keySet()) {
@@ -373,20 +373,21 @@ public class Presenter {
 //                for (Object i : colorTest.keySet()) {
 //                    System.out.println("Key: " + i + " Value - RGB Code: " + colorTest.get(i));
 //                }
-
-                for (Object i : test.keySet()) {
-                    ArrayList verticesCiontigID = test.get(i);
-                    String rgbCodeTotal = colorTest.get(i);
-                    String[] rgbCodes = rgbCodeTotal.split("t");
-                    for (Object j : verticesCiontigID) {
-                        for (MyVertex v : model.getGraph().getVertices()) {
-                            if (v.getID().equals(j)) {
-                                viewVertices.get(v.getID()).setColour(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2])));
-//                                viewVertices.get(v.getID()).setColour(Color.b);
+                if (chosenRank != null) {
+                    for (Object i : rankMembers.keySet()) {
+                        ArrayList verticesCiontigID = rankMembers.get(i);
+                        String rgbCodeTotal = colorIndividualRank.get(i);
+                        String[] rgbCodes = rgbCodeTotal.split("t");
+                        for (Object j : verticesCiontigID) {
+                            for (MyVertex v : model.getGraph().getVertices()) {
+                                if (v.getID().equals(j)) {
+                                    viewVertices.get(v.getID()).setColour(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2])));
+                                }
                             }
                         }
                     }
                 }
+
 
 
 //                differentRankMembers = (ArrayList) test.get(chosenRank);

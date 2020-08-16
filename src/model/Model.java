@@ -388,24 +388,19 @@ public class Model {
         ArrayList differentRankMembers = membersPerRank.get(chosenRank);
         HashMap<Integer, ArrayList> familyMembersPerRankEntry = new HashMap<>();
 
-//        System.out.println("chosen Rank, TaxIDS: " + differentRankMembers);
-
-        for (Object i : differentRankMembers) {
-            ArrayList temp1 = new ArrayList();
-            for (MyVertex v : getGraph().getVertices()) {
-                Node taxonomyActualVertex = (Node) v.getProperty(ContigProperty.TAXONOMY);
-//                if (taxonomyActualVertex.getAncestorId(chosenRank) != -1) {
-//                    Object temp2 = taxonomyActualVertex.getId();
-//                    if (temp2 == i) {
-//                        temp1.add(v.getID());
-//                    }
-//                }
-                if (taxonomyActualVertex.getAncestorId(chosenRank) != -1 && taxonomyActualVertex.getAncestorId(chosenRank) == (Integer) i) {
-                    temp1.add(v.getID());
+        if (differentRankMembers != null) {
+            for (Object i : differentRankMembers) {
+                ArrayList temp1 = new ArrayList();
+                for (MyVertex v : getGraph().getVertices()) {
+                    Node taxonomyActualVertex = (Node) v.getProperty(ContigProperty.TAXONOMY);
+                    if (taxonomyActualVertex.getAncestorId(chosenRank) != -1 && taxonomyActualVertex.getAncestorId(chosenRank) == (Integer) i) {
+                        temp1.add(v.getID());
+                    }
                 }
+                familyMembersPerRankEntry.put((Integer) i, temp1);
             }
-            familyMembersPerRankEntry.put((Integer) i, temp1);
         }
+
 
 //        for (Object i : familyMembersPerRankEntry.keySet()) {
 //            System.out.println("Key: " + i + " Value: " + familyMembersPerRankEntry.get(i));
