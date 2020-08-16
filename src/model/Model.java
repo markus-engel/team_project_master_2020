@@ -432,4 +432,17 @@ public class Model {
         }
         return rgbNumbers;
     }
+
+    public HashMap<Object, Double> heatmapColorsCovarge () {
+        ArrayList test = new ArrayList();
+        HashMap<Object, Double> gcCoverage = new HashMap<>();
+        double lowestCoverage = getLowestCoverage();
+        double highestCoverage = getHighestCoverage();
+        double range = highestCoverage - lowestCoverage;
+        for (MyVertex v : getGraph().getVertices()) {
+            double relativeCoverage = ((double) v.getProperty(ContigProperty.COVERAGE) - lowestCoverage) / range;
+            gcCoverage.put(v.getID(), relativeCoverage);
+        }
+        return gcCoverage;
+    }
 }

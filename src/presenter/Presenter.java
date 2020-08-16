@@ -595,6 +595,30 @@ public class Presenter {
                 }
             }
         });
+
+        view.getColoringCoverageRadioButton().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                if (!viewVertices.isEmpty()) {
+                    HashMap<Object, Double> gcCoverage = model.heatmapColorsCovarge();
+                    for (MyVertex v : model.getGraph().getVertices()) {
+                        for (Object j : gcCoverage.keySet()) {
+                            if (v.getID().equals(j)) {
+                                if (gcCoverage.get(j) < 0.5) {
+                                    viewVertices.get(v.getID()).setColour(Color.hsb(120, 1 - gcCoverage.get(j), 0.49 + gcCoverage.get(j)));
+                                }
+                                else if (gcCoverage.get(j) >= 0.5) {
+                                    viewVertices.get(v.getID()).setColour(Color.hsb(0, gcCoverage.get(j), 1));
+                                }
+//                                viewVertices.get(v.getID()).setColour(Color.DARKBLUE);
+//                                viewVertices.get(v.getID()).setColour(Color.hsb(240, gcCoverage.get(j), 1));
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
         view.getNodeSizeContigLengthRadioButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
