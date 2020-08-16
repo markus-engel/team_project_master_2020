@@ -1,6 +1,5 @@
 package view;
 
-import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -12,16 +11,16 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import model.graph.MyVertex;
+import model.io.ContigProperty;
+import model.io.Node;
 
 public class View {
 
@@ -81,9 +80,6 @@ public class View {
 
     @FXML
     private ChoiceBox<String> nodeSizeScaleChoiceBox;
-
-    @FXML
-    private Button resetSelectionButton;
 
     @FXML
     private RadioButton nodeSizeCoverageRadioButton;
@@ -209,7 +205,13 @@ public class View {
     private CheckMenuItem showLegendMenuItem;
 
     @FXML
-    private TextArea graphInformationTextArea;
+    private TableColumn<SelectedContig, String> contigIdCol;
+
+    @FXML
+    private TableColumn<SelectedContig, String> nameCol;
+
+    @FXML
+    private ObservableList<SelectedContig> selectedContigs;
 
     @FXML
     private TableView<LegendItem> legendTableView;
@@ -385,7 +387,7 @@ public class View {
         return overlapCountTextField;
     }
 
-    public TextField getselectionTextfield() {
+    public TextField getSelectionTextfield() {
         return selectionTextfield;
     }
 
@@ -394,8 +396,10 @@ public class View {
         overlapCountTextField.setText("Overlaps: " + overlapCount);
     }
 
-    public void setSelectionTextfield(int vertexCount, int edgeCount, int taxaCount){
-        selectionTextfield.setText("Selected: "+vertexCount+" Sequences  "+edgeCount+" Overlaps  "+taxaCount+" Taxa");
+    public void setSelectionTextfield(int selectedSequenceCount, int selectedOverlapCount, int selectedTaxaCount) {
+        selectionTextfield.setText("Selected:  " + selectedSequenceCount + " sequences   "
+                + selectedOverlapCount + " overlaps   "
+                + selectedTaxaCount + " taxa");
     }
 
     public Group getViewObjects() {
@@ -454,10 +458,6 @@ public class View {
         innerViewObjects.setScaleX(scale);
     }
 
-    public Button getResetSelectionButton() {
-        return resetSelectionButton;
-    }
-
     public double getScaleProperty() {
         return innerViewObjects.getScaleX();
     }
@@ -483,6 +483,27 @@ public class View {
             legendItems = FXCollections.observableArrayList();
         }
         return legendItems;
+    }
+
+    public ObservableList<SelectedContig> getSelectedContigs() {
+        if (selectedContigs == null) selectedContigs = FXCollections.observableArrayList();
+        return selectedContigs;
+    }
+
+    public void addToInfoTable(MyVertex vertex) {
+        if (vertex.getProperty(ContigProperty.TAXONOMY) instanceof Node) {
+            Node taxonomyNode = (Node) vertex.getProperty(ContigProperty.TAXONOMY);
+            getSelectedContigs().add(new SelectedContig(vertex.getID(), taxonomyNode.getScientificName()));
+        }
+        else getSelectedContigs().add(new SelectedContig(vertex.getID(), ""));
+    }
+
+    public void removeFromInfoTable(String unselectedNodeId) {
+        getSelectedContigs().removeIf(sc -> sc.getID().equals(unselectedNodeId));
+    }
+
+    public void removeAllFromInfoTable() {
+        getSelectedContigs().clear();
     }
 
     public void addVertex(ViewVertex vv, ObservableList observableList) {

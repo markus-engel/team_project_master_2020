@@ -124,6 +124,7 @@ public class Presenter {
                         view.getImportCoverageMenuItem().setDisable(false);
                         view.getCustomizeMenuItem().setDisable(false);
                         view.getSelectAllMenuItem().setDisable(false);
+                        view.getResetSelectionMenuItem().setDisable(false);
                         view.setSequenceCountTextField(model.getGraph().getVertexCount());
                         view.setOverlapCountTextField(model.getGraph().getEdgeCount());
                         MenuItem recentFile = new MenuItem(f.getAbsolutePath());
@@ -152,6 +153,7 @@ public class Presenter {
 //                    view.getColoringTaxonomyChoiceBox().setDisable(false);
                     view.getColoringRankRadioButton().setDisable(false);
                     view.getColoringTransparencyRadioButton().setDisable(false);
+                    updateSelectionInformation();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -282,6 +284,12 @@ public class Presenter {
                         String rgb = taxIDRGBCode.get(taxNode.getId());
                         String[] rgbCodes = rgb.split("t");
                         viewVertices.get(v.getID()).setColour(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2])));
+
+                        //updating legend
+                        LegendItem legendItem = new LegendItem(new Circle(5,Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2]))), taxNode.getScientificName());
+                        if (!view.getLegendItems().contains(legendItem)){
+                            view.getLegendItems().add(legendItem);
+                        }
                     }
                     else if (taxNode.getId() == -100) {
                         viewVertices.get(v.getID()).setColour(Color.rgb(0, 255, 0));
@@ -486,10 +494,30 @@ public class Presenter {
         view.getSelectAllMenuItem().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                seleGraph = model.getGraph();
-                for(MyVertex mv : model.getGraph().getVertices()){
-                    viewVertices.get(mv.getID()).setSelected();
+                viewVerticesSelection = viewVertices;
+                for(ViewVertex vv : viewVertices.values()){
+                    if (!vv.isSelected()) {
+                        vv.setSelected();
+                        updateSelectionGraph(vv);
+                    }
                 }
+            }
+        });
+
+        view.getResetSelectionMenuItem().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+
+                //unselects all vertices
+                for (ViewVertex vv : viewVertices.values()) {
+                    if (vv.isSelected()) {
+                        vv.setSelected();
+                    }
+                }
+                seleGraph = new UndirectedSparseGraph<>();
+                viewVerticesSelection = new HashMap<>();
+                updateSelectionInformation();
+                resetTab();
             }
         });
 
@@ -672,21 +700,6 @@ public class Presenter {
             }
         });
 
-        view.getResetSelectionButton().setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-
-                //unselects all vertices
-                for (ViewVertex vv : viewVertices.values()) {
-                    if (vv.isSelected()) {
-                        vv.setSelected();
-                        updateSelectionGraph(vv);
-                    }
-                }
-                resetTab();
-            }
-        });
-
     }
 
 
@@ -757,6 +770,7 @@ public class Presenter {
         view.getInnerViewObjects().getChildren().clear();
         viewVertices = new HashMap<>();
         seleGraph = new UndirectedSparseGraph<>();
+        view.removeAllFromInfoTable();
     }
 
     private void resetTab(){
@@ -795,6 +809,7 @@ public class Presenter {
                     seleGraph.addVertex(v);
                     countSelected += 1;
                     view.setselectionTextfield(String.valueOf(countSelected));
+                    view.addToInfoTable(v);
                     for(MyEdge edge : this.model.getGraph().getInEdges(v)){
                         if (seleGraph.containsVertex(edge.getFirst()) && seleGraph.containsVertex(edge.getSecond())) {
                             seleGraph.addEdge(edge, edge.getVertices());
@@ -806,6 +821,7 @@ public class Presenter {
                     seleGraph.removeVertex(v);
                     countSelected -= 1;
                     view.setselectionTextfield(String.valueOf(countSelected));
+                    view.removeFromInfoTable(v.getID());
                     for(MyEdge edge : this.model.getGraph().getInEdges(v)){
                         seleGraph.removeEdge(edge);
                     }
@@ -914,5 +930,11 @@ public class Presenter {
         });
     }
 
+    public void updateSelectionInformation() {
+        view.removeAllFromInfoTable();
+        for (MyVertex v : seleGraph.getVertices()){
+            view.addToInfoTable(v);
+        }
+    }
 }
 
