@@ -4,6 +4,7 @@ package view;
 // by Julia
 
 import javafx.fxml.FXML;
+import javafx.scene.chart.BarChart;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
@@ -20,6 +21,9 @@ public class ViewPlot {
 
     @FXML
     private Tab tabElse;
+
+    @FXML
+    private Tab tabContigLengthDistribution;
 
     @FXML
     private Slider nodeSizeManualSliderPlot;
@@ -51,6 +55,10 @@ public class ViewPlot {
         return tabElse;
     }
 
+    public Tab getTabContigLengthDistribution(){return tabContigLengthDistribution;}
+
+    public void setTabContigLengthDistribution(Tab tabContigLengthDistribution){this.tabContigLengthDistribution = tabContigLengthDistribution;}
+
     public Slider getNodeSizeManualSliderPlot() {
         return nodeSizeManualSliderPlot;
     }
@@ -67,9 +75,8 @@ public class ViewPlot {
         this.tabElse = tabElse;
     }
 
-    public void setGcPlot(ScatterChart<Number, Number> gcCoveragePlot, Tab tab) {
-        tab.setContent(gcCoveragePlot);
+    public void setGcPlot(ScatterChart<Number, Number> gcCoveragePlot, Tab tab) { tab.setContent(gcCoveragePlot);
     }
 
-
+    public void setCDPlot(BarChart<String, Number> cdPlot, Tab tab){tab.setContent(cdPlot);}
 }

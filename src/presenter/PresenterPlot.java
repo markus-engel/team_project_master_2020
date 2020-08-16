@@ -6,9 +6,7 @@ package presenter;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.ScatterChart;
-import javafx.scene.chart.XYChart;
+import javafx.scene.chart.*;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import model.Model;
@@ -29,6 +27,7 @@ public class PresenterPlot {
         this.model = model;
         this.viewPlot = viewPlot;
         plotCoverageGC(2.0);
+        plotContigLengthDistribution();
         setUpBinding();
     }
 
@@ -52,6 +51,7 @@ public class PresenterPlot {
             public void handle(ActionEvent actionEvent) {
                 try {
                     plotCoverageGC(2.0);
+                    viewPlot.getNodeSizeManualSliderPlot().setValue(5.0);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -98,9 +98,20 @@ public class PresenterPlot {
                         d.getXValue() + " GC content, " + d.getYValue() +" coverage"));
                 d.getNode().setScaleY(circleSize);
                 d.getNode().setScaleX(circleSize);
-                d.getNode().setStyle("-fx-background-color: #860061, blue;");
+                d.getNode().setStyle("-fx-background-color: #860061, orange;");
             }
         }
+    }
+
+    public void plotContigLengthDistribution(){
+        NumberAxis yaxis = new NumberAxis(0.0, 5000, 200);
+        CategoryAxis xaxis = new CategoryAxis();
+        yaxis.setLabel("Number of Contigs");
+        xaxis.setLabel("Length in bp");
+
+        BarChart<String, Number> bc = new BarChart<String, Number>(xaxis, yaxis);
+
+        viewPlot.setCDPlot(bc, viewPlot.getTabContigLengthDistribution());
     }
 
     // TODO: Colours, Tooltips, selection options
