@@ -52,8 +52,8 @@ import java.util.TimerTask;
 public class Presenter {
     Model model;
     View view;
-    HashMap<String, String> rankRGBCode;
-    HashMap<Integer, String> taxIDRGBCode;
+    HashMap<Integer, String> taxIDRGBCode, colorIndividualRank;
+    HashMap<Integer, ArrayList> rankMembers;
     Map<String, ViewVertex> viewVertices = new HashMap<>();  //Hashmap of view vertex objects
     Map<String, ViewVertex> viewVerticesSelection = new HashMap<>();  //Hashmap of view vertex objects
     public final Dimension MAX_WINDOW_DIMENSION = new Dimension(775, 500); //gets passed to model to center layouts, gets passed to view to control size of window
@@ -362,8 +362,12 @@ public class Presenter {
             public void handle(ActionEvent actionEvent) {
                 String chosenRank = (String) view.getColoringRankChoiceBox().getValue();
                 ArrayList differentRankMembers = new ArrayList();
-                HashMap<Integer, ArrayList> rankMembers = model.getAllIndividualsPerRank(chosenRank);
-                HashMap<Integer, String> colorIndividualRank = model.createColorRank(rankMembers);
+                rankMembers = model.getAllIndividualsPerRank(chosenRank);
+                colorIndividualRank = model.createColorRank(rankMembers);
+
+                for (MyVertex v : model.getGraph().getVertices()) {
+                    viewVertices.get(v.getID()).setColour(Color.rgb(250, 235, 215));
+                }
 
 //                System.out.println(test);
 //                for (Object i : test.keySet()) {
@@ -373,16 +377,14 @@ public class Presenter {
 //                for (Object i : colorTest.keySet()) {
 //                    System.out.println("Key: " + i + " Value - RGB Code: " + colorTest.get(i));
 //                }
-                if (chosenRank != null) {
-                    for (Object i : rankMembers.keySet()) {
-                        ArrayList verticesCiontigID = rankMembers.get(i);
-                        String rgbCodeTotal = colorIndividualRank.get(i);
-                        String[] rgbCodes = rgbCodeTotal.split("t");
-                        for (Object j : verticesCiontigID) {
-                            for (MyVertex v : model.getGraph().getVertices()) {
-                                if (v.getID().equals(j)) {
-                                    viewVertices.get(v.getID()).setColour(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2])));
-                                }
+                for (Object i : rankMembers.keySet()) {
+                    ArrayList verticesCiontigID = rankMembers.get(i);
+                    String rgbCodeTotal = colorIndividualRank.get(i);
+                    String[] rgbCodes = rgbCodeTotal.split("t");
+                    for (Object j : verticesCiontigID) {
+                        for (MyVertex v : model.getGraph().getVertices()) {
+                            if (v.getID().equals(j)) {
+                                viewVertices.get(v.getID()).setColour(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2])));
                             }
                         }
                     }
@@ -448,17 +450,32 @@ public class Presenter {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 if (rank) {
-                    for (MyVertex v : model.getGraph().getVertices()) {
-                        Node taxNode = (Node) v.getProperty(ContigProperty.TAXONOMY);
-                        if (rankRGBCode.keySet().contains(taxNode.getRank()) && !rankRGBCode.keySet().equals("no rank")) {
-                            String rgb = rankRGBCode.get(taxNode.getRank());
-                            String[] rgbCodes = rgb.split("t");
-                            viewVertices.get(v.getID()).setColour(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2]), view.getColoringTransparencySlider().getValue()));
-                        }
-                        else if (rankRGBCode.keySet().contains(taxNode.getRank().equals("no rank"))) {
-                            viewVertices.get(v.getID()).setColour(Color.rgb(0,255,0));
+                    for (Object i : rankMembers.keySet()) {
+                        ArrayList verticesCiontigID = rankMembers.get(i);
+                        String rgbCodeTotal = colorIndividualRank.get(i);
+                        String[] rgbCodes = rgbCodeTotal.split("t");
+                        for (Object j : verticesCiontigID) {
+                            for (MyVertex v : model.getGraph().getVertices()) {
+                                if (v.getID().equals(j)) {
+                                    viewVertices.get(v.getID()).setColour(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2]), view.getColoringTransparencySlider().getValue()));
+                                }
+                                else {
+                                    viewVertices.get(v.getID()).setColour(Color.rgb(248, 248, 255, view.getColoringTransparencySlider().getValue()));
+                                }
+                            }
                         }
                     }
+//                    for (MyVertex v : model.getGraph().getVertices()) {
+//                        Node taxNode = (Node) v.getProperty(ContigProperty.TAXONOMY);
+//                        if (rankRGBCode.keySet().contains(taxNode.getRank()) && !rankRGBCode.keySet().equals("no rank")) {
+//                            String rgb = rankRGBCode.get(taxNode.getRank());
+//                            String[] rgbCodes = rgb.split("t");
+//                            viewVertices.get(v.getID()).setColour(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2]), view.getColoringTransparencySlider().getValue()));
+//                        }
+//                        else if (rankRGBCode.keySet().contains(taxNode.getRank().equals("no rank"))) {
+//                            viewVertices.get(v.getID()).setColour(Color.rgb(0,255,0));
+//                        }
+//                    }
                 } else if (taxonomy) {
                     for (MyVertex v : model.getGraph().getVertices()) {
                         Node taxNode = (Node) v.getProperty(ContigProperty.TAXONOMY);

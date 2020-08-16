@@ -374,15 +374,14 @@ public class Model {
 //        individual members per rank
         HashMap<String, ArrayList> membersPerRank = new HashMap<String, ArrayList>();
         for (Object i : ranks) {
-            ArrayList tempME = new ArrayList();
+            ArrayList indivisualsPerRankFamiliy = new ArrayList();
             for (MyVertex v : getGraph().getVertices()) {
                 Node taxonomyV = (Node) v.getProperty(ContigProperty.TAXONOMY);
                 if (taxonomyV.getRank().equals(i)) {
-//                    tempME.add(v.getID());
-                    tempME.add(taxonomyV.getId());
+                    indivisualsPerRankFamiliy.add(taxonomyV.getId());
                 }
             }
-            membersPerRank.put((String) i, tempME);
+            membersPerRank.put((String) i, indivisualsPerRankFamiliy);
         }
 
         ArrayList differentRankMembers = membersPerRank.get(chosenRank);
