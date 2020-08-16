@@ -2,7 +2,6 @@
 package presenter;
 
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -21,7 +20,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.WritableImage;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
@@ -46,8 +44,6 @@ import java.util.*;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class Presenter {
     Model model;
@@ -70,7 +66,7 @@ public class Presenter {
 
     public Presenter() { // second constructor needed for selection presenter to extend
     }
-
+    
     // Action for the Menu: choose file
     private void setUpBindings() {
 
