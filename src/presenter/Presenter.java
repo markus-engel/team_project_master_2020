@@ -127,6 +127,7 @@ public class Presenter {
                         view.getResetSelectionMenuItem().setDisable(false);
                         view.setSequenceCountTextField(model.getGraph().getVertexCount());
                         view.setOverlapCountTextField(model.getGraph().getEdgeCount());
+                        view.getColoringGCcontentRadioButton().setDisable(false);
                         MenuItem recentFile = new MenuItem(f.getAbsolutePath());
                         if (!view.getOpenRecentFileMenu().getItems().contains(recentFile)){
                             setOpenRecentFileEventHandler(recentFile);
@@ -600,18 +601,39 @@ public class Presenter {
             @Override
             public void handle(ActionEvent actionEvent) {
                 if (!viewVertices.isEmpty()) {
-                    HashMap<Object, Double> gcCoverage = model.heatmapColorsCovarge();
+                    HashMap<Object, Double> coverage = model.heatmapColorsCovarge();
                     for (MyVertex v : model.getGraph().getVertices()) {
-                        for (Object j : gcCoverage.keySet()) {
+                        for (Object j : coverage.keySet()) {
                             if (v.getID().equals(j)) {
-                                if (gcCoverage.get(j) < 0.5) {
-                                    viewVertices.get(v.getID()).setColour(Color.hsb(120, 1 - gcCoverage.get(j), 0.49 + gcCoverage.get(j)));
+                                if (coverage.get(j) < 0.5) {
+                                    viewVertices.get(v.getID()).setColour(Color.hsb(120, 1 - coverage.get(j), 0.49 + coverage.get(j)));
                                 }
-                                else if (gcCoverage.get(j) >= 0.5) {
-                                    viewVertices.get(v.getID()).setColour(Color.hsb(0, gcCoverage.get(j), 1));
+                                else if (coverage.get(j) >= 0.5) {
+                                    viewVertices.get(v.getID()).setColour(Color.hsb(0, coverage.get(j), 1));
                                 }
 //                                viewVertices.get(v.getID()).setColour(Color.DARKBLUE);
 //                                viewVertices.get(v.getID()).setColour(Color.hsb(240, gcCoverage.get(j), 1));
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        view.getColoringGCcontentRadioButton().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                if (!viewVertices.isEmpty()) {
+                    HashMap<Object, Double> gcContent = model.heatmapColorsGCContent();
+                    for (MyVertex v : model.getGraph().getVertices()) {
+                        for (Object i : gcContent.keySet()) {
+                            if (v.getID().equals(i)) {
+                                if (gcContent.get(i) < 0.5) {
+                                    viewVertices.get(v.getID()).setColour(Color.hsb(120, 1 - gcContent.get(i), 0.49 + gcContent.get(i)));
+                                }
+                                else if (gcContent.get(i) >= 0.5) {
+                                    viewVertices.get(v.getID()).setColour(Color.hsb(0, gcContent.get(i), 1));
+                                }
                             }
                         }
                     }

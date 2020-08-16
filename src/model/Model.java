@@ -24,6 +24,7 @@ public class Model {
     private ObjectProperty<UndirectedSparseGraph<MyVertex, MyEdge>> graphProperty = new SimpleObjectProperty<>();
     private double lowestCoverage, highestCoverage;
     private double smallestContigLength, largestContigLength;
+    private double lowestGCContent, highestGCContent;
     TreeSet<Integer> taxa = new TreeSet<>();
     TreeSet<String> ranks = new TreeSet<>();
     private double repulsionMultiplier;
@@ -65,6 +66,7 @@ public class Model {
     public void parseGFA(String path) throws IOException {
         this.graphProperty = new SimpleObjectProperty<>(GraphParser.readFile(path));
         calculateContigLengthRange();
+        calculateGCContentRange();
     }
 
     private void calculateContigLengthRange() {
@@ -78,6 +80,21 @@ public class Model {
                 largestContigLength = contigLength;
         }
         setContigLengthRange(smallestContigLength, largestContigLength);
+    }
+
+    private void calculateGCContentRange () {
+        double lowestGCContent = Double.MAX_VALUE;
+        double highestGCContent = Double.MIN_VALUE;
+        for (MyVertex v : graphProperty.get().getVertices()) {
+            double gcContent = (double) v.getProperty(ContigProperty.GC);
+            if (gcContent < lowestGCContent) {
+                lowestGCContent = gcContent;
+            }
+            else if (gcContent > highestGCContent) {
+                highestGCContent = gcContent;
+            }
+        }
+        setGCContentRange(lowestGCContent, highestGCContent);
     }
 
     private SortedSet<Set<MyVertex>> clusterVertices(UndirectedSparseGraph<MyVertex, MyEdge> graph, boolean byContigLength) {
@@ -233,6 +250,19 @@ public class Model {
 
     public double getLargestContigLength() {
         return largestContigLength;
+    }
+
+    public void setGCContentRange (double lowerLimit, double upperLimit) {
+        lowestGCContent = lowerLimit;
+        highestGCContent = upperLimit;
+    }
+
+    public double getLowestGCContent(){
+        return lowestGCContent;
+    }
+
+    public double getHighestGCContent () {
+        return highestGCContent;
     }
 
     public void parseCoverage(String path) throws IOException {
@@ -419,12 +449,6 @@ public class Model {
         return rankIDRGBCode;
     }
 
-
-
-
-
-
-
     public int[] randomNumberColoring () {
         int[] rgbNumbers = new int[3];
         for (int i = 1; i <= rgbNumbers.length; i ++) {
@@ -434,15 +458,26 @@ public class Model {
     }
 
     public HashMap<Object, Double> heatmapColorsCovarge () {
-        ArrayList test = new ArrayList();
-        HashMap<Object, Double> gcCoverage = new HashMap<>();
+        HashMap<Object, Double> coverage = new HashMap<>();
         double lowestCoverage = getLowestCoverage();
         double highestCoverage = getHighestCoverage();
         double range = highestCoverage - lowestCoverage;
         for (MyVertex v : getGraph().getVertices()) {
             double relativeCoverage = ((double) v.getProperty(ContigProperty.COVERAGE) - lowestCoverage) / range;
-            gcCoverage.put(v.getID(), relativeCoverage);
+            coverage.put(v.getID(), relativeCoverage);
         }
-        return gcCoverage;
+        return coverage;
+    }
+
+    public HashMap<Object, Double> heatmapColorsGCContent () {
+        HashMap<Object, Double> gcContent = new HashMap<>();
+        double lowestGCContentent = getLowestGCContent();
+        double highestGCContent = getHighestGCContent();
+        double rangeGCContent = highestGCContent - lowestGCContentent;
+        for (MyVertex v : getGraph().getVertices()) {
+            double relativeGCContent = ((double) v.getProperty(ContigProperty.GC) - lowestGCContentent) / rangeGCContent;
+            gcContent.put(v.getID(), relativeGCContent);
+        }
+        return gcContent;
     }
 }
