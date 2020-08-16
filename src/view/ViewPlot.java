@@ -27,6 +27,10 @@ public class ViewPlot {
     @FXML
     private RadioButton nodeSizeManualRadioButtonPlot;
 
+    @FXML
+    private RadioButton nodeSizeDefaultRadioButtonPlot;
+
+
     public TabPane getTabPanePlots() {
         return tabPanePlots;
     }
@@ -53,6 +57,10 @@ public class ViewPlot {
 
     public RadioButton getNodeSizeManualRadioButtonPlot() {
         return nodeSizeManualRadioButtonPlot;
+    }
+
+    public RadioButton getNodeSizeDefaultRadioButtonPlot() {
+        return nodeSizeDefaultRadioButtonPlot;
     }
 
     public void setTabElse(Tab tabElse) {

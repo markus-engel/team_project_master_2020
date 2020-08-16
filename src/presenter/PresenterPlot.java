@@ -4,10 +4,13 @@ package presenter;
 // by Julia
 
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.MouseEvent;
 import model.Model;
 import model.graph.MyEdge;
 import model.graph.MyVertex;
@@ -25,16 +28,39 @@ public class PresenterPlot {
     public PresenterPlot(Model model, ViewPlot viewPlot) throws IOException {
         this.model = model;
         this.viewPlot = viewPlot;
-        plotCoverageGC();
+        plotCoverageGC(2.0);
         setUpBinding();
     }
 
     private void setUpBinding() {
+
         viewPlot.getNodeSizeManualSliderPlot().disableProperty().bind(viewPlot.getNodeSizeManualRadioButtonPlot().selectedProperty().not());
+
+        viewPlot.getNodeSizeManualSliderPlot().setOnMouseReleased(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                try {
+                    plotCoverageGC(Math.log(viewPlot.getNodeSizeManualSliderPlot().getValue()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        viewPlot.getNodeSizeDefaultRadioButtonPlot().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                try {
+                    plotCoverageGC(2.0);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     // Method to plot Coverage and GC-content of the contigs in the graph
-    public void plotCoverageGC() throws IOException {
+    public void plotCoverageGC(double circleSize) throws IOException {
         double coverage;
         double gc;
         int maxCoverage = 0;
@@ -70,9 +96,9 @@ public class PresenterPlot {
             for (XYChart.Data<Number, Number> d : s.getData()) {
                 Tooltip.install(d.getNode(), new Tooltip((String)d.getExtraValue()+": "+
                         d.getXValue() + " GC content, " + d.getYValue() +" coverage"));
-                d.getNode().setScaleY(2.0);
-                d.getNode().setScaleX(2.0);
-                d.getNode().setStyle("-fx-background-color: #860061, white;");
+                d.getNode().setScaleY(circleSize);
+                d.getNode().setScaleX(circleSize);
+                d.getNode().setStyle("-fx-background-color: #860061, blue;");
             }
         }
     }
