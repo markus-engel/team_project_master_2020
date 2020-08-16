@@ -52,20 +52,10 @@ public class TaxIdParser {
                 if (v.getID().equals(conID)) {
                     v.addProperty(ContigProperty.TAXONOMY, tree.getTaxNode(taxID));
                 }
-
                 if(!ranks.contains(tree.getTaxNode(taxID).getRank())) {
                     ranks.add(tree.getTaxNode(taxID).getRank());
                 }
             }
-
-//            for (Object i : ranks) {
-//                ArrayList idNodes = new ArrayList();
-//                for (MyVertex v : graph.getVertices()) {
-//                    Node tempME = (Node) v.getProperty(ContigProperty.TAXONOMY);
-//                    if (tempME.getRank() == i)
-//                    idNodes.add(v.getID());
-//                }
-//            }
 
         }
         br.close();
