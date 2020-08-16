@@ -370,7 +370,7 @@ public class Model {
 //        return rankIDRGBCode;
 //    }
 
-    public HashMap<Integer, ArrayList> getAllIndividualsPerRank (String chosenRank) {
+    public HashMap<String, ArrayList> getAllIndividualsPerRank() {
 //        individual members per rank
         HashMap<String, ArrayList> membersPerRank = new HashMap<String, ArrayList>();
         for (Object i : ranks) {
@@ -383,8 +383,11 @@ public class Model {
             }
             membersPerRank.put((String) i, indivisualsPerRankFamiliy);
         }
+        return membersPerRank;
+    }
 
-        ArrayList differentRankMembers = membersPerRank.get(chosenRank);
+    public HashMap<Integer, ArrayList> getAllMembersPerRankFamily (HashMap getAllIndividualsPerRank, String chosenRank) {
+        ArrayList differentRankMembers = (ArrayList) getAllIndividualsPerRank.get(chosenRank);
         HashMap<Integer, ArrayList> familyMembersPerRankEntry = new HashMap<>();
 
         if (differentRankMembers != null) {
@@ -399,33 +402,6 @@ public class Model {
                 familyMembersPerRankEntry.put((Integer) i, temp1);
             }
         }
-
-
-//        for (Object i : familyMembersPerRankEntry.keySet()) {
-//            System.out.println("Key: " + i + " Value: " + familyMembersPerRankEntry.get(i));
-//        }
-
-
-//        ArrayList idNodes = new ArrayList();
-//        for (MyVertex v : getGraph().getVertices()) {
-//            Node taxonomyV = (Node) v.getProperty(ContigProperty.TAXONOMY);
-//            if (taxonomyV.getAncestorId(chosenRank) != -1) {
-//                idNodes.add(v.getID());
-//            }
-//        }
-
-
-
-
-
-//        for (Object i : membersPerRank.keySet()) {
-//            System.out.println("Key: " + i + " Value: " + membersPerRank.get(i));
-//        }
-
-//        for (Object i : idNodes) {
-//            System.out.println(i);
-//        }
-
         return familyMembersPerRankEntry;
     }
 

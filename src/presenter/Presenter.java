@@ -2,7 +2,6 @@
 package presenter;
 
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -21,7 +20,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.WritableImage;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
@@ -46,8 +44,6 @@ import java.util.*;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class Presenter {
     Model model;
@@ -335,7 +331,9 @@ public class Presenter {
             @Override
             public void handle(ActionEvent actionEvent) {
                 String chosenRank = (String) view.getColoringRankChoiceBox().getValue();
-                rankMembers = model.getAllIndividualsPerRank(chosenRank);
+                HashMap<String, ArrayList> allIndividualsPerRank = model.getAllIndividualsPerRank();
+                rankMembers = model.getAllMembersPerRankFamily(allIndividualsPerRank, chosenRank);
+
                 colorIndividualRank = model.createColorRank(rankMembers);
 
                 for (MyVertex v : model.getGraph().getVertices()) {
