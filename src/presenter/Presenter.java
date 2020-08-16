@@ -316,12 +316,17 @@ public class Presenter {
                 rankNames.add("none");
                 rankNames.add("superkingdom");
                 rankNames.add("kingdom");
-                rankNames.add("phylum");
-                rankNames.add("class");
-                rankNames.add("order");
-                rankNames.add("family");
                 rankNames.add("genus");
+                rankNames.add("phylum");
+                rankNames.add("species group");
+                rankNames.add("class");
                 rankNames.add("species");
+                rankNames.add("order");
+                rankNames.add("subspecies");
+                rankNames.add("family");
+                rankNames.add("variates");
+
+
 //                ArrayList ranks = model.getAllIndividualsPerRank();
 //                for (Object k : ranks) { //ranks static
 //                    rankNames.add(k);
@@ -376,6 +381,7 @@ public class Presenter {
                         for (MyVertex v : model.getGraph().getVertices()) {
                             if (v.getID().equals(j)) {
                                 viewVertices.get(v.getID()).setColour(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2])));
+//                                viewVertices.get(v.getID()).setColour(Color.b);
                             }
                         }
                     }
