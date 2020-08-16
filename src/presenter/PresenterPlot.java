@@ -37,9 +37,17 @@ public class PresenterPlot {
     public void plotCoverageGC() throws IOException {
         double coverage;
         double gc;
+        int maxCoverage = 0;
         UndirectedSparseGraph<MyVertex, MyEdge> graph = model.getGraph();
 
-        NumberAxis yaxis = new NumberAxis(0.0, 2200.0, 200);
+        for (MyVertex v : graph.getVertices()) {
+            coverage = (double) v.getProperty(ContigProperty.COVERAGE);
+            if (coverage > maxCoverage) {
+                maxCoverage = 100*(Math.round((int)coverage/100));
+            }
+        }
+
+        NumberAxis yaxis = new NumberAxis(0.0, (int)maxCoverage+60, 200);
         NumberAxis xaxis = new NumberAxis(0.0, 1.0, 0.2);
         yaxis.setLabel("Coverage");
         xaxis.setLabel("GC content");
@@ -54,12 +62,14 @@ public class PresenterPlot {
             gc = (double) v.getProperty(ContigProperty.GC);
             series.getData().add(new XYChart.Data<>(gc, coverage, v.getID()));
         }
+
         sChart.getData().add(series);
-        viewPlot.setGcPlot(sChart);
+        viewPlot.setGcPlot(sChart, viewPlot.getTabGcCoverage());
 
         for (XYChart.Series<Number, Number> s : sChart.getData()) {
             for (XYChart.Data<Number, Number> d : s.getData()) {
-                Tooltip.install(d.getNode(), new Tooltip((String) d.getExtraValue()));
+                Tooltip.install(d.getNode(), new Tooltip((String)d.getExtraValue()+": "+
+                        d.getXValue() + " GC content, " + d.getYValue() +" coverage"));
                 d.getNode().setScaleY(2.0);
                 d.getNode().setScaleX(2.0);
                 d.getNode().setStyle("-fx-background-color: #860061, white;");
