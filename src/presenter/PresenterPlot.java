@@ -30,7 +30,7 @@ public class PresenterPlot {
     }
 
     private void setUpBinding() {
-
+        viewPlot.getNodeSizeManualSliderPlot().disableProperty().bind(viewPlot.getNodeSizeManualRadioButtonPlot().selectedProperty().not());
     }
 
     // Method to plot Coverage and GC-content of the contigs in the graph
@@ -60,6 +60,9 @@ public class PresenterPlot {
         for (XYChart.Series<Number, Number> s : sChart.getData()) {
             for (XYChart.Data<Number, Number> d : s.getData()) {
                 Tooltip.install(d.getNode(), new Tooltip((String) d.getExtraValue()));
+                d.getNode().setScaleY(2.0);
+                d.getNode().setScaleX(2.0);
+                d.getNode().setStyle("-fx-background-color: #860061, white;");
             }
         }
     }
