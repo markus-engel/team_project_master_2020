@@ -182,7 +182,8 @@ public class Presenter {
                     FXMLLoader loaderPlot = new FXMLLoader(getClass().getResource("../plot.fxml"));
                     Parent root = loaderPlot.load();
                     ViewPlot viewplot = loaderPlot.getController();
-                    PresenterPlot presenterPlot = new PresenterPlot(model, viewplot);
+                    PresenterPlot presenterPlot = new PresenterPlot(model, viewplot, viewplot.getTabGcCoverage(), model.getGraph());
+                    PresenterPlot presenterPlotSele = new PresenterPlot(model, viewplot, viewplot.getTabSelection(), seleGraph);
                     plotWindow.setTitle("Plots");
                     plotWindow.setScene(new Scene(root));
                     plotWindow.initModality(Modality.APPLICATION_MODAL);
@@ -200,8 +201,6 @@ public class Presenter {
             }
         });
 
-        //TODO: does this actually work? :) (Caner)
-        // for me it does (Anna)
         view.getCloseMenuItem().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -233,25 +232,6 @@ public class Presenter {
             }
         });
 
-        /*
-        view.getSelectionMenuItem().setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                try { // new window for the Selection plot
-                    Stage plotWindow = new Stage();
-                    FXMLLoader loaderPlot = new FXMLLoader(getClass().getResource("../selection.fxml"));
-                    Parent root = loaderPlot.load();
-                    ViewSelection viewSelection = loaderPlot.getController();
-                    PresenterSelection presenterSelection = new PresenterSelection(model, viewSelection);
-                    plotWindow.setScene(new Scene(root));
-                    plotWindow.initModality(Modality.APPLICATION_MODAL);
-                    plotWindow.show();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }); */
-
         view.getTabSelection().setOnSelectionChanged(new EventHandler<Event>() {
             @Override
             public void handle(Event event) {
@@ -274,7 +254,6 @@ public class Presenter {
                 if (rank) {
                     rank = false;
                 }
-
                 for (MyVertex v : model.getGraph().getVertices()) {
                     Node taxNode = (Node) v.getProperty(ContigProperty.TAXONOMY);
                     if (taxIDRGBCode.keySet().contains(taxNode.getId())) {

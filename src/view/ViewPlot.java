@@ -20,7 +20,7 @@ public class ViewPlot {
     private Tab tabGcCoverage;
 
     @FXML
-    private Tab tabElse;
+    private Tab tabSelection;
 
     @FXML
     private Tab tabContigLengthDistribution;
@@ -51,8 +51,8 @@ public class ViewPlot {
         this.tabGcCoverage = tabGcCoverage;
     }
 
-    public Tab getTabElse() {
-        return tabElse;
+    public Tab getTabSelection() {
+        return tabSelection;
     }
 
     public Tab getTabContigLengthDistribution(){return tabContigLengthDistribution;}
@@ -71,8 +71,8 @@ public class ViewPlot {
         return nodeSizeDefaultRadioButtonPlot;
     }
 
-    public void setTabElse(Tab tabElse) {
-        this.tabElse = tabElse;
+    public void setTabSelection(Tab tabElse) {
+        this.tabSelection = tabElse;
     }
 
     public void setGcPlot(ScatterChart<Number, Number> gcCoveragePlot, Tab tab) { tab.setContent(gcCoveragePlot);

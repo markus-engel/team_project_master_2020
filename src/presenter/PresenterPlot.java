@@ -7,6 +7,7 @@ import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.chart.*;
+import javafx.scene.control.Tab;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import model.Model;
@@ -23,10 +24,10 @@ public class PresenterPlot {
     Model model;
     ViewPlot viewPlot;
 
-    public PresenterPlot(Model model, ViewPlot viewPlot) throws IOException {
+    public PresenterPlot(Model model, ViewPlot viewPlot, Tab tab,UndirectedSparseGraph<MyVertex,MyEdge> graph) throws IOException {
         this.model = model;
         this.viewPlot = viewPlot;
-        plotCoverageGC(2.0);
+        plotCoverageGC(2.0, tab, graph);
         plotContigLengthDistribution();
         setUpBinding();
     }
@@ -39,7 +40,7 @@ public class PresenterPlot {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 try {
-                    plotCoverageGC(Math.log(viewPlot.getNodeSizeManualSliderPlot().getValue()));
+                    plotCoverageGC(Math.log(viewPlot.getNodeSizeManualSliderPlot().getValue()), viewPlot.getTabGcCoverage(), model.getGraph());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -50,7 +51,7 @@ public class PresenterPlot {
             @Override
             public void handle(ActionEvent actionEvent) {
                 try {
-                    plotCoverageGC(2.0);
+                    plotCoverageGC(2.0, viewPlot.getTabGcCoverage(), model.getGraph());
                     viewPlot.getNodeSizeManualSliderPlot().setValue(5.0);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -60,11 +61,10 @@ public class PresenterPlot {
     }
 
     // Method to plot Coverage and GC-content of the contigs in the graph
-    public void plotCoverageGC(double circleSize) throws IOException {
+    public void plotCoverageGC(double circleSize, Tab tab, UndirectedSparseGraph<MyVertex,MyEdge> graph) throws IOException {
         double coverage;
         double gc;
         int maxCoverage = 0;
-        UndirectedSparseGraph<MyVertex, MyEdge> graph = model.getGraph();
 
         for (MyVertex v : graph.getVertices()) {
             coverage = (double) v.getProperty(ContigProperty.COVERAGE);
@@ -73,7 +73,7 @@ public class PresenterPlot {
             }
         }
 
-        NumberAxis yaxis = new NumberAxis(0.0, (int)maxCoverage+60, 200);
+        NumberAxis yaxis = new NumberAxis(0.0, (int)maxCoverage+100, 200);
         NumberAxis xaxis = new NumberAxis(0.0, 1.0, 0.2);
         yaxis.setLabel("Coverage");
         xaxis.setLabel("GC content");
@@ -90,7 +90,7 @@ public class PresenterPlot {
         }
 
         sChart.getData().add(series);
-        viewPlot.setGcPlot(sChart, viewPlot.getTabGcCoverage());
+        viewPlot.setGcPlot(sChart, tab);
 
         for (XYChart.Series<Number, Number> s : sChart.getData()) {
             for (XYChart.Data<Number, Number> d : s.getData()) {
@@ -113,7 +113,4 @@ public class PresenterPlot {
 
         viewPlot.setCDPlot(bc, viewPlot.getTabContigLengthDistribution());
     }
-
-    // TODO: Colours, Tooltips, selection options
-
 }
