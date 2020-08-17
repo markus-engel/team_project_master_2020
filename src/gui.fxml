@@ -97,7 +97,7 @@
                   <Font name="Candara" size="10.0" />
                </font>
             </TextField>
-            <TextField fx:id="selectionTextfield" prefHeight="27.0" prefWidth="226.0" text="Selected:  0 sequences">
+            <TextField fx:id="selectionTextfield" prefHeight="27.0" prefWidth="120.0" text="Selected:  0 sequences">
                <font>
                   <Font size="10.0" />
                </font>

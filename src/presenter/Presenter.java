@@ -48,14 +48,16 @@ import java.util.Map;
 public class Presenter {
     Model model;
     View view;
-    HashMap<Integer, String> taxIDRGBCode, colorIndividualRank;
-    HashMap<Integer, ArrayList> rankMembers;
+    Map<Integer, String> taxIDRGBCode, colorIndividualRank;
+    Map<Integer, ArrayList<String>> rankMembers;
     Map<String, ViewVertex> viewVertices = new HashMap<>();  //Hashmap of view vertex objects
     Map<String, ViewVertex> viewVerticesSelection = new HashMap<>();  //Hashmap of view vertex objects
     public final Dimension MAX_WINDOW_DIMENSION = new Dimension(775, 500); //gets passed to model to center layouts, gets passed to view to control size of window
     UndirectedSparseGraph<MyVertex,MyEdge> seleGraph = new UndirectedSparseGraph<>();
     Boolean rank = false, taxonomy = false;
     int countSelected = 0;
+    UndirectedSparseGraph<MyVertex, MyEdge> currentGraph;
+    Map<String, ViewVertex> currentViewVertices;
 
 
     public Presenter(Model model, View view) {
@@ -256,20 +258,12 @@ public class Presenter {
         view.getColoringTaxonomyRadioButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                UndirectedSparseGraph<MyVertex, MyEdge> currentGraph;
-                Map<String, ViewVertex> currentViewVertices;
+                determineCurrentTab();
 
+                view.getLegendItems().clear();
+                taxIDRGBCode = model.createColor(model.getTaxaCount(), model.getTaxaID());
                 if (rank) {
                     rank = false;
-                }
-
-                //toggle between selectionTab and MainTab
-                if (view.getTabSelection().isSelected()) {
-                    currentGraph = seleGraph;
-                    currentViewVertices = viewVerticesSelection;
-                } else {
-                    currentGraph = model.getGraph();
-                    currentViewVertices = viewVertices;
                 }
 
                 for (MyVertex v : currentGraph.getVertices()) {
@@ -287,10 +281,20 @@ public class Presenter {
                     } else if (taxNode.getId() == -100) {
                         currentViewVertices.get(v.getID()).setColour(Color.rgb(0, 255, 0));
                     }
+                    else if (taxNode.getId() == -100) {
+                        viewVertices.get(v.getID()).setColour(Color.rgb(0, 255, 0));
+                        LegendItem legendItem = new LegendItem(new Circle(5,Color.rgb(0, 255, 0)), "not available");
+                        if (!view.getLegendItems().contains(legendItem)){
+                            view.getLegendItems().add(legendItem);
+                        }
+                    }
                 }
                 view.updateLabelCol("Taxonomy");
                 view.getShowLegendMenuItem().setDisable(false);
-
+                if (view.getShowLegendMenuItem().isSelected()) {
+                    view.getLegendTableView().setPrefWidth(view.getLegendTableView().getMaxWidth());
+                    view.getLabelCol().setPrefWidth(210);
+                }
                 taxonomy = true;
             }
         });
@@ -298,7 +302,7 @@ public class Presenter {
         view.getColoringRankRadioButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                ObservableList rankNames = FXCollections.observableArrayList();
+                ObservableList<String> rankNames = FXCollections.observableArrayList();
                 if (taxonomy) {
                     taxonomy = false;
                 }
@@ -320,66 +324,67 @@ public class Presenter {
 
                 view.getColoringRankChoiceBox().setItems(rankNames);
                 view.getShowLegendMenuItem().setDisable(false);
+                if (view.getShowLegendMenuItem().isSelected()) {
+                    view.getLegendTableView().setPrefWidth(view.getLegendTableView().getMaxWidth());
+                    view.getLabelCol().setPrefWidth(210);
+                }
             }
         });
 
         view.getColoringRankChoiceBox().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                String chosenRank = (String) view.getColoringRankChoiceBox().getValue();
-                HashMap<String, ArrayList> allIndividualsPerRank = model.getAllIndividualsPerRank();
-                rankMembers = model.getAllMembersPerRankFamily(allIndividualsPerRank, chosenRank);
-                UndirectedSparseGraph<MyVertex, MyEdge> currentGraph;
-                Map<String, ViewVertex> currentViewVertices;
-
-                colorIndividualRank = model.createColorRank(rankMembers);
-
-                //toggle between selectionTab and MainTab
-                if (view.getTabSelection().isSelected()) {
-                    currentGraph = seleGraph;
-                    currentViewVertices = viewVerticesSelection;
-                } else {
-                    currentGraph = model.getGraph();
-                    currentViewVertices = viewVertices;
+                determineCurrentTab();
+                view.getLegendItems().clear();
+                String chosenRank = view.getColoringRankChoiceBox().getValue();
+                Map<String, List<String>> contigsOrderedByChosenRank = new HashMap<>();
+                for (MyVertex v : currentGraph.getVertices()) {
+                    Node taxNode = (Node) v.getProperty(ContigProperty.TAXONOMY);
+                    String ancestorNameOfChosenRank = taxNode.getAncestorName(chosenRank).toString();
+                    if (ancestorNameOfChosenRank.equals("-1")) ancestorNameOfChosenRank = "not available";
+                    if (contigsOrderedByChosenRank.containsKey(ancestorNameOfChosenRank)) {
+                        contigsOrderedByChosenRank.get(ancestorNameOfChosenRank).add(v.getID());
+                    }
+                    else {
+                        contigsOrderedByChosenRank.put(ancestorNameOfChosenRank, new LinkedList<>());
+                        contigsOrderedByChosenRank.get(ancestorNameOfChosenRank).add(v.getID());
+                    }
                 }
+                Map<String, String> colorIndividualRank = model.createColorRank(contigsOrderedByChosenRank.keySet());
 
                 //reset colours to default
                 for (MyVertex v : currentGraph.getVertices()) {
                     currentViewVertices.get(v.getID()).setColour(Color.CYAN);
                 }
-
-                for (Object i : rankMembers.keySet()) {
-                    ArrayList verticesCiontigID = rankMembers.get(i);
-                    String rgbCodeTotal = colorIndividualRank.get(i);
+                for (String group : contigsOrderedByChosenRank.keySet()) {
+                    String rgbCodeTotal = colorIndividualRank.get(group);
                     String[] rgbCodes = rgbCodeTotal.split("t");
-                    for (Object j : verticesCiontigID) {
-                        for (MyVertex v : currentGraph.getVertices()) {
-                            if (v.getID().equals(j)) {
-                                currentViewVertices.get(v.getID()).setColour(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2])));
-                            }
-                        }
+                    LegendItem legendItem = new LegendItem(new Circle(5, Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2]))), group);
+                    if (!view.getLegendItems().contains(legendItem)) {
+                        view.getLegendItems().add(legendItem);
+                    }
+                    for (String contigID : contigsOrderedByChosenRank.get(group)) {
+                        currentViewVertices.get(contigID).setColour(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2])));
                     }
                 }
+                view.updateLabelCol("Taxonomy: " + chosenRank);
+                view.getShowLegendMenuItem().setDisable(false);
+                if (view.getShowLegendMenuItem().isSelected()) {
+                    view.getLegendTableView().setPrefWidth(view.getLegendTableView().getMaxWidth());
+                    view.getLabelCol().setPrefWidth(210);
+                }
             }
-
         });
 
         view.getColoringDefaultRadioButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                UndirectedSparseGraph<MyVertex, MyEdge> currentGraph;
-                Map<String, ViewVertex> currentViewVertices;
+                determineCurrentTab();
 
-                //toggle between selectionTab and MainTab
-                if (view.getTabSelection().isSelected()) {
-                    currentGraph = seleGraph;
-                    currentViewVertices = viewVerticesSelection;
-                } else {
-                    currentGraph = model.getGraph();
-                    currentViewVertices = viewVertices;
-
-                }
-
+                //Updates Legend on the side.
+                view.getShowLegendMenuItem().setDisable(true);
+                view.getLegendItems().clear();
+                view.getLegendTableView().setPrefWidth(0);
                 for (MyVertex v : currentGraph.getVertices()) {
                     currentViewVertices.get(v.getID()).setColour(Color.CYAN);
                 }
@@ -407,18 +412,7 @@ public class Presenter {
         view.getColoringTransparencySlider().setOnMouseReleased(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                UndirectedSparseGraph<MyVertex, MyEdge> currentGraph;
-                Map<String, ViewVertex> currentViewVertices;
-
-                //toggle between selectionTab and MainTab
-                if (view.getTabSelection().isSelected()) {
-                    currentGraph = seleGraph;
-                    currentViewVertices = viewVerticesSelection;
-                } else {
-                    currentGraph = model.getGraph();
-                    currentViewVertices = viewVertices;
-
-                }
+                determineCurrentTab();
 
                 if (rank) {
                     for (Object i : rankMembers.keySet()) {
@@ -576,56 +570,51 @@ public class Presenter {
         view.getColoringCoverageRadioButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                UndirectedSparseGraph<MyVertex, MyEdge> currentGraph;
-                Map<String, ViewVertex> currentViewVertices;
-
-                //toggle between selectionTab and MainTab
-                if (view.getTabSelection().isSelected()) {
-                    currentGraph = seleGraph;
-                    currentViewVertices = viewVerticesSelection;
-                } else {
-                    currentGraph = model.getGraph();
-                    currentViewVertices = viewVertices;
-
-                }
+                determineCurrentTab();
                 if (!viewVertices.isEmpty()) {
-                    HashMap<Object, Double> coverage = model.heatmapColorsCovarge();
-                    for (MyVertex v : currentGraph.getVertices()) {
+                    view.getLegendItems().clear();
+                    Map<Object, Double> coverage = model.heatmapColorsCovarge();
+                    for (ViewVertex v : currentViewVertices.values()) {
                         for (Object j : coverage.keySet()) {
                             if (v.getID().equals(j)) {
                                 if (coverage.get(j) < 0.5) {
-                                    currentViewVertices.get(v.getID()).setColour(Color.hsb(120, 1 - coverage.get(j), 0.49 + coverage.get(j)));
+                                    v.setColour(Color.hsb(120, 1 - coverage.get(j), 0.49 + coverage.get(j)));
                                 } else if (coverage.get(j) >= 0.5) {
-                                    currentViewVertices.get(v.getID()).setColour(Color.hsb(0, coverage.get(j), 1));
+                                   v.setColour(Color.hsb(0, coverage.get(j), 1));
                                 }
 //                                viewVertices.get(v.getID()).setColour(Color.DARKBLUE);
 //                                viewVertices.get(v.getID()).setColour(Color.hsb(240, gcCoverage.get(j), 1));
+                                }
                             }
+                        }
+                        LegendItem legendItem0 = new LegendItem(new Circle(5, Color.hsb(120, 1, 0.49 + 0)), Integer.toString((int) model.getLowestCoverage()) + " (minimum)");
+                        LegendItem legendItem25 = new LegendItem(new Circle(5, Color.hsb(120, 1 - 0.25, 0.49 + 0.25)), Integer.toString((int) calcCovFromPercentage(0.25)));
+                        LegendItem legendItem50 = new LegendItem(new Circle(5, Color.hsb(0, 0.5, 1)), Integer.toString((int) calcCovFromPercentage(0.5)));
+                        LegendItem legendItem75 = new LegendItem(new Circle(5, Color.hsb(0, 0.75, 1)), Integer.toString((int) calcCovFromPercentage(0.75)));
+                        LegendItem legendItem100 = new LegendItem(new Circle(5, Color.hsb(0, 1, 1)), Integer.toString((int) model.getHighestCoverage()) + " (maximum)");
+                        view.getLegendItems().add(legendItem0);
+                        view.getLegendItems().add(legendItem25);
+                        view.getLegendItems().add(legendItem50);
+                        view.getLegendItems().add(legendItem75);
+                        view.getLegendItems().add(legendItem100);
+                        view.updateLabelCol("Coverage");
+                        view.getShowLegendMenuItem().setDisable(false);
+                        if (view.getShowLegendMenuItem().isSelected()) {
+                            view.getLegendTableView().setPrefWidth(120);
+                            view.getLabelCol().setPrefWidth(100);
                         }
                     }
                 }
-            }
 
         });
 
         view.getColoringGCcontentRadioButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                UndirectedSparseGraph<MyVertex, MyEdge> currentGraph;
-                Map<String, ViewVertex> currentViewVertices;
-
-                //toggle between selectionTab and MainTab
-                if (view.getTabSelection().isSelected()) {
-                    currentGraph = seleGraph;
-                    currentViewVertices = viewVerticesSelection;
-                } else {
-                    currentGraph = model.getGraph();
-                    currentViewVertices = viewVertices;
-
-                }
-
+                determineCurrentTab();
                 if (!currentViewVertices.isEmpty()) {
-                    HashMap<Object, Double> gcContent = model.heatmapColorsGCContent();
+                    view.getLegendItems().clear();
+                    Map<Object, Double> gcContent = model.heatmapColorsGCContent();
                     for (MyVertex v : currentGraph.getVertices()) {
                         for (Object i : gcContent.keySet()) {
                             if (v.getID().equals(i)) {
@@ -637,6 +626,26 @@ public class Presenter {
                             }
                         }
                     }
+                    LegendItem legendItem0 = new LegendItem(new Circle(5,Color.hsb(120, 1, 0.49 + 0)), "0.00");
+                    LegendItem legendItem25 = new LegendItem(new Circle(5,Color.hsb(120, 1 - 0.25, 0.49 + 0.25)), "0.25");
+                    LegendItem legendItem40 = new LegendItem(new Circle(5,Color.hsb(120, 1 - 0.4, 0.49 + 0.4)), "0.40");
+                    LegendItem legendItem50 = new LegendItem(new Circle(5,Color.hsb(0, 0.5, 1)), "0.50");
+                    LegendItem legendItem60 = new LegendItem(new Circle(5,Color.hsb(0, 0.6, 1)), "0.60");
+                    LegendItem legendItem75 = new LegendItem(new Circle(5,Color.hsb(0, 0.75, 1)), "0.75");
+                    LegendItem legendItem100 = new LegendItem(new Circle(5,Color.hsb(0, 1, 1)), "1.00");
+                    view.getLegendItems().add(legendItem0);
+                    view.getLegendItems().add(legendItem25);
+                    view.getLegendItems().add(legendItem40);
+                    view.getLegendItems().add(legendItem50);
+                    view.getLegendItems().add(legendItem60);
+                    view.getLegendItems().add(legendItem75);
+                    view.getLegendItems().add(legendItem100);
+                    view.updateLabelCol("GC content");
+                    view.getShowLegendMenuItem().setDisable(false);
+                    if (view.getShowLegendMenuItem().isSelected()) {
+                        view.getLegendTableView().setPrefWidth(120);
+                        view.getLabelCol().setPrefWidth(100);
+                    }
                 }
             }
 
@@ -645,18 +654,7 @@ public class Presenter {
         view.getNodeSizeContigLengthRadioButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                UndirectedSparseGraph<MyVertex, MyEdge> currentGraph;
-                Map<String, ViewVertex> currentViewVertices;
-
-                //toggle between selectionTab and MainTab
-                if (view.getTabSelection().isSelected()) {
-                    currentGraph = seleGraph;
-                    currentViewVertices = viewVerticesSelection;
-                } else {
-                    currentGraph = model.getGraph();
-                    currentViewVertices = viewVertices;
-
-                }
+                determineCurrentTab();
                 if (!currentViewVertices.isEmpty()) {
                     double smallestContigLength = model.getSmallestContigLength();
                     double largestContigLength = model.getLargestContigLength();
@@ -679,15 +677,7 @@ public class Presenter {
         view.getNodeSizeDefaultRadioButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                Map<String, ViewVertex> currentViewVertices;
-
-                //toggle between selectionTab and MainTab
-                if (view.getTabSelection().isSelected()) {
-                    currentViewVertices = viewVerticesSelection;
-                } else {
-                    currentViewVertices = viewVertices;
-
-                }
+                determineCurrentTab();
                 if (!currentViewVertices.isEmpty()) for (ViewVertex vv : currentViewVertices.values()) {
                     vv.setSize(5);
                 }
@@ -699,15 +689,7 @@ public class Presenter {
         view.getNodeSizeManualRadioButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                Map<String, ViewVertex> currentViewVertices;
-
-                //toggle between selectionTab and MainTab
-                if (view.getTabSelection().isSelected()) {
-                    currentViewVertices = viewVerticesSelection;
-                } else {
-                    currentViewVertices = viewVertices;
-
-                }
+                determineCurrentTab();
                 if (!currentViewVertices.isEmpty()) for (ViewVertex vv : currentViewVertices.values()) {
                     vv.setSize(5);
                 }
@@ -717,18 +699,7 @@ public class Presenter {
         view.getNodeSizeManualSlider().setOnMouseReleased(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                UndirectedSparseGraph<MyVertex, MyEdge> currentGraph;
-                Map<String, ViewVertex> currentViewVertices;
-
-                //toggle between selectionTab and MainTab
-                if (view.getTabSelection().isSelected()) {
-                    currentGraph = seleGraph;
-                    currentViewVertices = viewVerticesSelection;
-                } else {
-                    currentGraph = model.getGraph();
-                    currentViewVertices = viewVertices;
-
-                }
+                determineCurrentTab();
                 if (!currentViewVertices.isEmpty() & view.getNodeSizeScaleChoiceBox().getValue().equals("linear scale"))
                     for (ViewVertex vv : currentViewVertices.values()) {
                         vv.setSize(view.getNodeSizeManualSlider().getValue());
@@ -743,18 +714,7 @@ public class Presenter {
         view.getOrderByNodeNumbersRadioButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                UndirectedSparseGraph<MyVertex, MyEdge> currentGraph;
-                Map<String, ViewVertex> currentViewVertices;
-
-                //toggle between selectionTab and MainTab
-                if (view.getTabSelection().isSelected()) {
-                    currentGraph = seleGraph;
-                    currentViewVertices = viewVerticesSelection;
-                } else {
-                    currentGraph = model.getGraph();
-                    currentViewVertices = viewVertices;
-
-                }
+                determineCurrentTab();
                 Task<Void> layoutApplyTask = new Task<Void>() {
                     @Override
                     protected Void call() {
@@ -777,18 +737,7 @@ public class Presenter {
         view.getOrderByContigLengthRadioButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                UndirectedSparseGraph<MyVertex, MyEdge> currentGraph;
-                Map<String, ViewVertex> currentViewVertices;
-
-                //toggle between selectionTab and MainTab
-                if (view.getTabSelection().isSelected()) {
-                    currentGraph = seleGraph;
-                    currentViewVertices = viewVerticesSelection;
-                } else {
-                    currentGraph = model.getGraph();
-                    currentViewVertices = viewVertices;
-
-                }
+                determineCurrentTab();
                 Task<Void> layoutApplyTask = new Task<Void>() {
                     @Override
                     protected Void call() {
@@ -813,13 +762,31 @@ public class Presenter {
             @Override
             public void handle(ActionEvent actionEvent) {
                 if (view.getShowLegendMenuItem().isSelected()) {
-                    view.getLegendTableView().setPrefWidth(view.getLegendTableView().getMaxWidth());
+                    if (view.getColoringTaxonomyRadioButton().isSelected() | view.getColoringRankRadioButton().isSelected()) {
+                        view.getLegendTableView().setPrefWidth(view.getLegendTableView().getMaxWidth());
+                        view.getLabelCol().setPrefWidth(210);
+                    }
+                    else {
+                        view.getLegendTableView().setPrefWidth(120);
+                        view.getLabelCol().setPrefWidth(100);
+                    }
                 } else {
                     view.getLegendTableView().setPrefWidth(0);
                 }
             }
         });
 
+    }
+
+    private void determineCurrentTab() {
+        //toggle between selectionTab and MainTab
+        if (view.getTabSelection().isSelected()) {
+            currentGraph = seleGraph;
+            currentViewVertices = viewVerticesSelection;
+        } else {
+            currentGraph = model.getGraph();
+            currentViewVertices = viewVertices;
+        }
     }
 
 
@@ -1055,6 +1022,10 @@ public class Presenter {
         for (MyVertex v : seleGraph.getVertices()){
             view.addToInfoTable(v);
         }
+    }
+
+    public double calcCovFromPercentage(double percentRelativeCoverage) {
+        return model.getLowestCoverage() + (percentRelativeCoverage * (model.getHighestCoverage() - model.getLowestCoverage()));
     }
 }
 
