@@ -35,6 +35,21 @@ public class ViewVertex extends Group {
         this.getChildren().add(circle);
     }
 
+    public ViewVertex(String ID, int size, double x, double y, ViewVertex viewVertex){
+        this.ID = new SimpleStringProperty(ID);
+        this.circle = new Circle(0, 0, size);
+        this.selected = false;
+        this.setTranslateX(x);
+        this.setTranslateY(y);
+        circle.setFill(Color.CORAL);
+        circle.setStroke(Color.CORAL);
+        this.getChildren().add(circle);
+
+        this.circle.fillProperty().bind(viewVertex.getCircle().fillProperty());
+        this.circle.strokeProperty().bind(this.circle.fillProperty());
+        this.circle.radiusProperty().bind(viewVertex.getCircle().radiusProperty());
+    }
+
     public Circle getCircle() {
         return circle;
     }

@@ -699,7 +699,7 @@ public class Presenter {
         // add view vertices
         for (MyVertex v1 : currentGraph.getVertices()) {
             // Save v1 in collection to check, it has already been created to avoid redundancies in loop below?
-            ViewVertex vv = new ViewVertex(v1.getID(), 5, v1.getX(), v1.getY());
+            ViewVertex vv = new ViewVertex(v1.getID(), 5, v1.getX(), v1.getY(), viewVertices.get(v1.getID()));
             view.addVertex(vv, observableList);
             viewVerticesSelection.put(v1.getID(), vv);
             makeDraggable(vv, innerObjects);
