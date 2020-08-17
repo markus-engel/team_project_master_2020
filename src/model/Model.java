@@ -445,8 +445,8 @@ public class Model {
         double highestGCContent = getHighestGCContent();
         double rangeGCContent = highestGCContent - lowestGCContentent;
         for (MyVertex v : getGraph().getVertices()) {
-            double relativeGCContent = ((double) v.getProperty(ContigProperty.GC) - lowestGCContentent) / rangeGCContent;
-            gcContent.put(v.getID(), relativeGCContent);
+//            double relativeGCContent = ((double) v.getProperty(ContigProperty.GC) - lowestGCContentent) / rangeGCContent;
+            gcContent.put(v.getID(), (Double) v.getProperty(ContigProperty.GC));
         }
         return gcContent;
     }
