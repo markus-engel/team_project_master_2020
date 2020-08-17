@@ -94,8 +94,8 @@ public class PresenterPlot {
 
         for (XYChart.Series<Number, Number> s : sChart.getData()) {
             for (XYChart.Data<Number, Number> d : s.getData()) {
-                Tooltip.install(d.getNode(), new Tooltip((String)d.getExtraValue()+": "+
-                        d.getXValue() + " GC content, " + d.getYValue() +" coverage"));
+                Tooltip.install(d.getNode(), new Tooltip((String)d.getExtraValue()+":\n"+ String.format("%.4g%n",d.getXValue())
+                        + " GC content, " + String.format("%.4g%n",d.getYValue()) +" coverage"));
                 d.getNode().setScaleY(circleSize);
                 d.getNode().setScaleX(circleSize);
                 d.getNode().setStyle("-fx-background-color: #860061, orange;");
