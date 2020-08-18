@@ -100,7 +100,7 @@ public class View {
     private Slider coloringTransparencySlider;
 
     @FXML
-    private ChoiceBox<?> coloringRankChoiceBox;
+    private ChoiceBox<String> coloringRankChoiceBox;
 
     @FXML
     private RadioButton coloringCoverageRadioButton;
@@ -304,32 +304,16 @@ public class View {
 
     public RadioButton getColoringTransparencyRadioButton () { return  coloringTransparencyRadioButton; }
 
-    public ChoiceBox<?> getColoringRankChoiceBox() {
+    public ChoiceBox<String> getColoringRankChoiceBox() {
         return coloringRankChoiceBox;
-    }
-
-    public void setColoringRankChoiceBox(ChoiceBox<?> coloringTaxonomyChoiceBox) {
-        this.coloringRankChoiceBox = coloringRankChoiceBox;
     }
 
     public RadioButton getColoringCoverageRadioButton() {
         return coloringCoverageRadioButton;
     }
 
-    public void setColoringCoverageRadioButton(RadioButton coloringCoverageRadioButton) {
-        this.coloringCoverageRadioButton = coloringCoverageRadioButton;
-    }
-
     public RadioButton getColoringGCcontentRadioButton() {
         return coloringGCcontentRadioButton;
-    }
-
-    public void setColoringGCcontentRadioButton(RadioButton coloringGCcontentRadioButton) {
-        this.coloringGCcontentRadioButton = coloringGCcontentRadioButton;
-    }
-
-    public TextField getSequenceCountTextField() {
-        return sequenceCountTextField;
     }
 
     public RadioButton getNodeSizeManualRadioButton() {
@@ -354,7 +338,7 @@ public class View {
         return nodeSizeDefaultRadioButton;
     }
 
-    public ChoiceBox<?> getNodeSizeScaleChoiceBox() {
+    public ChoiceBox<String> getNodeSizeScaleChoiceBox() {
         return nodeSizeScaleChoiceBox;
     }
 
@@ -381,14 +365,6 @@ public class View {
     // Number of Vertices
     public void setSequenceCountTextField(int sequenceCount) {
         sequenceCountTextField.setText("Sequences: " + String.valueOf(sequenceCount));
-    }
-
-    public TextField getOverlapCountTextField() {
-        return overlapCountTextField;
-    }
-
-    public TextField getSelectionTextfield() {
-        return selectionTextfield;
     }
 
     // Number of Edges
@@ -474,9 +450,11 @@ public class View {
         return showLegendMenuItem;
     }
 
-    public TableView<?> getLegendTableView() {
+    public TableView<LegendItem> getLegendTableView() {
         return legendTableView;
     }
+
+    public TableColumn<LegendItem,String> getLabelCol() { return labelCol; }
 
     public ObservableList<LegendItem> getLegendItems(){
         if (legendItems==null){

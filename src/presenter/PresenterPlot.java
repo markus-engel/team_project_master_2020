@@ -18,6 +18,8 @@ import view.ViewPlot;
 import view.ViewVertex;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class PresenterPlot {
 
@@ -28,7 +30,7 @@ public class PresenterPlot {
         this.model = model;
         this.viewPlot = viewPlot;
         plotCoverageGC(2.0, tab, graph);
-        plotContigLengthDistribution();
+        plotContigLengthDistribution(graph);
         setUpBinding();
     }
 
@@ -103,13 +105,34 @@ public class PresenterPlot {
         }
     }
 
-    public void plotContigLengthDistribution(){
+    public void plotContigLengthDistribution(UndirectedSparseGraph<MyVertex,MyEdge> graph){
+        TreeMap<Integer, Integer> cls = new TreeMap<Integer, Integer>();
+        for(MyVertex v : graph.getVertices()){
+            int curLength = (int)(double)v.getProperty(ContigProperty.LENGTH);
+            if(cls.containsKey(curLength)){
+                cls.put(curLength, cls.get(curLength + 1));
+            }
+            else{
+                cls.put(curLength, 1);
+            }
+        }
+
         NumberAxis yaxis = new NumberAxis(0.0, 5000, 200);
         CategoryAxis xaxis = new CategoryAxis();
         yaxis.setLabel("Number of Contigs");
         xaxis.setLabel("Length in bp");
 
+
         BarChart<String, Number> bc = new BarChart<String, Number>(xaxis, yaxis);
+        bc.setTitle("Distribution of Contig Lengths");
+
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        for(Map.Entry<Integer,Integer> entry : cls.entrySet()){
+            series.getData().add(new XYChart.Data<String, Number>(String.valueOf(entry.getKey()), entry.getValue()));
+            System.out.printf(String.valueOf(entry.getKey()) + "  " + entry.getValue() + " ");
+        }
+
+        //bc.getData().add(series);
 
         viewPlot.setCDPlot(bc, viewPlot.getTabContigLengthDistribution());
     }

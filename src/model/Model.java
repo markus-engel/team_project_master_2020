@@ -319,11 +319,11 @@ public class Model {
         return count;
     }
 
-    public HashMap<Integer, String> createColor(Integer taxaCount, TreeSet<Integer> taxaID) {
+    public Map<Integer, String> createColor(Integer taxaCount, TreeSet<Integer> taxaID) {
 //        int r = 5, g = 5, b = 5, rgbBorderHigh = 255;
         int[] rgbNumbers;
         double alpha = 1;
-        HashMap<Integer, String> taxIDRGBCode = new HashMap<>();
+        Map<Integer, String> taxIDRGBCode = new HashMap<>();
 
 //        https://www.farb-tabelle.de/en/table-of-color.htm#white
 
@@ -357,78 +357,31 @@ public class Model {
         return taxIDRGBCode;
     }
 
-//    public HashMap<String, String> createColorRank(ArrayList rankMembers) {
-//        int[] rgbNumbersRank;
-//        HashMap<String, String> rankIDRGBCode = new HashMap<>();
-//
-//        for (Object i : rankMembers) {
-//            String rgbCodeTaxa;
-//            rgbNumbersRank = randomNumberColoring();
-//            rgbCodeTaxa = rgbNumbersRank[0] + "t" + rgbNumbersRank[1] + "t" + rgbNumbersRank[2];
-//            rankIDRGBCode.put((String) i, rgbCodeTaxa);
-//        }
-//        return rankIDRGBCode;
-//    }
-
-    public HashMap<String, ArrayList> getAllIndividualsPerRank() {
-//        individual members per rank
-        HashMap<String, ArrayList> membersPerRank = new HashMap<String, ArrayList>();
-        for (Object i : ranks) {
-            ArrayList indivisualsPerRankFamiliy = new ArrayList();
-            for (MyVertex v : getGraph().getVertices()) {
-                Node taxonomyV = (Node) v.getProperty(ContigProperty.TAXONOMY);
-                if (taxonomyV.getRank().equals(i)) {
-                    indivisualsPerRankFamiliy.add(taxonomyV.getId());
-                }
-            }
-            membersPerRank.put((String) i, indivisualsPerRankFamiliy);
-        }
-        return membersPerRank;
-    }
-
-    public HashMap<Integer, ArrayList> getAllMembersPerRankFamily (HashMap getAllIndividualsPerRank, String chosenRank) {
-        ArrayList differentRankMembers = (ArrayList) getAllIndividualsPerRank.get(chosenRank);
-        HashMap<Integer, ArrayList> familyMembersPerRankEntry = new HashMap<>();
-
-        if (differentRankMembers != null) {
-            for (Object i : differentRankMembers) {
-                ArrayList temp1 = new ArrayList();
-                for (MyVertex v : getGraph().getVertices()) {
-                    Node taxonomyActualVertex = (Node) v.getProperty(ContigProperty.TAXONOMY);
-                    if (taxonomyActualVertex.getAncestorId(chosenRank) != -1 && taxonomyActualVertex.getAncestorId(chosenRank) == (Integer) i) {
-                        temp1.add(v.getID());
-                    }
-                }
-                familyMembersPerRankEntry.put((Integer) i, temp1);
-            }
-        }
-        return familyMembersPerRankEntry;
-    }
-
-    public HashMap<Integer, String> createColorRank(HashMap familyMembersPerRankEntry) {
-        Set rankMembersTaxID = familyMembersPerRankEntry.keySet();
+    public Map<String, String> createColorRank(Set<String> rankMembers) {
         int[] rgbNumbersRank;
-        HashMap<Integer, String> rankIDRGBCode = new HashMap<>();
+        Map<String, String> rankRGBCode = new HashMap<>();
 
-        for (Object i : rankMembersTaxID) {
+        for (String i : rankMembers) {
             String rgbCodeTaxa;
             rgbNumbersRank = randomNumberColoring();
             rgbCodeTaxa = rgbNumbersRank[0] + "t" + rgbNumbersRank[1] + "t" + rgbNumbersRank[2];
-            rankIDRGBCode.put((Integer) i, rgbCodeTaxa);
+            rankRGBCode.put(i, rgbCodeTaxa);
         }
-        return rankIDRGBCode;
+        return rankRGBCode;
     }
 
     public int[] randomNumberColoring () {
+        int lowestValue = 30;
+        int highestValue = 230;
         int[] rgbNumbers = new int[3];
         for (int i = 1; i <= rgbNumbers.length; i ++) {
-            rgbNumbers[i - 1] = (int) (Math.random() * ((255 - 0) + 1));
+            rgbNumbers[i - 1] = (int) (lowestValue + Math.random() * ((highestValue - lowestValue) + 1));
         }
         return rgbNumbers;
     }
 
-    public HashMap<Object, Double> heatmapColorsCovarge () {
-        HashMap<Object, Double> coverage = new HashMap<>();
+    public Map<Object, Double> heatmapColorsCovarge () {
+        Map<Object, Double> coverage = new HashMap<>();
         double lowestCoverage = getLowestCoverage();
         double highestCoverage = getHighestCoverage();
         double range = highestCoverage - lowestCoverage;
@@ -439,14 +392,14 @@ public class Model {
         return coverage;
     }
 
-    public HashMap<Object, Double> heatmapColorsGCContent () {
-        HashMap<Object, Double> gcContent = new HashMap<>();
+    public Map<Object, Double> heatmapColorsGCContent () {
+        Map<Object, Double> gcContent = new HashMap<>();
         double lowestGCContentent = getLowestGCContent();
         double highestGCContent = getHighestGCContent();
         double rangeGCContent = highestGCContent - lowestGCContentent;
         for (MyVertex v : getGraph().getVertices()) {
-            double relativeGCContent = ((double) v.getProperty(ContigProperty.GC) - lowestGCContentent) / rangeGCContent;
-            gcContent.put(v.getID(), relativeGCContent);
+//            double relativeGCContent = ((double) v.getProperty(ContigProperty.GC) - lowestGCContentent) / rangeGCContent;
+            gcContent.put(v.getID(), (Double) v.getProperty(ContigProperty.GC));
         }
         return gcContent;
     }
