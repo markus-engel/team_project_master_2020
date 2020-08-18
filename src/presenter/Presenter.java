@@ -52,13 +52,11 @@ public class Presenter {
     Map<Integer, String> taxIDRGBCode;
     Map<String, String> colorIndividualRank;
     Map<Object, Double> gcContent, coverageColor;
-    Map<Integer, ArrayList<String>> rankMembers;
     Map<String, List<String>> contigsOrderedByChosenRank;
     Map<String, ViewVertex> viewVertices = new HashMap<>();  //Hashmap of view vertex objects
     Map<String, ViewVertex> viewVerticesSelection = new HashMap<>();  //Hashmap of view vertex objects
     public final Dimension MAX_WINDOW_DIMENSION = new Dimension(775, 500); //gets passed to model to center layouts, gets passed to view to control size of window
     UndirectedSparseGraph<MyVertex,MyEdge> seleGraph = new UndirectedSparseGraph<>();
-    Boolean rank = false, taxonomy = false, gcContentBool = false, coverage = false;
     int countSelected = 0;
     UndirectedSparseGraph<MyVertex, MyEdge> currentGraph;
     Map<String, ViewVertex> currentViewVertices;
@@ -267,9 +265,6 @@ public class Presenter {
 
                 view.getLegendItems().clear();
                 taxIDRGBCode = model.createColor(model.getTaxaCount(), model.getTaxaID());
-                if (rank || gcContentBool || coverage) {
-                    rank = false; gcContentBool = false; coverage = false;
-                }
 
                 for (MyVertex v : currentGraph.getVertices()) {
                     Node taxNode = (Node) v.getProperty(ContigProperty.TAXONOMY);
@@ -300,7 +295,6 @@ public class Presenter {
                     view.getLegendTableView().setPrefWidth(view.getLegendTableView().getMaxWidth());
                     view.getLabelCol().setPrefWidth(210);
                 }
-                taxonomy = true;
             }
         });
 
@@ -308,11 +302,7 @@ public class Presenter {
             @Override
             public void handle(ActionEvent actionEvent) {
                 ObservableList<String> rankNames = FXCollections.observableArrayList();
-                if (taxonomy || gcContentBool || coverage) {
-                    taxonomy = false; gcContentBool = false; coverage = false;
-                }
 
-                rank = true;
                 view.getColoringRankChoiceBox().setDisable(false);
                 rankNames.add("none");
                 rankNames.add("superkingdom");
@@ -385,8 +375,6 @@ public class Presenter {
             @Override
             public void handle(ActionEvent actionEvent) {
                 determineCurrentTab();
-                taxonomy = false; gcContentBool = false;
-                coverage = false; rank = false;
                 //Updates Legend on the side.
                 view.getShowLegendMenuItem().setDisable(true);
                 view.getLegendItems().clear();
@@ -418,7 +406,7 @@ public class Presenter {
             public void handle(MouseEvent mouseEvent) {
                 determineCurrentTab();
 
-                if (rank) {
+                if (view.getColoringRankRadioButton().isSelected()) {
                     view.getLegendItems().clear();
                     for (MyVertex v : currentGraph.getVertices()) {
                         currentViewVertices.get(v.getID()).setColour(Color.CYAN);
@@ -440,7 +428,7 @@ public class Presenter {
                         view.getLabelCol().setPrefWidth(210);
                     }
                 }
-                else if (taxonomy) {
+                else if (view.getColoringTaxonomyRadioButton().isSelected()) {
                     view.getLegendItems().clear();
                     for (MyVertex v : currentGraph.getVertices()) {
                         Node taxNode = (Node) v.getProperty(ContigProperty.TAXONOMY);
@@ -471,7 +459,7 @@ public class Presenter {
                         view.getLabelCol().setPrefWidth(210);
                     }
                 }
-                else if (coverage) {
+                else if (view.getColoringCoverageRadioButton().isSelected()) {
                     view.getLegendItems().clear();
                     for (ViewVertex v : currentViewVertices.values()) {
                         for (Object j : coverageColor.keySet()) {
@@ -502,7 +490,7 @@ public class Presenter {
                         view.getLabelCol().setPrefWidth(100);
                     }
                 }
-                else if (gcContentBool) {
+                else if (view.getColoringGCcontentRadioButton().isSelected()) {
                     view.getLegendItems().clear();
                     for (MyVertex v : currentGraph.getVertices()) {
                         for (Object i : gcContent.keySet()) {
@@ -655,9 +643,6 @@ public class Presenter {
             @Override
             public void handle(ActionEvent actionEvent) {
                 determineCurrentTab();
-                if (taxonomy || gcContentBool || rank ) {
-                    taxonomy = false; gcContentBool = false; rank = false;
-                }
                 if (!viewVertices.isEmpty()) {
                     view.getLegendItems().clear();
                     coverageColor = model.heatmapColorsCovarge();
@@ -674,7 +659,6 @@ public class Presenter {
                     }
                     createLegendCoverage();
                 }
-                coverage = true;
             }
         });
 
@@ -682,9 +666,6 @@ public class Presenter {
             @Override
             public void handle(ActionEvent actionEvent) {
                 determineCurrentTab();
-                if (taxonomy || rank || coverage) {
-                    taxonomy = false; rank = false; coverage = false;
-                }
                 if (!currentViewVertices.isEmpty()) {
                     view.getLegendItems().clear();
                     gcContent = model.heatmapColorsGCContent();
@@ -701,9 +682,7 @@ public class Presenter {
                     }
                     createLegendGCcontent();
                 }
-                gcContentBool = true;
             }
-
         });
 
         view.getNodeSizeContigLengthRadioButton().setOnAction(new EventHandler<ActionEvent>() {
