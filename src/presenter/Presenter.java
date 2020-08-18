@@ -2,6 +2,8 @@
 package presenter;
 
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -36,7 +38,6 @@ import model.io.Node;
 import view.*;
 
 import javax.imageio.ImageIO;
-import javax.swing.text.IconView;
 import java.awt.*;
 import java.io.File;
 import java.io.FileWriter;
@@ -57,7 +58,7 @@ public class Presenter {
     Map<String, ViewVertex> viewVerticesSelection = new HashMap<>();  //Hashmap of view vertex objects
     public final Dimension MAX_WINDOW_DIMENSION = new Dimension(775, 500); //gets passed to model to center layouts, gets passed to view to control size of window
     UndirectedSparseGraph<MyVertex,MyEdge> seleGraph = new UndirectedSparseGraph<>();
-    int countSelected = 0;
+    IntegerProperty countSelected = new SimpleIntegerProperty();
     UndirectedSparseGraph<MyVertex, MyEdge> currentGraph;
     Map<String, ViewVertex> currentViewVertices;
     Boolean rankBool = false, taxonomyBool = false, gcBool = false, coverageBool = false;
@@ -70,7 +71,7 @@ public class Presenter {
 
     public Presenter() { // second constructor needed for selection presenter to extend
     }
-    
+
     // Action for the Menu: choose file
     private void setUpBindings() {
 
@@ -269,7 +270,7 @@ public class Presenter {
                 }
 
                 view.getLegendItems().clear();
-                
+
                 for (MyVertex v : currentGraph.getVertices()) {
                     Node taxNode = (Node) v.getProperty(ContigProperty.TAXONOMY);
                     if (taxIDRGBCode.keySet().contains(taxNode.getId())) {
@@ -794,6 +795,7 @@ public class Presenter {
             }
         });
 
+        countSelected.bind(view.getSelectedContigs().sizeProperty());
     }
 
     private void determineCurrentTab() {
@@ -877,6 +879,18 @@ public class Presenter {
         seleGraph = new UndirectedSparseGraph<>();
         view.initNewScrollPane();
         view.removeAllFromInfoTable();
+        view.getShowLegendMenuItem().setDisable(true);
+        view.getLegendTableView().setPrefWidth(0);
+        view.getLegendItems().clear();
+        view.getImportTaxonomyMenuItem().setDisable(true);
+        view.getImportCoverageMenuItem().setDisable(true);
+        view.getNodeSizeDefaultRadioButton().setSelected(true);
+        view.getNodeSizeCoverageRadioButton().setDisable(true);
+        view.getColoringDefaultRadioButton().setSelected(true);
+        view.getColoringCoverageRadioButton().setDisable(true);
+        view.getColoringTaxonomyRadioButton().setDisable(true);
+        view.getColoringRankRadioButton().setDisable(true);
+        view.getOrderByNodeNumbersRadioButton().setSelected(true);
     }
 
     private void resetTab(){
@@ -892,6 +906,7 @@ public class Presenter {
         seleGraph = new UndirectedSparseGraph<>();
         viewVerticesSelection = new HashMap<>();
         updateSelectionInformation();
+        view.setSelectionTextField(countSelected.intValue());
         resetTab();
     }
     /*
@@ -912,7 +927,7 @@ public class Presenter {
             viewVertex.setSelected();
             updateSelectionGraph(viewVertex);
             view.getSelectionMenu().setDisable(false);
-            view.setSelectionTextField(countSelected);
+            view.setSelectionTextField(countSelected.intValue());
         });
     }
 
@@ -923,8 +938,6 @@ public class Presenter {
                 if (!seleGraph.containsVertex(v)) {
                     System.out.println("addded test: " + viewVertex.getID());
                     seleGraph.addVertex(v);
-                    countSelected += 1;
-                    view.setSelectionTextField(countSelected);
                     view.addToInfoTable(v);
                     for(MyEdge edge : this.model.getGraph().getInEdges(v)){
                         if (seleGraph.containsVertex(edge.getFirst()) && seleGraph.containsVertex(edge.getSecond())) {
@@ -935,8 +948,6 @@ public class Presenter {
                 } else if (seleGraph.containsVertex(v)) {
                     System.out.println("deleted test: " + viewVertex.getID());
                     seleGraph.removeVertex(v);
-                    countSelected -= 1;
-                    view.setSelectionTextField(countSelected);
                     view.removeFromInfoTable(v.getID());
                     for(MyEdge edge : this.model.getGraph().getInEdges(v)){
                         seleGraph.removeEdge(edge);
@@ -948,6 +959,7 @@ public class Presenter {
         //  seleGraph.removeEdge(edge);
         //}
         }
+        view.setSelectionTextField(countSelected.intValue());
     }
 
 
