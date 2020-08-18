@@ -86,13 +86,13 @@ public class Presenter {
         view.getNewFileMenuItem().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                view.getScrollPane().setDisable(true);
                 view.getImportTaxonomyMenuItem().setDisable(true);
                 view.getImportCoverageMenuItem().setDisable(true);
                 view.getCustomizeMenuItem().setDisable(true);
                 view.getSelectAllMenuItem().setDisable(true);
                 view.getSelectionMenu().setDisable(true);
                 reset();
+                resetSelection();
             }
         });
 
@@ -562,6 +562,7 @@ public class Presenter {
         view.getSearchField().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                resetSelection();
                 if(model.getGraph() == null){
                     view.getSearchField().setText("");
                 } else {
@@ -573,11 +574,22 @@ public class Presenter {
                             updateSelectionGraph(vv);
                             break;
                         }
-                        if (input.equals(model.getScientificTaxNames().get(mv.getProperty(ContigProperty.TAXONOMY)))) {
-                            ViewVertex vv = viewVertices.get(mv.getID());
-                            vv.setSelected();
-                            updateSelectionGraph(vv);
-                            break;
+                        if(mv.getProperty(ContigProperty.TAXONOMY) instanceof Node){
+                            Node node = (Node) mv.getProperty(ContigProperty.TAXONOMY);
+                            if (input.equals(node.getScientificName())) {
+                                ViewVertex vv = viewVertices.get(mv.getID());
+                                vv.setSelected();
+                                updateSelectionGraph(vv);
+                                } else {
+                                while(node.getAncestor() != null) {
+                                    node = node.getAncestor();
+                                    if (input.equals(node.getScientificName())) {
+                                        ViewVertex vv = viewVertices.get(mv.getID());
+                                        vv.setSelected();
+                                        updateSelectionGraph(vv);
+                                    }
+                                }
+                            }
                         }
                     }
                 }

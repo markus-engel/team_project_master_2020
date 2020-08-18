@@ -27,7 +27,6 @@ public class Model {
     private double lowestGCContent, highestGCContent;
     TreeSet<Integer> taxa = new TreeSet<>();
     TreeSet<String> ranks = new TreeSet<>();
-    Map<Node,String> scientificTaxNames = new HashMap<>();
     private double repulsionMultiplier;
     private double attractionMultiplier;
 
@@ -58,14 +57,6 @@ public class Model {
         });
         repulsionMultiplier = 0.1;
         attractionMultiplier = 1.0;
-    }
-
-    public Map<Node,String> getScientificTaxNames() {return scientificTaxNames;}
-
-    private void createScientificTaxNamesHashMap(){
-        for(Node node: taxonomyTree.getTree().values()){
-            scientificTaxNames.put(node,node.getScientificName());
-        }
     }
 
     //TODO: the name here is confusing. parsing the graph is only one of it, the rest is layout! (Caner) @Julia: export for loop in different method (Jonas)
