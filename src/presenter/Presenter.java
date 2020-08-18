@@ -866,6 +866,8 @@ public class Presenter {
 
     private void makeDraggable(ViewVertex viewVertex, Group innerObjects) {
         viewVertex.setOnMouseDragged(event -> {
+            view.getInnerViewObjects().getChildren().remove(view.getSelectionRectangle());
+            view.removeSelectionRectangle();
             double x = event.getSceneX();
             double y = event.getSceneY();
             Bounds bounds = innerObjects.localToScene(view.getInnerViewObjects().getBoundsInLocal());
@@ -1037,6 +1039,7 @@ public class Presenter {
                         }
                     }
                     view.getInnerViewObjects().getChildren().remove(view.getSelectionRectangle());
+                    view.removeSelectionRectangle();
                 }
             }
         });

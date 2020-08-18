@@ -455,6 +455,10 @@ public class View {
         selectionRectangle = new Rectangle(width,height,Color.TRANSPARENT);
     }
 
+    public void removeSelectionRectangle() {
+        selectionRectangle = null;
+    }
+
     public CheckMenuItem getShowLegendMenuItem() {
         return showLegendMenuItem;
     }
