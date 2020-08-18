@@ -160,8 +160,6 @@ public class Presenter {
                     //calculate colour once for tax and rank
                     taxIDRGBCode = model.createColor(model.getTaxaCount(), model.getTaxaID());
 
-
-
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -395,7 +393,6 @@ public class Presenter {
         });
 
         view.getHelpMenu().setOnAction(new EventHandler<ActionEvent>() {
-
             @Override
             public void handle(ActionEvent actionEvent) {
 
