@@ -1,5 +1,6 @@
 package view;
 
+import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -73,7 +74,7 @@ public class View {
     private Tab tabMain;
 
     @FXML
-    private TextField selectionTextfield;
+    private TextField selectionTextField;
 
     @FXML
     private ToggleGroup nodeSizeGroup;
@@ -211,7 +212,7 @@ public class View {
     private TableColumn<SelectedContig, String> nameCol;
 
     @FXML
-    private ObservableList<SelectedContig> selectedContigs;
+    private SimpleListProperty<SelectedContig> selectedContigs;;
 
     @FXML
     private TableView<LegendItem> legendTableView;
@@ -358,18 +359,18 @@ public class View {
         taxaCountTextfield.setText(String.valueOf(size));
     }
 
-    public void setSelectionTextField(int number){
-        selectionTextfield.setText("Selected: " + number);
-    }
-
     // Number of Vertices
     public void setSequenceCountTextField(int sequenceCount) {
-        sequenceCountTextField.setText("Sequences: " + String.valueOf(sequenceCount));
+        sequenceCountTextField.setText("Sequences: " + sequenceCount);
     }
 
     // Number of Edges
     public void setOverlapCountTextField(int overlapCount) {
         overlapCountTextField.setText("Overlaps: " + overlapCount);
+    }
+
+    public void setSelectionTextField(int selectedSequenceCount) {
+        selectionTextField.setText("Selected: " + selectedSequenceCount);
     }
 
     public Group getViewObjects() {
@@ -457,8 +458,8 @@ public class View {
         return legendItems;
     }
 
-    public ObservableList<SelectedContig> getSelectedContigs() {
-        if (selectedContigs == null) selectedContigs = FXCollections.observableArrayList();
+    public SimpleListProperty<SelectedContig> getSelectedContigs() {
+        if (selectedContigs == null) selectedContigs = new SimpleListProperty<>(FXCollections.observableArrayList());
         return selectedContigs;
     }
 
