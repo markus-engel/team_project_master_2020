@@ -10,19 +10,14 @@ import javafx.scene.chart.*;
 import javafx.scene.control.Tab;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import model.Model;
 import model.graph.MyEdge;
 import model.graph.MyVertex;
 import model.io.ContigProperty;
 import model.io.Node;
-import view.LegendItem;
 import view.ViewPlot;
-import view.ViewVertex;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -32,26 +27,36 @@ public class PresenterPlot {
     ViewPlot viewPlot;
     Map<Integer, String> taxIDRGBCode;
     Presenter presenter;
-    private Boolean taxonomyChosen = false, generalBool = false;
+    private String coloringMethode = "default";
 
     public PresenterPlot(Model model, ViewPlot viewPlot, Tab tab,UndirectedSparseGraph<MyVertex,MyEdge> graph, Presenter presenter) throws IOException {
         this.model = model;
         this.viewPlot = viewPlot;
         this.presenter = presenter;
-        plotCoverageGC(2.0, tab, graph, generalBool);
+        plotCoverageGC(2.0, tab, graph, coloringMethode);
         plotContigLengthDistribution(graph);
         setUpBinding();
     }
 
     private void setUpBinding() {
 
+        if (presenter.getGcContentReady()) {
+            viewPlot.getColoringGCcontentRadioButton().setDisable(false);
+            viewPlot.getColoringCoverageRadioButton().setDisable(false);
+        }
+        if (presenter.getTaxonomyFileLoaded()) {
+            viewPlot.getColoringTaxonomyRadioButton().setDisable(false);
+        }
+
+
         viewPlot.getNodeSizeManualSliderPlot().disableProperty().bind(viewPlot.getNodeSizeManualRadioButtonPlot().selectedProperty().not());
 
         viewPlot.getNodeSizeManualSliderPlot().setOnMouseReleased(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
+                coloringMethode = coloringDecision();
                 try {
-                    plotCoverageGC(Math.log(viewPlot.getNodeSizeManualSliderPlot().getValue()), viewPlot.getTabGcCoverage(), model.getGraph(), generalBool);
+                    plotCoverageGC(Math.log(viewPlot.getNodeSizeManualSliderPlot().getValue()), viewPlot.getTabGcCoverage(), model.getGraph(), coloringMethode);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -61,8 +66,9 @@ public class PresenterPlot {
         viewPlot.getNodeSizeDefaultRadioButtonPlot().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                coloringMethode = coloringDecision();
                 try {
-                    plotCoverageGC(2.0, viewPlot.getTabGcCoverage(), model.getGraph(), generalBool);
+                    plotCoverageGC(2.0, viewPlot.getTabGcCoverage(), model.getGraph(), coloringMethode);
                     viewPlot.getNodeSizeManualSliderPlot().setValue(5.0);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -73,9 +79,9 @@ public class PresenterPlot {
         viewPlot.getColoringTaxonomyRadioButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                taxonomyChosen = true;
+                coloringMethode = coloringDecision();
                 try {
-                    plotCoverageGC(2.0, viewPlot.getTabGcCoverage(), model.getGraph(), taxonomyChosen);
+                    plotCoverageGC(2.0, viewPlot.getTabGcCoverage(), model.getGraph(), coloringMethode);
                     viewPlot.getNodeSizeManualSliderPlot().setValue(5.0);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -86,9 +92,35 @@ public class PresenterPlot {
         viewPlot.getColoringDefaultRadioButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                taxonomyChosen = false;
+                coloringMethode = coloringDecision();
                 try {
-                    plotCoverageGC(2.0, viewPlot.getTabGcCoverage(), model.getGraph(), taxonomyChosen);
+                    plotCoverageGC(2.0, viewPlot.getTabGcCoverage(), model.getGraph(), coloringMethode);
+                    viewPlot.getNodeSizeManualSliderPlot().setValue(5.0);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        viewPlot.getColoringGCcontentRadioButton().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                coloringMethode = coloringDecision();
+                try {
+                    plotCoverageGC(2.0, viewPlot.getTabGcCoverage(), model.getGraph(), coloringMethode);
+                    viewPlot.getNodeSizeManualSliderPlot().setValue(5.0);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        viewPlot.getColoringCoverageRadioButton().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                coloringMethode = coloringDecision();
+                try {
+                    plotCoverageGC(2.0, viewPlot.getTabGcCoverage(), model.getGraph(), coloringMethode);
                     viewPlot.getNodeSizeManualSliderPlot().setValue(5.0);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -98,7 +130,7 @@ public class PresenterPlot {
     }
 
     // Method to plot Coverage and GC-content of the contigs in the graph
-    public void plotCoverageGC(double circleSize, Tab tab, UndirectedSparseGraph<MyVertex,MyEdge> graph, Boolean coloringBool) throws IOException {
+    public void plotCoverageGC(double circleSize, Tab tab, UndirectedSparseGraph<MyVertex,MyEdge> graph, String coloringMethode) throws IOException {
         double coverage;
         double gc;
         int taxID;
@@ -132,7 +164,7 @@ public class PresenterPlot {
         sChart.getData().add(series);
         viewPlot.setGcPlot(sChart, tab);
 
-        if (!coloringBool) {
+        if (coloringMethode.equals("default")) {
             for (XYChart.Series<Number, Number> s : sChart.getData()) {
                 for (XYChart.Data<Number, Number> d : s.getData()) {
                     Tooltip.install(d.getNode(), new Tooltip((String)d.getExtraValue()+"\n"
@@ -144,7 +176,7 @@ public class PresenterPlot {
                 }
             }
         }
-        else if (coloringBool) {
+        else if (coloringMethode.equals("tax")) {
             Map<Integer, String> taxIDRGBCode = presenter.getTaxIDRGBCode();
             for (XYChart.Series<Number, Number> s : sChart.getData()) {
                 for (XYChart.Data<Number, Number> d : s.getData()) {
@@ -164,8 +196,63 @@ public class PresenterPlot {
                 }
             }
         }
-        if (presenter.getTaxonomyFileLoaded()) {
-            viewPlot.getColoringTaxonomyRadioButton().setDisable(false);
+        else if (coloringMethode.equals("gc")) {
+            Map<Object, Double> gcContent = presenter.getGCContent();
+            for (XYChart.Series<Number, Number> s : sChart.getData()) {
+                for (XYChart.Data<Number, Number> d : s.getData()) {
+                    Tooltip.install(d.getNode(), new Tooltip((String)d.getExtraValue()+"\n"
+                            + "x: " + String.format("%.3g%n",d.getXValue())
+                            + "y: " + Math.round((Double) d.getYValue())));
+                    d.getNode().setScaleY(circleSize);
+                    d.getNode().setScaleX(circleSize);
+                    String vertexIDActualString = ((String) d.getExtraValue()).split("-")[0];
+
+                    System.out.println(vertexIDActualString);
+
+                    if (!vertexIDActualString.isEmpty()) {
+                        for (Object i : gcContent.keySet()) {
+                            if ((vertexIDActualString).equals(i)) {
+                                if (gcContent.get(i) < 0.5) {
+                                    Double C = gcContent.get(i) * (1 - gcContent.get(i));
+                                    Double m = gcContent.get(i) - C;
+                                    Double X = C * (1 - (Math.abs((120 / 60) % 2 - 1)));
+                                    String colorCode = "rgb(" + ((X + m) * 255) + "," + ((C + m) * 255) + "," + ((0 + m) * 255) + ");";
+                                    d.getNode().setStyle("-fx-background-color: #860061, " + colorCode);
+                                }
+                                else if (gcContent.get(i) >= 0.5) {
+                                    Double C = (0.49 + gcContent.get(i)) * gcContent.get(i);
+                                    Double m = (0.49 + gcContent.get(i)) - C;
+                                    Double X = C * (1 - (Math.abs((120 / 60) % 2 - 1)));
+                                    String colorCode = "rgb(" + ((C + m) * 255) + "," + ((X + m) * 255) + "," + ((0 + m) * 255) + ");";
+                                    d.getNode().setStyle("-fx-background-color: #860061, " + colorCode);
+                                }
+                            }
+                        }
+//                        if ((vertexIDActualString).equals())
+
+
+//                        String rgb = taxIDRGBCode.get(Integer.parseInt(vertexIDActualString));
+//                        String[] rgbCodes = rgb.split("t");
+//                        String colorCode = "rgb(" + rgbCodes[0] + "," + rgbCodes[1] + "," + rgbCodes[2] + ");";
+//                        d.getNode().setStyle("-fx-background-color: #860061, " + colorCode);
+                    }
+                }
+            }
+//                        for (MyVertex v : currentGraph.getVertices()) {
+//                            for (Object i : gcContent.keySet()) {
+//                                if (v.getID().equals(i)) {
+//                                    if (gcContent.get(i) < 0.5) {
+//                                        currentViewVertices.get(v.getID()).setColour(Color.hsb(120, 1 - gcContent.get(i), 0.49 + gcContent.get(i)));
+//                                    } else if (gcContent.get(i) >= 0.5) {
+//                                        currentViewVertices.get(v.getID()).setColour(Color.hsb(0, gcContent.get(i), 1));
+//                                    }
+//                                }
+//                            }
+//                        }
+//                        createLegendGCcontent(1.0);
+//                    }
+//                }
+//            });
         }
     }
 
@@ -199,5 +286,24 @@ public class PresenterPlot {
         //bc.getData().add(series);
 
         viewPlot.setCDPlot(bc, viewPlot.getTabContigLengthDistribution());
+    }
+
+    public String coloringDecision () {
+        if (viewPlot.getColoringTaxonomyRadioButton().isSelected()) {
+            coloringMethode = "tax";
+        }
+        else if (viewPlot.getColoringDefaultRadioButton().isSelected()) {
+            coloringMethode = "default";
+        }
+        else if (viewPlot.getColoringGCcontentRadioButton().isSelected()) {
+            coloringMethode = "gc";
+        }
+        else if (viewPlot.getColoringCoverageRadioButton().isSelected()) {
+            coloringMethode = "cov";
+        }
+
+        System.out.println(coloringMethode);
+
+        return coloringMethode;
     }
 }
