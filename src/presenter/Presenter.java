@@ -61,8 +61,6 @@ public class Presenter {
     UndirectedSparseGraph<MyVertex, MyEdge> currentGraph;
     Map<String, ViewVertex> currentViewVertices;
     Boolean rankBool = false, taxonomyBool = false, gcBool = false, coverageBool = false;
-    boolean pushTestJonas;
-
 
     public Presenter(Model model, View view) {
         this.model = model;
