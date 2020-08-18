@@ -522,19 +522,7 @@ public class Presenter {
                     LegendItem legendItem60 = new LegendItem(new Circle(5,Color.hsb(0, 0.6, 1, view.getColoringTransparencySlider().getValue())), "0.60");
                     LegendItem legendItem75 = new LegendItem(new Circle(5,Color.hsb(0, 0.75, 1, view.getColoringTransparencySlider().getValue())), "0.75");
                     LegendItem legendItem100 = new LegendItem(new Circle(5,Color.hsb(0, 1, 1, view.getColoringTransparencySlider().getValue())), "1.00");
-                    view.getLegendItems().add(legendItem0);
-                    view.getLegendItems().add(legendItem25);
-                    view.getLegendItems().add(legendItem40);
-                    view.getLegendItems().add(legendItem50);
-                    view.getLegendItems().add(legendItem60);
-                    view.getLegendItems().add(legendItem75);
-                    view.getLegendItems().add(legendItem100);
-                    view.updateLabelCol("GC content");
-                    view.getShowLegendMenuItem().setDisable(false);
-                    if (view.getShowLegendMenuItem().isSelected()) {
-                        view.getLegendTableView().setPrefWidth(120);
-                        view.getLabelCol().setPrefWidth(100);
-                    }
+                    addToLegendAndAdjust(legendItem0, legendItem25, legendItem40, legendItem50, legendItem60, legendItem75, legendItem100);
                 }
 
             }
@@ -684,22 +672,7 @@ public class Presenter {
                             }
                         }
                     }
-                    LegendItem legendItem0 = new LegendItem(new Circle(5, Color.hsb(120, 1, 0.49 + 0)), Integer.toString((int) model.getLowestCoverage()) + " (minimum)");
-                    LegendItem legendItem25 = new LegendItem(new Circle(5, Color.hsb(120, 1 - 0.25, 0.49 + 0.25)), Integer.toString((int) calcCovFromPercentage(0.25)));
-                    LegendItem legendItem50 = new LegendItem(new Circle(5, Color.hsb(0, 0.5, 1)), Integer.toString((int) calcCovFromPercentage(0.5)));
-                    LegendItem legendItem75 = new LegendItem(new Circle(5, Color.hsb(0, 0.75, 1)), Integer.toString((int) calcCovFromPercentage(0.75)));
-                    LegendItem legendItem100 = new LegendItem(new Circle(5, Color.hsb(0, 1, 1)), Integer.toString((int) model.getHighestCoverage()) + " (maximum)");
-                    view.getLegendItems().add(legendItem0);
-                    view.getLegendItems().add(legendItem25);
-                    view.getLegendItems().add(legendItem50);
-                    view.getLegendItems().add(legendItem75);
-                    view.getLegendItems().add(legendItem100);
-                    view.updateLabelCol("Coverage");
-                    view.getShowLegendMenuItem().setDisable(false);
-                    if (view.getShowLegendMenuItem().isSelected()) {
-                        view.getLegendTableView().setPrefWidth(120);
-                        view.getLabelCol().setPrefWidth(100);
-                    }
+                    createLegendCoverage();
                 }
                 coverage = true;
             }
@@ -726,26 +699,7 @@ public class Presenter {
                             }
                         }
                     }
-                    LegendItem legendItem0 = new LegendItem(new Circle(5,Color.hsb(120, 1, 0.49 + 0)), "0.00");
-                    LegendItem legendItem25 = new LegendItem(new Circle(5,Color.hsb(120, 1 - 0.25, 0.49 + 0.25)), "0.25");
-                    LegendItem legendItem40 = new LegendItem(new Circle(5,Color.hsb(120, 1 - 0.4, 0.49 + 0.4)), "0.40");
-                    LegendItem legendItem50 = new LegendItem(new Circle(5,Color.hsb(0, 0.5, 1)), "0.50");
-                    LegendItem legendItem60 = new LegendItem(new Circle(5,Color.hsb(0, 0.6, 1)), "0.60");
-                    LegendItem legendItem75 = new LegendItem(new Circle(5,Color.hsb(0, 0.75, 1)), "0.75");
-                    LegendItem legendItem100 = new LegendItem(new Circle(5,Color.hsb(0, 1, 1)), "1.00");
-                    view.getLegendItems().add(legendItem0);
-                    view.getLegendItems().add(legendItem25);
-                    view.getLegendItems().add(legendItem40);
-                    view.getLegendItems().add(legendItem50);
-                    view.getLegendItems().add(legendItem60);
-                    view.getLegendItems().add(legendItem75);
-                    view.getLegendItems().add(legendItem100);
-                    view.updateLabelCol("GC content");
-                    view.getShowLegendMenuItem().setDisable(false);
-                    if (view.getShowLegendMenuItem().isSelected()) {
-                        view.getLegendTableView().setPrefWidth(120);
-                        view.getLabelCol().setPrefWidth(100);
-                    }
+                    createLegendGCcontent();
                 }
                 gcContentBool = true;
             }
@@ -1127,6 +1081,39 @@ public class Presenter {
 
     public double calcCovFromPercentage(double percentRelativeCoverage) {
         return model.getLowestCoverage() + (percentRelativeCoverage * (model.getHighestCoverage() - model.getLowestCoverage()));
+    }
+
+    public void createLegendGCcontent() {
+        view.updateLabelCol("GC content");
+        LegendItem legendItem0 = new LegendItem(new Circle(5,Color.hsb(120, 1, 0.49 + 0)), "0.00");
+        LegendItem legendItem25 = new LegendItem(new Circle(5,Color.hsb(120, 1 - 0.25, 0.49 + 0.25)), "0.25");
+        LegendItem legendItem40 = new LegendItem(new Circle(5,Color.hsb(120, 1 - 0.4, 0.49 + 0.4)), "0.40");
+        LegendItem legendItem50 = new LegendItem(new Circle(5,Color.hsb(0, 0.5, 1)), "0.50");
+        LegendItem legendItem60 = new LegendItem(new Circle(5,Color.hsb(0, 0.6, 1)), "0.60");
+        LegendItem legendItem75 = new LegendItem(new Circle(5,Color.hsb(0, 0.75, 1)), "0.75");
+        LegendItem legendItem100 = new LegendItem(new Circle(5,Color.hsb(0, 1, 1)), "1.00");
+        addToLegendAndAdjust(legendItem0, legendItem25, legendItem40, legendItem50, legendItem60, legendItem75, legendItem100);
+    }
+
+    public void createLegendCoverage(){
+        view.updateLabelCol("Coverage");
+        LegendItem legendItem0 = new LegendItem(new Circle(5, Color.hsb(120, 1, 0.49 + 0)), Integer.toString((int) model.getLowestCoverage()) + " (minimum)");
+        LegendItem legendItem25 = new LegendItem(new Circle(5, Color.hsb(120, 1 - 0.25, 0.49 + 0.25)), Integer.toString((int) calcCovFromPercentage(0.25)));
+        LegendItem legendItem50 = new LegendItem(new Circle(5, Color.hsb(0, 0.5, 1)), Integer.toString((int) calcCovFromPercentage(0.5)));
+        LegendItem legendItem75 = new LegendItem(new Circle(5, Color.hsb(0, 0.75, 1)), Integer.toString((int) calcCovFromPercentage(0.75)));
+        LegendItem legendItem100 = new LegendItem(new Circle(5, Color.hsb(0, 1, 1)), Integer.toString((int) model.getHighestCoverage()) + " (maximum)");
+        addToLegendAndAdjust(legendItem0,legendItem25,legendItem50,legendItem75,legendItem100);
+    }
+
+    private void addToLegendAndAdjust(LegendItem... legendItems) {
+        for(LegendItem li : legendItems) {
+            view.getLegendItems().add(li);
+        }
+        view.getShowLegendMenuItem().setDisable(false);
+        if (view.getShowLegendMenuItem().isSelected()) {
+            view.getLegendTableView().setPrefWidth(120);
+            view.getLabelCol().setPrefWidth(100);
+        }
     }
 }
 
