@@ -10,12 +10,14 @@ import javafx.scene.chart.*;
 import javafx.scene.control.Tab;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
 import model.Model;
 import model.graph.MyEdge;
 import model.graph.MyVertex;
 import model.io.ContigProperty;
 import model.io.Node;
 import view.ViewPlot;
+import view.ViewVertex;
 
 import java.io.IOException;
 import java.util.Map;
@@ -42,10 +44,12 @@ public class PresenterPlot {
 
         if (presenter.getGcContentReady()) {
             viewPlot.getColoringGCcontentRadioButton().setDisable(false);
-            viewPlot.getColoringCoverageRadioButton().setDisable(false);
         }
         if (presenter.getTaxonomyFileLoaded()) {
             viewPlot.getColoringTaxonomyRadioButton().setDisable(false);
+        }
+        if (presenter.getCoverageReadyBool()) {
+            viewPlot.getColoringCoverageRadioButton().setDisable(false);
         }
 
 
@@ -207,8 +211,6 @@ public class PresenterPlot {
                     d.getNode().setScaleX(circleSize);
                     String vertexIDActualString = ((String) d.getExtraValue()).split("-")[0];
 
-                    System.out.println(vertexIDActualString);
-
                     if (!vertexIDActualString.isEmpty()) {
                         for (Object i : gcContent.keySet()) {
                             if ((vertexIDActualString).equals(i)) {
@@ -228,31 +230,44 @@ public class PresenterPlot {
                                 }
                             }
                         }
-//                        if ((vertexIDActualString).equals())
-
-
-//                        String rgb = taxIDRGBCode.get(Integer.parseInt(vertexIDActualString));
-//                        String[] rgbCodes = rgb.split("t");
-//                        String colorCode = "rgb(" + rgbCodes[0] + "," + rgbCodes[1] + "," + rgbCodes[2] + ");";
-//                        d.getNode().setStyle("-fx-background-color: #860061, " + colorCode);
                     }
                 }
             }
-//                        for (MyVertex v : currentGraph.getVertices()) {
-//                            for (Object i : gcContent.keySet()) {
-//                                if (v.getID().equals(i)) {
-//                                    if (gcContent.get(i) < 0.5) {
-//                                        currentViewVertices.get(v.getID()).setColour(Color.hsb(120, 1 - gcContent.get(i), 0.49 + gcContent.get(i)));
-//                                    } else if (gcContent.get(i) >= 0.5) {
-//                                        currentViewVertices.get(v.getID()).setColour(Color.hsb(0, gcContent.get(i), 1));
-//                                    }
-//                                }
-//                            }
-//                        }
-//                        createLegendGCcontent(1.0);
-//                    }
-//                }
-//            });
+        }
+        else if (coloringMethode.equals("cov")) {
+            Map<Object, Double> coverageColor = presenter.getCoverageColor();
+
+            for (XYChart.Series<Number, Number> s : sChart.getData()) {
+                for (XYChart.Data<Number, Number> d : s.getData()) {
+                    Tooltip.install(d.getNode(), new Tooltip((String)d.getExtraValue()+"\n"
+                            + "x: " + String.format("%.3g%n",d.getXValue())
+                            + "y: " + Math.round((Double) d.getYValue())));
+                    d.getNode().setScaleY(circleSize);
+                    d.getNode().setScaleX(circleSize);
+                    String vertexIDActualString = ((String) d.getExtraValue()).split("-")[0];
+
+                    if (!vertexIDActualString.isEmpty()) {
+                        for (Object i : coverageColor.keySet()) {
+                            if ((vertexIDActualString).equals(i)) {
+                                if (coverageColor.get(i) < 0.5) {
+                                    Double C = coverageColor.get(i) * (1 - coverageColor.get(i));
+                                    Double m = coverageColor.get(i) - C;
+                                    Double X = C * (1 - (Math.abs((120 / 60) % 2 - 1)));
+                                    String colorCode = "rgb(" + ((X + m) * 255) + "," + ((C + m) * 255) + "," + ((0 + m) * 255) + ");";
+                                    d.getNode().setStyle("-fx-background-color: #860061, " + colorCode);
+                                }
+                                else if (coverageColor.get(i) >= 0.5) {
+                                    Double C = (0.49 + coverageColor.get(i)) * coverageColor.get(i);
+                                    Double m = (0.49 + coverageColor.get(i)) - C;
+                                    Double X = C * (1 - (Math.abs((120 / 60) % 2 - 1)));
+                                    String colorCode = "rgb(" + ((C + m) * 255) + "," + ((X + m) * 255) + "," + ((0 + m) * 255) + ");";
+                                    d.getNode().setStyle("-fx-background-color: #860061, " + colorCode);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
