@@ -875,6 +875,7 @@ public class Presenter {
         view.getInnerViewObjects().getChildren().clear();
         viewVertices = new HashMap<>();
         seleGraph = new UndirectedSparseGraph<>();
+        view.initNewScrollPane();
         view.removeAllFromInfoTable();
     }
 
