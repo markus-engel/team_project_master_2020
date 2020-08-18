@@ -54,8 +54,9 @@ public class Presenter {
     View view;
     Presenter self;
     private Map<Integer, String> taxIDRGBCode;
+    private Map<Object, Double> gcContent;
     Map<String, String> colorIndividualRank;
-    Map<Object, Double> gcContent, coverageColor;
+    Map<Object, Double> coverageColor;
     Map<String, List<String>> contigsOrderedByChosenRank;
     Map<String, ViewVertex> viewVertices = new HashMap<>();  //Hashmap of view vertex objects
     Map<String, ViewVertex> viewVerticesSelection = new HashMap<>();  //Hashmap of view vertex objects
@@ -66,7 +67,7 @@ public class Presenter {
     Map<String, ViewVertex> currentViewVertices;
     Boolean rankBool = false, taxonomyBool = false, gcBool = false, coverageBool = false;
     Map<String, Object> menuSettingsMain = new HashMap<>(); //hashMap holding colourGroup, OrderGroup, NodeGroup
-    private Boolean taxonomyFileLoaded = false;
+    private Boolean taxonomyFileLoaded = false, gcContentReady = false;
 
     public Presenter(Model model, View view) {
         this.model = model;
@@ -137,6 +138,8 @@ public class Presenter {
                         view.setOverlapCountTextField(model.getGraph().getEdgeCount());
                         view.getColoringGCcontentRadioButton().setDisable(false);
                         MenuItem recentFile = new MenuItem(f.getAbsolutePath());
+                        gcContent = model.heatmapColorsGCContent();
+                        gcContentReady = true;
                         if (!view.getOpenRecentFileMenu().getItems().contains(recentFile)){
                             setOpenRecentFileEventHandler(recentFile);
                             view.getOpenRecentFileMenu().getItems().add(recentFile);
@@ -692,7 +695,6 @@ public class Presenter {
                 determineCurrentTab();
                 if (!currentViewVertices.isEmpty()) {
                     view.getLegendItems().clear();
-                    gcContent = model.heatmapColorsGCContent();
                     for (MyVertex v : currentGraph.getVertices()) {
                         for (Object i : gcContent.keySet()) {
                             if (v.getID().equals(i)) {
@@ -1199,9 +1201,18 @@ public class Presenter {
         return taxIDRGBCode;
     }
 
+    public Map<Object, Double> getGCContent () {
+        return gcContent;
+    }
+
     public Boolean getTaxonomyFileLoaded () {
         return taxonomyFileLoaded;
     }
+
+    public Boolean getGcContentReady () {
+        return gcContentReady;
+    }
+
 
     public String createTooltip(ViewVertex viewVertex) {
         DecimalFormat df = new DecimalFormat("####0.000");
