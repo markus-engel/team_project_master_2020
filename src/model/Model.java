@@ -371,9 +371,11 @@ public class Model {
     }
 
     public int[] randomNumberColoring () {
+        int lowestValue = 30;
+        int highestValue = 230;
         int[] rgbNumbers = new int[3];
         for (int i = 1; i <= rgbNumbers.length; i ++) {
-            rgbNumbers[i - 1] = (int) (Math.random() * ((255 - 0) + 1));
+            rgbNumbers[i - 1] = (int) (lowestValue + Math.random() * ((highestValue - lowestValue) + 1));
         }
         return rgbNumbers;
     }

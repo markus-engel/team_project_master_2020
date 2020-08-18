@@ -49,9 +49,11 @@ import java.util.Map;
 public class Presenter {
     Model model;
     View view;
-    Map<Integer, String> taxIDRGBCode, colorIndividualRank;
+    Map<Integer, String> taxIDRGBCode;
+    Map<String, String> colorIndividualRank;
     Map<Object, Double> gcContent, coverageColor;
     Map<Integer, ArrayList<String>> rankMembers;
+    Map<String, List<String>> contigsOrderedByChosenRank;
     Map<String, ViewVertex> viewVertices = new HashMap<>();  //Hashmap of view vertex objects
     Map<String, ViewVertex> viewVerticesSelection = new HashMap<>();  //Hashmap of view vertex objects
     public final Dimension MAX_WINDOW_DIMENSION = new Dimension(775, 500); //gets passed to model to center layouts, gets passed to view to control size of window
@@ -340,7 +342,7 @@ public class Presenter {
                 determineCurrentTab();
                 view.getLegendItems().clear();
                 String chosenRank = view.getColoringRankChoiceBox().getValue();
-                Map<String, List<String>> contigsOrderedByChosenRank = new HashMap<>();
+                contigsOrderedByChosenRank = new HashMap<>();
                 for (MyVertex v : currentGraph.getVertices()) {
                     Node taxNode = (Node) v.getProperty(ContigProperty.TAXONOMY);
                     String ancestorNameOfChosenRank = taxNode.getAncestorName(chosenRank).toString();
@@ -353,7 +355,7 @@ public class Presenter {
                         contigsOrderedByChosenRank.get(ancestorNameOfChosenRank).add(v.getID());
                     }
                 }
-                Map<String, String> colorIndividualRank = model.createColorRank(contigsOrderedByChosenRank.keySet());
+                colorIndividualRank = model.createColorRank(contigsOrderedByChosenRank.keySet());
 
                 //reset colours to default
                 for (MyVertex v : currentGraph.getVertices()) {
@@ -417,29 +419,56 @@ public class Presenter {
                 determineCurrentTab();
 
                 if (rank) {
-                    for (Object i : rankMembers.keySet()) {
-                        ArrayList verticesCiontigID = rankMembers.get(i);
-                        String rgbCodeTotal = colorIndividualRank.get(i);
+                    view.getLegendItems().clear();
+                    for (MyVertex v : currentGraph.getVertices()) {
+                        currentViewVertices.get(v.getID()).setColour(Color.CYAN);
+                    }
+                    for (String group : contigsOrderedByChosenRank.keySet()) {
+                        String rgbCodeTotal = colorIndividualRank.get(group);
                         String[] rgbCodes = rgbCodeTotal.split("t");
-                        for (Object j : verticesCiontigID) {
-                            for (MyVertex v : currentGraph.getVertices()) {
-                                if (v.getID().equals(j)) {
-                                    currentViewVertices.get(v.getID()).setColour(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2]), view.getColoringTransparencySlider().getValue()));
-                                }
-                            }
+                        LegendItem legendItem = new LegendItem(new Circle(5, Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2]), view.getColoringTransparencySlider().getValue())), group);
+                        if (!view.getLegendItems().contains(legendItem)) {
+                            view.getLegendItems().add(legendItem);
                         }
+                        for (String contigID : contigsOrderedByChosenRank.get(group)) {
+                            currentViewVertices.get(contigID).setColour(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2]), view.getColoringTransparencySlider().getValue()));
+                        }
+                    }
+                    view.getShowLegendMenuItem().setDisable(false);
+                    if (view.getShowLegendMenuItem().isSelected()) {
+                        view.getLegendTableView().setPrefWidth(view.getLegendTableView().getMaxWidth());
+                        view.getLabelCol().setPrefWidth(210);
                     }
                 }
                 else if (taxonomy) {
+                    view.getLegendItems().clear();
                     for (MyVertex v : currentGraph.getVertices()) {
                         Node taxNode = (Node) v.getProperty(ContigProperty.TAXONOMY);
                         if (taxIDRGBCode.keySet().contains(taxNode.getId())) {
                             String rgb = taxIDRGBCode.get(taxNode.getId());
                             String[] rgbCodes = rgb.split("t");
-                            currentViewVertices.get(v.getID()).getCircle().setFill(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2]), view.getColoringTransparencySlider().getValue()));
+                            currentViewVertices.get(v.getID()).setColour(Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2]), view.getColoringTransparencySlider().getValue()));
+
+                            //updating legend
+                            LegendItem legendItem = new LegendItem(new Circle(5, Color.rgb(Integer.parseInt(rgbCodes[0]), Integer.parseInt(rgbCodes[1]), Integer.parseInt(rgbCodes[2]), view.getColoringTransparencySlider().getValue())), taxNode.getScientificName());
+                            if (!view.getLegendItems().contains(legendItem)) {
+                                view.getLegendItems().add(legendItem);
+                            }
                         } else if (taxNode.getId() == -100) {
-                            currentViewVertices.get(v.getID()).getCircle().setFill(Color.rgb(0, 255, 0));
+                            currentViewVertices.get(v.getID()).setColour(Color.rgb(0, 255, 0, view.getColoringTransparencySlider().getValue()));
                         }
+                        else if (taxNode.getId() == -100) {
+                            viewVertices.get(v.getID()).setColour(Color.rgb(0, 255, 0, view.getColoringTransparencySlider().getValue()));
+                            LegendItem legendItem = new LegendItem(new Circle(5,Color.rgb(0, 255, 0, view.getColoringTransparencySlider().getValue())), "not available");
+                            if (!view.getLegendItems().contains(legendItem)){
+                                view.getLegendItems().add(legendItem);
+                            }
+                        }
+                    }
+                    view.getShowLegendMenuItem().setDisable(false);
+                    if (view.getShowLegendMenuItem().isSelected()) {
+                        view.getLegendTableView().setPrefWidth(view.getLegendTableView().getMaxWidth());
+                        view.getLabelCol().setPrefWidth(210);
                     }
                 }
                 else if (coverage) {
