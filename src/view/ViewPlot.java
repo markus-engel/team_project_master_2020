@@ -40,6 +40,12 @@ public class ViewPlot {
     @FXML
     private RadioButton coloringDefaultRadioButton;
 
+    @FXML
+    private RadioButton coloringCoverageRadioButton;
+
+    @FXML
+    private RadioButton coloringGCcontentRadioButton;
+
 
     public TabPane getTabPanePlots() {
         return tabPanePlots;
@@ -83,6 +89,14 @@ public class ViewPlot {
 
     public RadioButton getColoringDefaultRadioButton () {
         return coloringDefaultRadioButton;
+    }
+
+    public RadioButton getColoringCoverageRadioButton () {
+        return coloringCoverageRadioButton;
+    }
+
+    public RadioButton getColoringGCcontentRadioButton () {
+        return coloringGCcontentRadioButton;
     }
 
     public void setTabSelection(Tab tabElse) {
