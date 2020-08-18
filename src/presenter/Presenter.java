@@ -61,6 +61,7 @@ public class Presenter {
     UndirectedSparseGraph<MyVertex, MyEdge> currentGraph;
     Map<String, ViewVertex> currentViewVertices;
     Boolean rankBool = false, taxonomyBool = false, gcBool = false, coverageBool = false;
+    boolean pushTestJonas;
 
 
     public Presenter(Model model, View view) {
@@ -913,7 +914,7 @@ public class Presenter {
             viewVertex.setSelected();
             updateSelectionGraph(viewVertex);
             view.getSelectionMenu().setDisable(false);
-            view.setSelectionTextfield(seleGraph.getVertexCount(),seleGraph.getEdgeCount(),0);
+            view.setSelectionTextField(countSelected);
         });
     }
 
@@ -925,7 +926,7 @@ public class Presenter {
                     System.out.println("addded test: " + viewVertex.getID());
                     seleGraph.addVertex(v);
                     countSelected += 1;
-                    view.setselectionTextfield(String.valueOf(countSelected));
+                    view.setSelectionTextField(countSelected);
                     view.addToInfoTable(v);
                     for(MyEdge edge : this.model.getGraph().getInEdges(v)){
                         if (seleGraph.containsVertex(edge.getFirst()) && seleGraph.containsVertex(edge.getSecond())) {
@@ -937,7 +938,7 @@ public class Presenter {
                     System.out.println("deleted test: " + viewVertex.getID());
                     seleGraph.removeVertex(v);
                     countSelected -= 1;
-                    view.setselectionTextfield(String.valueOf(countSelected));
+                    view.setSelectionTextField(countSelected);
                     view.removeFromInfoTable(v.getID());
                     for(MyEdge edge : this.model.getGraph().getInEdges(v)){
                         seleGraph.removeEdge(edge);
