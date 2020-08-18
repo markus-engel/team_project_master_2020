@@ -131,6 +131,95 @@ public class PresenterPlot {
                 }
             }
         });
+
+        if (presenter.getSelectionGraph().getVertexCount() != 0) {
+
+            viewPlot.getNodeSizeManualSliderPlot().disableProperty().bind(viewPlot.getNodeSizeManualRadioButtonPlot().selectedProperty().not());
+
+            viewPlot.getNodeSizeManualSliderPlot().setOnMouseReleased(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent mouseEvent) {
+                    coloringMethode = coloringDecision();
+                    try {
+                        plotCoverageGC(Math.log(viewPlot.getNodeSizeManualSliderPlot().getValue()), viewPlot.getTabSelection(), presenter.getSelectionGraph(), coloringMethode);
+                        plotCoverageGC(Math.log(viewPlot.getNodeSizeManualSliderPlot().getValue()), viewPlot.getTabGcCoverage(), model.getGraph(), coloringMethode);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            viewPlot.getNodeSizeDefaultRadioButtonPlot().setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent actionEvent) {
+                    coloringMethode = coloringDecision();
+                    try {
+                        plotCoverageGC(2.0, viewPlot.getTabSelection(), presenter.getSelectionGraph(), coloringMethode);
+                        plotCoverageGC(2.0, viewPlot.getTabGcCoverage(), model.getGraph(), coloringMethode);
+                        viewPlot.getNodeSizeManualSliderPlot().setValue(5.0);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            viewPlot.getColoringTaxonomyRadioButton().setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent actionEvent) {
+                    coloringMethode = coloringDecision();
+                    try {
+                        plotCoverageGC(2.0, viewPlot.getTabSelection(), presenter.getSelectionGraph(), coloringMethode);
+                        plotCoverageGC(2.0, viewPlot.getTabGcCoverage(), model.getGraph(), coloringMethode);
+                        viewPlot.getNodeSizeManualSliderPlot().setValue(5.0);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            viewPlot.getColoringDefaultRadioButton().setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent actionEvent) {
+                    coloringMethode = coloringDecision();
+                    try {
+                        plotCoverageGC(2.0, viewPlot.getTabSelection(), presenter.getSelectionGraph(), coloringMethode);
+                        plotCoverageGC(2.0, viewPlot.getTabGcCoverage(), model.getGraph(), coloringMethode);
+                        viewPlot.getNodeSizeManualSliderPlot().setValue(5.0);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            viewPlot.getColoringGCcontentRadioButton().setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent actionEvent) {
+                    coloringMethode = coloringDecision();
+                    try {
+                        plotCoverageGC(2.0, viewPlot.getTabSelection(), presenter.getSelectionGraph(), coloringMethode);
+                        plotCoverageGC(2.0, viewPlot.getTabGcCoverage(), model.getGraph(), coloringMethode);
+                        viewPlot.getNodeSizeManualSliderPlot().setValue(5.0);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            viewPlot.getColoringCoverageRadioButton().setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent actionEvent) {
+                    coloringMethode = coloringDecision();
+                    try {
+                        plotCoverageGC(2.0, viewPlot.getTabSelection(), presenter.getSelectionGraph(), coloringMethode);
+                        plotCoverageGC(2.0, viewPlot.getTabGcCoverage(), model.getGraph(), coloringMethode);
+                        viewPlot.getNodeSizeManualSliderPlot().setValue(5.0);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+
     }
 
     // Method to plot Coverage and GC-content of the contigs in the graph
@@ -222,9 +311,9 @@ public class PresenterPlot {
                                     d.getNode().setStyle("-fx-background-color: #860061, " + colorCode);
                                 }
                                 else if (gcContent.get(i) >= 0.5) {
-                                    Double C = (0.49 + gcContent.get(i)) * gcContent.get(i);
-                                    Double m = (0.49 + gcContent.get(i)) - C;
-                                    Double X = C * (1 - (Math.abs((120 / 60) % 2 - 1)));
+                                    Double C = 1 * gcContent.get(i);
+                                    Double m = 1 - C;
+                                    Double X = C * (1 - (Math.abs((0 / 60) % 2 - 1)));
                                     String colorCode = "rgb(" + ((C + m) * 255) + "," + ((X + m) * 255) + "," + ((0 + m) * 255) + ");";
                                     d.getNode().setStyle("-fx-background-color: #860061, " + colorCode);
                                 }
@@ -257,9 +346,9 @@ public class PresenterPlot {
                                     d.getNode().setStyle("-fx-background-color: #860061, " + colorCode);
                                 }
                                 else if (coverageColor.get(i) >= 0.5) {
-                                    Double C = (0.49 + coverageColor.get(i)) * coverageColor.get(i);
-                                    Double m = (0.49 + coverageColor.get(i)) - C;
-                                    Double X = C * (1 - (Math.abs((120 / 60) % 2 - 1)));
+                                    Double C = 1 * coverageColor.get(i);
+                                    Double m = 1 - C;
+                                    Double X = C * (1 - (Math.abs((0 / 60) % 2 - 1)));
                                     String colorCode = "rgb(" + ((C + m) * 255) + "," + ((X + m) * 255) + "," + ((0 + m) * 255) + ");";
                                     d.getNode().setStyle("-fx-background-color: #860061, " + colorCode);
                                 }
@@ -317,7 +406,7 @@ public class PresenterPlot {
             coloringMethode = "cov";
         }
 
-        System.out.println(coloringMethode);
+//        System.out.println(coloringMethode);
 
         return coloringMethode;
     }

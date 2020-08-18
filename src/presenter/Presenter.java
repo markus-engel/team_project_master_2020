@@ -61,7 +61,7 @@ public class Presenter {
     Map<String, ViewVertex> viewVertices = new HashMap<>();  //Hashmap of view vertex objects
     Map<String, ViewVertex> viewVerticesSelection = new HashMap<>();  //Hashmap of view vertex objects
     public final Dimension MAX_WINDOW_DIMENSION = new Dimension(775, 500); //gets passed to model to center layouts, gets passed to view to control size of window
-    UndirectedSparseGraph<MyVertex,MyEdge> seleGraph = new UndirectedSparseGraph<>();
+    private UndirectedSparseGraph<MyVertex,MyEdge> seleGraph = new UndirectedSparseGraph<>();
     IntegerProperty countSelected = new SimpleIntegerProperty();
     UndirectedSparseGraph<MyVertex, MyEdge> currentGraph;
     Map<String, ViewVertex> currentViewVertices;
@@ -1208,6 +1208,10 @@ public class Presenter {
 
     public Map<Object, Double> getCoverageColor () {
         return coverageColor;
+    }
+
+    public UndirectedSparseGraph<MyVertex, MyEdge> getSelectionGraph () {
+        return seleGraph;
     }
 
     public Boolean getTaxonomyFileLoaded () {
