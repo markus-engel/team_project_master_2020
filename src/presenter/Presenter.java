@@ -270,8 +270,7 @@ public class Presenter {
                 }
 
                 view.getLegendItems().clear();
-                taxIDRGBCode = model.createColor(model.getTaxaCount(), model.getTaxaID());
-
+                
                 for (MyVertex v : currentGraph.getVertices()) {
                     Node taxNode = (Node) v.getProperty(ContigProperty.TAXONOMY);
                     if (taxIDRGBCode.keySet().contains(taxNode.getId())) {
