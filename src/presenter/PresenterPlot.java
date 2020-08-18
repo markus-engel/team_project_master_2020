@@ -198,12 +198,8 @@ public class PresenterPlot {
         }
         else if (coloringMethode.equals("gc")) {
             Map<Object, Double> gcContent = presenter.getGCContent();
-            System.out.println(gcContent);
-            System.out.println("Test");
             for (XYChart.Series<Number, Number> s : sChart.getData()) {
-                System.out.println("test1");
                 for (XYChart.Data<Number, Number> d : s.getData()) {
-                    System.out.println("test2");
                     Tooltip.install(d.getNode(), new Tooltip((String)d.getExtraValue()+"\n"
                             + "x: " + String.format("%.3g%n",d.getXValue())
                             + "y: " + Math.round((Double) d.getYValue())));
