@@ -194,8 +194,8 @@ public class Presenter {
                     FXMLLoader loaderPlot = new FXMLLoader(getClass().getResource("../plot.fxml"));
                     Parent root = loaderPlot.load();
                     ViewPlot viewplot = loaderPlot.getController();
-                    PresenterPlot presenterPlot = new PresenterPlot(model, viewplot, viewplot.getTabGcCoverage(), model.getGraph(), self);
-                    PresenterPlot presenterPlotSele = new PresenterPlot(model, viewplot, viewplot.getTabSelection(), seleGraph, self);
+                    PresenterPlot presenterPlot = new PresenterPlot(model, viewplot, viewplot.getTabGcCoverage(), model.getGraph());
+                    PresenterPlot presenterPlotSele = new PresenterPlot(model, viewplot, viewplot.getTabSelection(), seleGraph);
                     plotWindow.setTitle("Plots");
                     plotWindow.setScene(new Scene(root));
                     plotWindow.initModality(Modality.APPLICATION_MODAL);
@@ -736,11 +736,13 @@ public class Presenter {
                 Task<Void> layoutApplyTask = new Task<Void>() {
                     @Override
                     protected Void call() {
+                        view.getProgressIndicator().setVisible(true);
                         model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), currentGraph, false);
                         return null;
                     }
                 };
                 layoutApplyTask.setOnSucceeded(e -> {
+                    view.getProgressIndicator().setVisible(false);
                     for (MyVertex mv : currentGraph.getVertices()) {
                         ViewVertex vv = currentViewVertices.get(mv.getID());
                         vv.animate(mv.getX(), mv.getY());
@@ -759,16 +761,17 @@ public class Presenter {
                 Task<Void> layoutApplyTask = new Task<Void>() {
                     @Override
                     protected Void call() {
+                        view.getProgressIndicator().setVisible(true);
                         model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), currentGraph, true);
                         return null;
                     }
                 };
                 layoutApplyTask.setOnSucceeded(e -> {
+                    view.getProgressIndicator().setVisible(false);
                     for (MyVertex mv : currentGraph.getVertices()) {
                         ViewVertex vv = currentViewVertices.get(mv.getID());
                         vv.animate(mv.getX(), mv.getY());
                     }
-                    System.out.println("new layout with order by contig length done");
                 });
                 Thread layoutApplyThread = new Thread(layoutApplyTask);
                 layoutApplyThread.setDaemon(true);
@@ -967,6 +970,7 @@ public class Presenter {
         Task<Void> layoutApplyTask = new Task<Void>() {
             @Override
             protected Void call() {
+                view.getProgressIndicator().setVisible(true);
                 button.setDisable(true);
                 model.setRepulsionMultiplier(view.getLayoutRepulsionMultiplierSpinnerValue());
                 model.setAttractionMultiplier(view.getLayoutAttractionMultiplierSpinnerValue());
@@ -980,6 +984,7 @@ public class Presenter {
                 vv.animate(mv.getX(), mv.getY());
             }
             button.setDisable(false);
+            view.getProgressIndicator().setVisible(false);
         });
         Thread layoutApplyThread = new Thread(layoutApplyTask);
         layoutApplyThread.setDaemon(true);
@@ -1040,7 +1045,6 @@ public class Presenter {
                     @Override
                     protected Void call() throws Exception {
                         model.parseGFA(menuItem.getText());
-                        view.getProgressIndicator().setVisible(false);
                         model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), model.getGraph(), view.getOrderByContigLengthRadioButton().isSelected());
                         return null;
                     }
@@ -1049,6 +1053,7 @@ public class Presenter {
                     visualizeGraph(model.getGraph(), view.getInnerViewObjects().getChildren(), view.getInnerViewObjects());
                     view.getScrollPane().setDisable(false);
                     view.makeScrollPaneZoomable(view.getScrollPane());
+                    view.getProgressIndicator().setVisible(false);
                 });
 
                 Thread parseGraphThread = new Thread(parseGraphTask);
