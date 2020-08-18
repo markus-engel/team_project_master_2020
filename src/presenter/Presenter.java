@@ -66,6 +66,7 @@ public class Presenter {
     Map<String, ViewVertex> currentViewVertices;
     Boolean rankBool = false, taxonomyBool = false, gcBool = false, coverageBool = false;
     Map<String, Object> menuSettingsMain = new HashMap<>(); //hashMap holding colourGroup, OrderGroup, NodeGroup
+    private Boolean taxonomyFileLoaded = false;
 
     public Presenter(Model model, View view) {
         this.model = model;
@@ -162,6 +163,7 @@ public class Presenter {
                     view.getColoringRankRadioButton().setDisable(false);
                     view.getColoringTransparencyRadioButton().setDisable(false);
                     updateSelectionInformation();
+                    taxonomyFileLoaded = true;
 
                     //calculate colour once for tax and rank
                     taxIDRGBCode = model.createColor(model.getTaxaID());
@@ -199,8 +201,8 @@ public class Presenter {
                     FXMLLoader loaderPlot = new FXMLLoader(getClass().getResource("../plot.fxml"));
                     Parent root = loaderPlot.load();
                     ViewPlot viewplot = loaderPlot.getController();
-                    PresenterPlot presenterPlot = new PresenterPlot(model, viewplot, viewplot.getTabGcCoverage(), model.getGraph(),self);
-                    PresenterPlot presenterPlotSele = new PresenterPlot(model, viewplot, viewplot.getTabSelection(), seleGraph,self);
+                    PresenterPlot presenterPlot = new PresenterPlot(model, viewplot, viewplot.getTabGcCoverage(), model.getGraph(), self);
+                    PresenterPlot presenterPlotSele = new PresenterPlot(model, viewplot, viewplot.getTabSelection(), seleGraph, self);
                     plotWindow.setTitle("Plots");
                     plotWindow.setScene(new Scene(root));
                     plotWindow.initModality(Modality.APPLICATION_MODAL);
@@ -1166,6 +1168,10 @@ public class Presenter {
     }
     public Map<Integer, String> getTaxIDRGBCode() {
         return taxIDRGBCode;
+    }
+
+    public Boolean getTaxonomyFileLoaded () {
+        return taxonomyFileLoaded;
     }
 
     public String createTooltip(ViewVertex viewVertex) {
