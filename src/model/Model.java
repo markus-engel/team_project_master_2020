@@ -351,7 +351,13 @@ public class Model {
         int highestValue = 230;
         int[] rgbNumbers = new int[3];
         for (int i = 1; i <= rgbNumbers.length; i ++) {
-            rgbNumbers[i - 1] = (int) (lowestValue + Math.random() * ((highestValue - lowestValue) + 1));
+            int temp = (int) (lowestValue + Math.random() * ((highestValue - lowestValue) + 1));
+            if (temp > 59 && temp < 76 || temp > 103 && temp < 117 || temp > 231 && temp < 245 ) {
+                temp = (int) (lowestValue + Math.random() * ((highestValue - lowestValue) + 1));
+            }
+            else {
+                rgbNumbers[i - 1] = temp;
+            }
         }
         return rgbNumbers;
     }
