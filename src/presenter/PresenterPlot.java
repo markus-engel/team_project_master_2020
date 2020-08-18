@@ -26,7 +26,7 @@ public class PresenterPlot {
     Model model;
     ViewPlot viewPlot;
 
-    public PresenterPlot(Model model, ViewPlot viewPlot, Tab tab,UndirectedSparseGraph<MyVertex,MyEdge> graph) throws IOException {
+    public PresenterPlot(Model model, ViewPlot viewPlot, Tab tab,UndirectedSparseGraph<MyVertex,MyEdge> graph, Presenter presenter) throws IOException {
         this.model = model;
         this.viewPlot = viewPlot;
         plotCoverageGC(2.0, tab, graph);
