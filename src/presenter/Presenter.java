@@ -15,6 +15,7 @@ import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
+import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
@@ -61,6 +62,7 @@ public class Presenter {
     UndirectedSparseGraph<MyVertex, MyEdge> currentGraph;
     Map<String, ViewVertex> currentViewVertices;
     Boolean rankBool = false, taxonomyBool = false, gcBool = false, coverageBool = false;
+    Map<String, Object> menuSettingsMain = new HashMap<>(); //hashMap holding colourGroup, OrderGroup, NodeGroup
 
 
     public Presenter(Model model, View view) {
@@ -247,13 +249,24 @@ public class Presenter {
         view.getTabSelection().setOnSelectionChanged(new EventHandler<Event>() {
             @Override
             public void handle(Event event) {
+
                 resetTab();
                 if (view.getTabSelection().isSelected()) {
+                    saveMenuSettingsMain();
                     System.out.println("Selection tab recognized");
                     model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), seleGraph, view.getOrderByContigLengthRadioButton().isSelected());
                     visualizeSelectionGraph(seleGraph, view.getInnerViewObjectsSele().getChildren(), view.getInnerViewObjectsSele());
                     view.getScrollPaneSele().setDisable(false);
                     view.makeScrollPaneZoomable(view.getScrollPaneSele());
+                }
+            }
+        });
+
+        view.getTabMain().setOnSelectionChanged(new EventHandler<Event>() {
+            @Override
+            public void handle(Event event) {
+                if (view.getTabMain().isSelected()) {
+                    setMenuSettingsMain();
                 }
             }
         });
@@ -270,7 +283,6 @@ public class Presenter {
                 }
 
                 view.getLegendItems().clear();
-                taxIDRGBCode = model.createColor(model.getTaxaCount(), model.getTaxaID());
 
                 for (MyVertex v : currentGraph.getVertices()) {
                     Node taxNode = (Node) v.getProperty(ContigProperty.TAXONOMY);
@@ -386,9 +398,9 @@ public class Presenter {
             public void handle(ActionEvent actionEvent) {
                 determineCurrentTab();
                 //Updates Legend on the side.
-                view.getShowLegendMenuItem().setDisable(true);
                 view.getLegendItems().clear();
                 view.getLegendTableView().setPrefWidth(0);
+                view.getShowLegendMenuItem().setSelected(false);
                 for (MyVertex v : currentGraph.getVertices()) {
                     currentViewVertices.get(v.getID()).setColour(Color.CYAN);
                 }
@@ -456,7 +468,7 @@ public class Presenter {
                             currentViewVertices.get(v.getID()).setColour(Color.rgb(0, 255, 0, view.getColoringTransparencySlider().getValue()));
                         }
                         else if (taxNode.getId() == -100) {
-                            viewVertices.get(v.getID()).setColour(Color.rgb(0, 255, 0, view.getColoringTransparencySlider().getValue()));
+                            currentViewVertices.get(v.getID()).setColour(Color.rgb(0, 255, 0, view.getColoringTransparencySlider().getValue()));
                             LegendItem legendItem = new LegendItem(new Circle(5,Color.rgb(0, 255, 0, view.getColoringTransparencySlider().getValue())), "not available");
                             if (!view.getLegendItems().contains(legendItem)){
                                 view.getLegendItems().add(legendItem);
@@ -598,8 +610,9 @@ public class Presenter {
         view.getNodeSizeScaleChoiceBox().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                determineCurrentTab();
                 view.getNodeSizeGroup().selectToggle(view.getNodeSizeDefaultRadioButton());
-                if (!viewVertices.isEmpty()) for (ViewVertex vv : viewVertices.values()) {
+                if (!currentViewVertices.isEmpty()) for (ViewVertex vv : currentViewVertices.values()) {
                     vv.setSize(5);
                 }
                 view.getNodeSizeManualSlider().setValue(5);
@@ -609,12 +622,13 @@ public class Presenter {
         view.getNodeSizeCoverageRadioButton().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                if (!viewVertices.isEmpty()) {
+                determineCurrentTab();
+                if (!currentViewVertices.isEmpty()) {
                     double lowestCoverage = model.getLowestCoverage();
                     double highestCoverage = model.getHighestCoverage();
                     double range = highestCoverage - lowestCoverage;
                     for (MyVertex v : model.getGraph().getVertices()) {
-                        ViewVertex vv = viewVertices.get(v.getID());
+                        ViewVertex vv = currentViewVertices.get(v.getID());
                         double relativeCoverage = ((double) v.getProperty(ContigProperty.COVERAGE) - lowestCoverage) / range;
                         if (view.getNodeSizeScaleChoiceBox().getValue().equals("linear scale")) {
                             vv.setSize(2 + (6 * relativeCoverage));
@@ -635,7 +649,7 @@ public class Presenter {
                     gcBool = false; taxonomyBool = false; rankBool = false;
                 }
                 determineCurrentTab();
-                if (!viewVertices.isEmpty()) {
+                if (!currentViewVertices.isEmpty()) {
                     view.getLegendItems().clear();
                     coverageColor = model.heatmapColorsCovarge();
                     for (ViewVertex v : currentViewVertices.values()) {
@@ -1059,6 +1073,7 @@ public class Presenter {
     }
 
     public void createLegendGCcontent(Double transparencyValue) {
+        view.getShowLegendMenuItem().setDisable(false);
         view.updateLabelCol("GC content");
         LegendItem legendItem0 = new LegendItem(new Circle(5,Color.hsb(120, 1, 0.49 + 0, transparencyValue)), "0.00");
         LegendItem legendItem25 = new LegendItem(new Circle(5,Color.hsb(120, 1 - 0.25, 0.49 + 0.25, transparencyValue)), "0.25");
@@ -1071,6 +1086,7 @@ public class Presenter {
     }
 
     public void createLegendCoverage(Double transparencyValue){
+        view.getShowLegendMenuItem().setDisable(false);
         view.updateLabelCol("Coverage");
         LegendItem legendItem0 = new LegendItem(new Circle(5, Color.hsb(120, 1, 0.49 + 0, transparencyValue)), Integer.toString((int) model.getLowestCoverage()) + " (minimum)");
         LegendItem legendItem25 = new LegendItem(new Circle(5, Color.hsb(120, 1 - 0.25, 0.49 + 0.25, transparencyValue)), Integer.toString((int) calcCovFromPercentage(0.25)));
@@ -1089,6 +1105,50 @@ public class Presenter {
             view.getLegendTableView().setPrefWidth(120);
             view.getLabelCol().setPrefWidth(100);
         }
+    }
+
+    private void saveMenuSettingsMain(){
+        menuSettingsMain.put("ColorGroup", view.getColoringGroup().getSelectedToggle());
+        menuSettingsMain.put("OrderGroup", view.getOrderGroup().getSelectedToggle());
+        menuSettingsMain.put("NodeSizeGroup", view.getNodeSizeGroup().getSelectedToggle());
+
+
+        ObservableList<LegendItem> legendItems= FXCollections.observableArrayList();
+        for (LegendItem legendItem: view.getLegendItems()){
+            legendItems.add(new LegendItem(new Circle(legendItem.getCircle().getRadius(),legendItem.getCircle().getFill()), legendItem.getLabel()));
+        }
+        menuSettingsMain.put("LegendItems",legendItems);
+
+        menuSettingsMain.put("RankChoiceBox", view.getColoringRankChoiceBox().getValue());
+        menuSettingsMain.put("TransparencySlider", view.getColoringTransparencySlider().getValue());
+
+        menuSettingsMain.put("NodeSizeScaleChoiceBox", view.getNodeSizeScaleChoiceBox().getValue());
+        menuSettingsMain.put("NodeSizeSlider", view.getNodeSizeManualSlider().getValue());
+
+        //having trouble with repulsion and attraciton spinner..
+        //menuSettingsMain.put("RepulsionMultiplier", view.getLayoutRepulsionMultiplierSpinner().getValueFactory());
+        //menuSettingsMain.put("AttractionMultiplier", view.getLayoutAttractionMultiplierSpinnerValue());
+
+
+    }
+
+    private void setMenuSettingsMain(){
+        view.getColoringGroup().selectToggle((Toggle)menuSettingsMain.get("ColorGroup"));
+        view.getOrderGroup().selectToggle((Toggle)menuSettingsMain.get("OrderGroup"));
+        view.getNodeSizeGroup().selectToggle((Toggle)menuSettingsMain.get("NodeSizeGroup"));
+
+        view.getLegendItems().clear();
+        view.getLegendItems().addAll((ObservableList<LegendItem>) menuSettingsMain.get("LegendItems"));
+
+        view.getColoringRankChoiceBox().setValue((String) menuSettingsMain.get("RankChoiceBox"));
+        view.getColoringTransparencySlider().setValue((double) menuSettingsMain.get("TransparencySlider"));
+
+        view.getNodeSizeScaleChoiceBox().setValue((String) menuSettingsMain.get("NodeSizeScaleChoiceBox"));
+        view.getNodeSizeManualSlider().setValue((double) menuSettingsMain.get("NodeSizeSlider"));
+
+        //having trouble with repulsion/attraction spinner
+        //view.getLayoutRepulsionMultiplierSpinner().setValueFactory((SpinnerValueFactory)menuSettingsMain.get("RepulsionMultiplier"));
+        //view.getLayoutAttractionMultiplierSpinner().setValueFactory((SpinnerValueFactory)menuSettingsMain.get("AttractionMultiplier"));
     }
 }
 

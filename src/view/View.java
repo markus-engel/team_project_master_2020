@@ -79,6 +79,12 @@ public class View {
     private ToggleGroup nodeSizeGroup;
 
     @FXML
+    private ToggleGroup coloringGroup;
+
+    @FXML
+    private ToggleGroup orderGroup;
+
+    @FXML
     private ChoiceBox<String> nodeSizeScaleChoiceBox;
 
     @FXML
@@ -346,6 +352,14 @@ public class View {
         return nodeSizeGroup;
     }
 
+    public ToggleGroup getColoringGroup() {
+        return coloringGroup;
+    }
+
+    public ToggleGroup getOrderGroup(){
+        return orderGroup;
+    }
+
     public RadioButton getOrderByNodeNumbersRadioButton() {
         return orderByNodeNumbersRadioButton;
     }
@@ -461,6 +475,10 @@ public class View {
             legendItems = FXCollections.observableArrayList();
         }
         return legendItems;
+    }
+
+    public void setLegendItems(ObservableList<LegendItem> legendItems){
+        this.legendItems = legendItems;
     }
 
     public ObservableList<SelectedContig> getSelectedContigs() {
