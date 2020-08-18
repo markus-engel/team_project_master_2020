@@ -50,7 +50,8 @@ import java.util.Map;
 public class Presenter {
     Model model;
     View view;
-    Map<Integer, String> taxIDRGBCode;
+    Presenter self;
+    private Map<Integer, String> taxIDRGBCode;
     Map<String, String> colorIndividualRank;
     Map<Object, Double> gcContent, coverageColor;
     Map<String, List<String>> contigsOrderedByChosenRank;
@@ -66,6 +67,7 @@ public class Presenter {
     public Presenter(Model model, View view) {
         this.model = model;
         this.view = view;
+        this.self = this;
         setUpBindings();
     }
 
@@ -158,7 +160,7 @@ public class Presenter {
                     updateSelectionInformation();
 
                     //calculate colour once for tax and rank
-                    taxIDRGBCode = model.createColor(model.getTaxaCount(), model.getTaxaID());
+                    taxIDRGBCode = model.createColor(model.getTaxaID());
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -192,8 +194,8 @@ public class Presenter {
                     FXMLLoader loaderPlot = new FXMLLoader(getClass().getResource("../plot.fxml"));
                     Parent root = loaderPlot.load();
                     ViewPlot viewplot = loaderPlot.getController();
-                    PresenterPlot presenterPlot = new PresenterPlot(model, viewplot, viewplot.getTabGcCoverage(), model.getGraph());
-                    PresenterPlot presenterPlotSele = new PresenterPlot(model, viewplot, viewplot.getTabSelection(), seleGraph);
+                    PresenterPlot presenterPlot = new PresenterPlot(model, viewplot, viewplot.getTabGcCoverage(), model.getGraph(), self);
+                    PresenterPlot presenterPlotSele = new PresenterPlot(model, viewplot, viewplot.getTabSelection(), seleGraph, self);
                     plotWindow.setTitle("Plots");
                     plotWindow.setScene(new Scene(root));
                     plotWindow.initModality(Modality.APPLICATION_MODAL);
@@ -356,7 +358,7 @@ public class Presenter {
 
                 //reset colours to default
                 for (MyVertex v : currentGraph.getVertices()) {
-                    currentViewVertices.get(v.getID()).setColour(Color.CYAN);
+                    currentViewVertices.get(v.getID()).setColour(Color.rgb(67, 110, 238));
                 }
                 for (String group : contigsOrderedByChosenRank.keySet()) {
                     String rgbCodeTotal = colorIndividualRank.get(group);
@@ -387,7 +389,7 @@ public class Presenter {
                 view.getLegendItems().clear();
                 view.getLegendTableView().setPrefWidth(0);
                 for (MyVertex v : currentGraph.getVertices()) {
-                    currentViewVertices.get(v.getID()).setColour(Color.CYAN);
+                    currentViewVertices.get(v.getID()).setColour(Color.rgb(67, 110, 238));
                 }
             }
         });
@@ -415,7 +417,7 @@ public class Presenter {
                 if (rankBool) {
                     view.getLegendItems().clear();
                     for (MyVertex v : currentGraph.getVertices()) {
-                        currentViewVertices.get(v.getID()).setColour(Color.CYAN);
+                        currentViewVertices.get(v.getID()).setColour(Color.rgb(67, 110, 238));
                     }
                     for (String group : contigsOrderedByChosenRank.keySet()) {
                         String rgbCodeTotal = colorIndividualRank.get(group);
@@ -1098,6 +1100,10 @@ public class Presenter {
             view.getLegendTableView().setPrefWidth(120);
             view.getLabelCol().setPrefWidth(100);
         }
+    }
+
+    public Map<Integer, String> getTaxIDRGBCode() {
+        return taxIDRGBCode;
     }
 }
 
