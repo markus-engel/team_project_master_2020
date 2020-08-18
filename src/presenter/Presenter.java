@@ -132,6 +132,7 @@ public class Presenter {
                         view.getCustomizeMenuItem().setDisable(false);
                         view.getSelectAllMenuItem().setDisable(false);
                         view.getResetSelectionMenuItem().setDisable(false);
+                        view.getSelectionMenu().setDisable(false);
                         view.setSequenceCountTextField(model.getGraph().getVertexCount());
                         view.setOverlapCountTextField(model.getGraph().getEdgeCount());
                         view.getColoringGCcontentRadioButton().setDisable(false);
@@ -555,6 +556,31 @@ public class Presenter {
             @Override
             public void handle(ActionEvent actionEvent) {
                 resetSelection();
+            }
+        });
+
+        view.getSearchField().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                if(model.getGraph() == null){
+                    view.getSearchField().setText("");
+                } else {
+                    String input = view.getSearchField().getText();
+                    for(MyVertex mv : model.getGraph().getVertices()){
+                        if(input.equals(mv.getID())){
+                            ViewVertex vv = viewVertices.get(mv.getID());
+                            vv.setSelected();
+                            updateSelectionGraph(vv);
+                            break;
+                        }
+                        if (input.equals(model.getScientificTaxNames().get(mv.getProperty(ContigProperty.TAXONOMY)))) {
+                            ViewVertex vv = viewVertices.get(mv.getID());
+                            vv.setSelected();
+                            updateSelectionGraph(vv);
+                            break;
+                        }
+                    }
+                }
             }
         });
 
@@ -1014,8 +1040,8 @@ public class Presenter {
                 resetSelection();
                 view.initSelectionRectangle(0,0);
                 view.getSelectionRectangle().setStroke(Color.BLACK);
-                view.getSelectionRectangle().setTranslateX(event.getX());
-                view.getSelectionRectangle().setTranslateY(event.getY());
+                view.getSelectionRectangle().setTranslateX(event.getX()/ view.getScaleProperty());
+                view.getSelectionRectangle().setTranslateY(event.getY()/ view.getScaleProperty());
                 view.getInnerViewObjects().getChildren().add(view.getSelectionRectangle());
             }
         });

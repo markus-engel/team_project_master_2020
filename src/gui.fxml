@@ -246,7 +246,7 @@
                       </Menu>
                   </menus>
               </MenuBar>
-             <TextField fx:id="searchField" disable="true" prefHeight="29.0" prefWidth="273.0" promptText="Search" />
+             <TextField fx:id="searchField" prefHeight="29.0" prefWidth="273.0" promptText="Search" />
          </children>
       </HBox>
    </top>

@@ -146,6 +146,9 @@ public class View {
     private MenuBar menuBar;
 
     @FXML
+    private TextField searchField;
+
+    @FXML
     private Menu fileMenu;
 
     @FXML
@@ -496,6 +499,8 @@ public class View {
     public void removeFromInfoTable(String unselectedNodeId) {
         getSelectedContigs().removeIf(sc -> sc.getID().equals(unselectedNodeId));
     }
+
+    public TextField getSearchField(){ return searchField; }
 
     public void removeAllFromInfoTable() {
         getSelectedContigs().clear();
