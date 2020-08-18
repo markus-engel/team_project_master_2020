@@ -490,6 +490,8 @@ public class View {
         return scrollPane;
     }
 
+    public void initNewScrollPane() {scrollPane =  new ScrollPane();}
+
     public ScrollPane getScrollPaneSele() {
         return scrollPaneSele;
     }

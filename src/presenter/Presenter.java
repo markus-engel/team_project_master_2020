@@ -542,17 +542,7 @@ public class Presenter {
         view.getResetSelectionMenuItem().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-
-                //unselects all vertices
-                for (ViewVertex vv : viewVertices.values()) {
-                    if (vv.isSelected()) {
-                        vv.setSelected();
-                    }
-                }
-                seleGraph = new UndirectedSparseGraph<>();
-                viewVerticesSelection = new HashMap<>();
-                updateSelectionInformation();
-                resetTab();
+                resetSelection();
             }
         });
 
@@ -885,14 +875,25 @@ public class Presenter {
         view.getInnerViewObjects().getChildren().clear();
         viewVertices = new HashMap<>();
         seleGraph = new UndirectedSparseGraph<>();
+        view.initNewScrollPane();
         view.removeAllFromInfoTable();
     }
 
     private void resetTab(){
         view.getInnerViewObjectsSele().getChildren().clear();
-
     }
 
+    private void resetSelection (){
+        for (ViewVertex vv : viewVertices.values()) {
+            if (vv.isSelected()) {
+                vv.setSelected();
+            }
+        }
+        seleGraph = new UndirectedSparseGraph<>();
+        viewVerticesSelection = new HashMap<>();
+        updateSelectionInformation();
+        resetTab();
+    }
     /*
     private void makeTooltip(ViewVertex viewVertex) {
         Tooltip tp = new Tooltip(viewVertex.getID());
@@ -978,6 +979,7 @@ public class Presenter {
         view.getScrollPane().addEventFilter(MouseEvent.MOUSE_PRESSED,new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
+                resetSelection();
                 view.initSelectionRectangle(0,0);
                 view.getSelectionRectangle().setStroke(Color.BLACK);
                 view.getSelectionRectangle().setTranslateX(event.getX());
