@@ -10,14 +10,19 @@ import javafx.scene.chart.*;
 import javafx.scene.control.Tab;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import model.Model;
 import model.graph.MyEdge;
 import model.graph.MyVertex;
 import model.io.ContigProperty;
+import model.io.Node;
+import view.LegendItem;
 import view.ViewPlot;
 import view.ViewVertex;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -25,11 +30,15 @@ public class PresenterPlot {
 
     Model model;
     ViewPlot viewPlot;
+    Map<Integer, String> taxIDRGBCode;
+    Presenter presenter;
+    private Boolean taxonomyChosen = false, generalBool = false;
 
     public PresenterPlot(Model model, ViewPlot viewPlot, Tab tab,UndirectedSparseGraph<MyVertex,MyEdge> graph, Presenter presenter) throws IOException {
         this.model = model;
         this.viewPlot = viewPlot;
-        plotCoverageGC(2.0, tab, graph);
+        this.presenter = presenter;
+        plotCoverageGC(2.0, tab, graph, generalBool);
         plotContigLengthDistribution(graph);
         setUpBinding();
     }
@@ -42,7 +51,7 @@ public class PresenterPlot {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 try {
-                    plotCoverageGC(Math.log(viewPlot.getNodeSizeManualSliderPlot().getValue()), viewPlot.getTabGcCoverage(), model.getGraph());
+                    plotCoverageGC(Math.log(viewPlot.getNodeSizeManualSliderPlot().getValue()), viewPlot.getTabGcCoverage(), model.getGraph(), generalBool);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -53,7 +62,33 @@ public class PresenterPlot {
             @Override
             public void handle(ActionEvent actionEvent) {
                 try {
-                    plotCoverageGC(2.0, viewPlot.getTabGcCoverage(), model.getGraph());
+                    plotCoverageGC(2.0, viewPlot.getTabGcCoverage(), model.getGraph(), generalBool);
+                    viewPlot.getNodeSizeManualSliderPlot().setValue(5.0);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        viewPlot.getColoringTaxonomyRadioButton().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                taxonomyChosen = true;
+                try {
+                    plotCoverageGC(2.0, viewPlot.getTabGcCoverage(), model.getGraph(), taxonomyChosen);
+                    viewPlot.getNodeSizeManualSliderPlot().setValue(5.0);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        viewPlot.getColoringDefaultRadioButton().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                taxonomyChosen = false;
+                try {
+                    plotCoverageGC(2.0, viewPlot.getTabGcCoverage(), model.getGraph(), taxonomyChosen);
                     viewPlot.getNodeSizeManualSliderPlot().setValue(5.0);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -63,9 +98,10 @@ public class PresenterPlot {
     }
 
     // Method to plot Coverage and GC-content of the contigs in the graph
-    public void plotCoverageGC(double circleSize, Tab tab, UndirectedSparseGraph<MyVertex,MyEdge> graph) throws IOException {
+    public void plotCoverageGC(double circleSize, Tab tab, UndirectedSparseGraph<MyVertex,MyEdge> graph, Boolean coloringBool) throws IOException {
         double coverage;
         double gc;
+        int taxID;
         int maxCoverage = 0;
 
         for (MyVertex v : graph.getVertices()) {
@@ -88,21 +124,48 @@ public class PresenterPlot {
         for (MyVertex v : graph.getVertices()) {
             coverage = (double) v.getProperty(ContigProperty.COVERAGE);
             gc = (double) v.getProperty(ContigProperty.GC);
-            series.getData().add(new XYChart.Data<>(gc, coverage, v.getID()));
+            taxID = ((Node) v.getProperty(ContigProperty.TAXONOMY)).getId();
+            String id = v.getID() + "-" + taxID;
+            series.getData().add(new XYChart.Data<>(gc, coverage, id));
         }
 
         sChart.getData().add(series);
         viewPlot.setGcPlot(sChart, tab);
 
-        for (XYChart.Series<Number, Number> s : sChart.getData()) {
-            for (XYChart.Data<Number, Number> d : s.getData()) {
-                Tooltip.install(d.getNode(), new Tooltip((String)d.getExtraValue()+"\n"
-                        + "x: " + String.format("%.3g%n",d.getXValue())
-                        + "y: " + Math.round((Double) d.getYValue())));
-                d.getNode().setScaleY(circleSize);
-                d.getNode().setScaleX(circleSize);
-                d.getNode().setStyle("-fx-background-color: #860061, orange;");
+        if (!coloringBool) {
+            for (XYChart.Series<Number, Number> s : sChart.getData()) {
+                for (XYChart.Data<Number, Number> d : s.getData()) {
+                    Tooltip.install(d.getNode(), new Tooltip((String)d.getExtraValue()+"\n"
+                            + "x: " + String.format("%.3g%n",d.getXValue())
+                            + "y: " + Math.round((Double) d.getYValue())));
+                    d.getNode().setScaleY(circleSize);
+                    d.getNode().setScaleX(circleSize);
+                    d.getNode().setStyle("-fx-background-color: #860061, orange;");
+                }
             }
+        }
+        else if (coloringBool) {
+            Map<Integer, String> taxIDRGBCode = presenter.getTaxIDRGBCode();
+            for (XYChart.Series<Number, Number> s : sChart.getData()) {
+                for (XYChart.Data<Number, Number> d : s.getData()) {
+                    Tooltip.install(d.getNode(), new Tooltip((String)d.getExtraValue()+"\n"
+                            + "x: " + String.format("%.3g%n",d.getXValue())
+                            + "y: " + Math.round((Double) d.getYValue())));
+                    d.getNode().setScaleY(circleSize);
+                    d.getNode().setScaleX(circleSize);
+                    String taxIDActualString = ((String) d.getExtraValue()).split("-")[1];
+
+                    if (!taxIDActualString.isEmpty()) {
+                        String rgb = taxIDRGBCode.get(Integer.parseInt(taxIDActualString));
+                        String[] rgbCodes = rgb.split("t");
+                        String colorCode = "rgb(" + rgbCodes[0] + "," + rgbCodes[1] + "," + rgbCodes[2] + ");";
+                        d.getNode().setStyle("-fx-background-color: #860061, " + colorCode);
+                    }
+                }
+            }
+        }
+        if (presenter.getTaxonomyFileLoaded()) {
+            viewPlot.getColoringTaxonomyRadioButton().setDisable(false);
         }
     }
 
@@ -130,7 +193,7 @@ public class PresenterPlot {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         for(Map.Entry<Integer,Integer> entry : cls.entrySet()){
             series.getData().add(new XYChart.Data<String, Number>(String.valueOf(entry.getKey()), entry.getValue()));
-            System.out.printf(String.valueOf(entry.getKey()) + "  " + entry.getValue() + " ");
+//            System.out.printf(String.valueOf(entry.getKey()) + "  " + entry.getValue() + " ");
         }
 
         //bc.getData().add(series);

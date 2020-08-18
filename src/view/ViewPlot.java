@@ -34,6 +34,12 @@ public class ViewPlot {
     @FXML
     private RadioButton nodeSizeDefaultRadioButtonPlot;
 
+    @FXML
+    private RadioButton coloringTaxonomyRadioButton;
+
+    @FXML
+    private RadioButton coloringDefaultRadioButton;
+
 
     public TabPane getTabPanePlots() {
         return tabPanePlots;
@@ -69,6 +75,14 @@ public class ViewPlot {
 
     public RadioButton getNodeSizeDefaultRadioButtonPlot() {
         return nodeSizeDefaultRadioButtonPlot;
+    }
+
+    public RadioButton getColoringTaxonomyRadioButton () {
+        return coloringTaxonomyRadioButton;
+    }
+
+    public RadioButton getColoringDefaultRadioButton () {
+        return coloringDefaultRadioButton;
     }
 
     public void setTabSelection(Tab tabElse) {
