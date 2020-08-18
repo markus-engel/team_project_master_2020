@@ -43,6 +43,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.List;
 import java.util.HashMap;
@@ -154,6 +155,7 @@ public class Presenter {
                 File f = fc.showOpenDialog(null);
                 if (f != null) try {
                     model.parseTaxId(f.getAbsolutePath());
+                    for (ViewVertex vv : viewVertices.values()) Tooltip.install(vv, new Tooltip(createTooltip(vv)));
                     view.setTaxaCountTextField("Taxa: " + model.getTaxaCount());
                     view.getColoringTaxonomyRadioButton().setDisable(false);
 //                    view.getColoringTaxonomyChoiceBox().setDisable(false);
@@ -177,6 +179,7 @@ public class Presenter {
                 File f = fc.showOpenDialog(null);
                 if (f != null) try {
                     model.parseCoverage(f.getAbsolutePath());
+                    for (ViewVertex vv : viewVertices.values()) Tooltip.install(vv, new Tooltip(createTooltip(vv)));
                     view.getCoverageGCMenu().setDisable(false);
                     view.getNodeSizeCoverageRadioButton().setDisable(false);
                     view.getColoringCoverageRadioButton().setDisable(false);
@@ -298,9 +301,6 @@ public class Presenter {
                         }
                     } else if (taxNode.getId() == -100) {
                         currentViewVertices.get(v.getID()).setColour(Color.rgb(0, 255, 0));
-                    }
-                    else if (taxNode.getId() == -100) {
-                        viewVertices.get(v.getID()).setColour(Color.rgb(0, 255, 0));
                         LegendItem legendItem = new LegendItem(new Circle(5,Color.rgb(0, 255, 0)), "not available");
                         if (!view.getLegendItems().contains(legendItem)){
                             view.getLegendItems().add(legendItem);
@@ -464,9 +464,6 @@ public class Presenter {
                                 view.getLegendItems().add(legendItem);
                             }
                         } else if (taxNode.getId() == -100) {
-                            currentViewVertices.get(v.getID()).setColour(Color.rgb(0, 255, 0, view.getColoringTransparencySlider().getValue()));
-                        }
-                        else if (taxNode.getId() == -100) {
                             currentViewVertices.get(v.getID()).setColour(Color.rgb(0, 255, 0, view.getColoringTransparencySlider().getValue()));
                             LegendItem legendItem = new LegendItem(new Circle(5,Color.rgb(0, 255, 0, view.getColoringTransparencySlider().getValue())), "not available");
                             if (!view.getLegendItems().contains(legendItem)){
@@ -836,7 +833,7 @@ public class Presenter {
             viewVertices.put(v1.getID(), vv);
             makeDraggable(vv, innerObjects);
             makeSelectable(vv);
-            Tooltip.install(vv, new Tooltip(vv.getID()));
+            Tooltip.install(vv, new Tooltip(createTooltip(vv)));
         }
         // add view edges
         for (MyEdge edge : currentGraph.getEdges()) {
@@ -855,7 +852,7 @@ public class Presenter {
             viewVerticesSelection.put(v1.getID(), vv);
             makeDraggable(vv, innerObjects);
             makeSelectable(vv);
-            Tooltip.install(vv, new Tooltip(vv.getID()));
+            Tooltip.install(vv, new Tooltip(createTooltip(vv)));
         }
         // add view edges
         for (MyEdge edge : currentGraph.getEdges()) {
@@ -1169,6 +1166,26 @@ public class Presenter {
     }
     public Map<Integer, String> getTaxIDRGBCode() {
         return taxIDRGBCode;
+    }
+
+    public String createTooltip(ViewVertex viewVertex) {
+        DecimalFormat df = new DecimalFormat("####0.000");
+        for (MyVertex v : model.getGraph().getVertices()) {
+            if(v.getID().equals(viewVertex.getID())) {
+                String length = "\nLength: " + (int)Math.round((double)v.getProperty(ContigProperty.LENGTH)) + " bp";
+                String GC = "\nGC-content: " + df.format((double)v.getProperty(ContigProperty.GC));
+                String taxName = "";
+                if (v.getProperty(ContigProperty.TAXONOMY) instanceof Node) {
+                    taxName = "\n" + ((Node) v.getProperty(ContigProperty.TAXONOMY)).getScientificName();
+                }
+                String coverage = "";
+                if (v.getProperty(ContigProperty.COVERAGE) != "no entry") {
+                    coverage = "\nCoverage: " + df.format((double)v.getProperty(ContigProperty.COVERAGE));
+                }
+                return viewVertex.getID() + length + GC + coverage + taxName;
+            }
+        }
+        return "";
     }
 }
 
