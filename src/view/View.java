@@ -358,7 +358,7 @@ public class View {
         taxaCountTextfield.setText(String.valueOf(size));
     }
 
-    public void setselectionTextfield(String number){
+    public void setSelectionTextField(int number){
         selectionTextfield.setText("Selected: " + number);
     }
 
@@ -370,12 +370,6 @@ public class View {
     // Number of Edges
     public void setOverlapCountTextField(int overlapCount) {
         overlapCountTextField.setText("Overlaps: " + overlapCount);
-    }
-
-    public void setSelectionTextfield(int selectedSequenceCount, int selectedOverlapCount, int selectedTaxaCount) {
-        selectionTextfield.setText("Selected:  " + selectedSequenceCount + " sequences   "
-                + selectedOverlapCount + " overlaps   "
-                + selectedTaxaCount + " taxa");
     }
 
     public Group getViewObjects() {
