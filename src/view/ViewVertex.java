@@ -30,9 +30,24 @@ public class ViewVertex extends Group {
         this.selected = false;
         this.setTranslateX(x);
         this.setTranslateY(y);
-        circle.setFill(Color.CORAL);
-        circle.setStroke(Color.CORAL);
+        circle.setFill(Color.CYAN);
+        circle.setStroke(Color.CYAN);
         this.getChildren().add(circle);
+    }
+
+    public ViewVertex(String ID, int size, double x, double y, ViewVertex viewVertex){
+        this.ID = new SimpleStringProperty(ID);
+        this.circle = new Circle(0, 0, size);
+        this.selected = false;
+        this.setTranslateX(x);
+        this.setTranslateY(y);
+        circle.setFill(Color.CYAN);
+        circle.setStroke(Color.CYAN);
+        this.getChildren().add(circle);
+
+        this.circle.fillProperty().bind(viewVertex.getCircle().fillProperty());
+        this.circle.strokeProperty().bind(this.circle.fillProperty());
+        this.circle.radiusProperty().bind(viewVertex.getCircle().radiusProperty());
     }
 
     public Circle getCircle() {
@@ -64,6 +79,10 @@ public class ViewVertex extends Group {
     }
 
     public void setColour(Paint paint){
+
+            this.circle.fillProperty().unbind();
+            this.circle.strokeProperty().unbind();
+
             circle.setFill(paint);
             if (!isSelected()){
                 circle.setStroke(paint);
@@ -82,6 +101,7 @@ public class ViewVertex extends Group {
     }
 
     public void setSize(double size) {
+        this.circle.radiusProperty().unbind();
         this.circle.setRadius(size);
     }
 }
