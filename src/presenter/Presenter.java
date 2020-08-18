@@ -196,8 +196,8 @@ public class Presenter {
                     FXMLLoader loaderPlot = new FXMLLoader(getClass().getResource("../plot.fxml"));
                     Parent root = loaderPlot.load();
                     ViewPlot viewplot = loaderPlot.getController();
-                    PresenterPlot presenterPlot = new PresenterPlot(model, viewplot, viewplot.getTabGcCoverage(), model.getGraph());
-                    PresenterPlot presenterPlotSele = new PresenterPlot(model, viewplot, viewplot.getTabSelection(), seleGraph);
+                    PresenterPlot presenterPlot = new PresenterPlot(model, viewplot, viewplot.getTabGcCoverage(), model.getGraph(),self);
+                    PresenterPlot presenterPlotSele = new PresenterPlot(model, viewplot, viewplot.getTabSelection(), seleGraph,self);
                     plotWindow.setTitle("Plots");
                     plotWindow.setScene(new Scene(root));
                     plotWindow.initModality(Modality.APPLICATION_MODAL);
