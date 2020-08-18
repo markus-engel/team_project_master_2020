@@ -2,6 +2,8 @@
 package presenter;
 
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -37,7 +39,6 @@ import model.io.Node;
 import view.*;
 
 import javax.imageio.ImageIO;
-import javax.swing.text.IconView;
 import java.awt.*;
 import java.io.File;
 import java.io.FileWriter;
@@ -50,7 +51,8 @@ import java.util.Map;
 public class Presenter {
     Model model;
     View view;
-    Map<Integer, String> taxIDRGBCode;
+    Presenter self;
+    private Map<Integer, String> taxIDRGBCode;
     Map<String, String> colorIndividualRank;
     Map<Object, Double> gcContent, coverageColor;
     Map<String, List<String>> contigsOrderedByChosenRank;
@@ -58,16 +60,16 @@ public class Presenter {
     Map<String, ViewVertex> viewVerticesSelection = new HashMap<>();  //Hashmap of view vertex objects
     public final Dimension MAX_WINDOW_DIMENSION = new Dimension(775, 500); //gets passed to model to center layouts, gets passed to view to control size of window
     UndirectedSparseGraph<MyVertex,MyEdge> seleGraph = new UndirectedSparseGraph<>();
-    int countSelected = 0;
+    IntegerProperty countSelected = new SimpleIntegerProperty();
     UndirectedSparseGraph<MyVertex, MyEdge> currentGraph;
     Map<String, ViewVertex> currentViewVertices;
     Boolean rankBool = false, taxonomyBool = false, gcBool = false, coverageBool = false;
     Map<String, Object> menuSettingsMain = new HashMap<>(); //hashMap holding colourGroup, OrderGroup, NodeGroup
 
-
     public Presenter(Model model, View view) {
         this.model = model;
         this.view = view;
+        this.self = this;
         setUpBindings();
     }
 
@@ -160,9 +162,7 @@ public class Presenter {
                     updateSelectionInformation();
 
                     //calculate colour once for tax and rank
-                    taxIDRGBCode = model.createColor(model.getTaxaCount(), model.getTaxaID());
-
-
+                    taxIDRGBCode = model.createColor(model.getTaxaID());
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -196,8 +196,8 @@ public class Presenter {
                     FXMLLoader loaderPlot = new FXMLLoader(getClass().getResource("../plot.fxml"));
                     Parent root = loaderPlot.load();
                     ViewPlot viewplot = loaderPlot.getController();
-                    PresenterPlot presenterPlot = new PresenterPlot(model, viewplot, viewplot.getTabGcCoverage(), model.getGraph());
-                    PresenterPlot presenterPlotSele = new PresenterPlot(model, viewplot, viewplot.getTabSelection(), seleGraph);
+                    PresenterPlot presenterPlot = new PresenterPlot(model, viewplot, viewplot.getTabGcCoverage(), model.getGraph(), self);
+                    PresenterPlot presenterPlotSele = new PresenterPlot(model, viewplot, viewplot.getTabSelection(), seleGraph, self);
                     plotWindow.setTitle("Plots");
                     plotWindow.setScene(new Scene(root));
                     plotWindow.initModality(Modality.APPLICATION_MODAL);
@@ -371,7 +371,7 @@ public class Presenter {
 
                 //reset colours to default
                 for (MyVertex v : currentGraph.getVertices()) {
-                    currentViewVertices.get(v.getID()).setColour(Color.CYAN);
+                    currentViewVertices.get(v.getID()).setColour(Color.rgb(67, 110, 238));
                 }
                 for (String group : contigsOrderedByChosenRank.keySet()) {
                     String rgbCodeTotal = colorIndividualRank.get(group);
@@ -402,13 +402,12 @@ public class Presenter {
                 view.getLegendTableView().setPrefWidth(0);
                 view.getShowLegendMenuItem().setSelected(false);
                 for (MyVertex v : currentGraph.getVertices()) {
-                    currentViewVertices.get(v.getID()).setColour(Color.CYAN);
+                    currentViewVertices.get(v.getID()).setColour(Color.rgb(67, 110, 238));
                 }
             }
         });
 
         view.getHelpMenu().setOnAction(new EventHandler<ActionEvent>() {
-
             @Override
             public void handle(ActionEvent actionEvent) {
 
@@ -431,7 +430,7 @@ public class Presenter {
                 if (rankBool) {
                     view.getLegendItems().clear();
                     for (MyVertex v : currentGraph.getVertices()) {
-                        currentViewVertices.get(v.getID()).setColour(Color.CYAN);
+                        currentViewVertices.get(v.getID()).setColour(Color.rgb(67, 110, 238));
                     }
                     for (String group : contigsOrderedByChosenRank.keySet()) {
                         String rgbCodeTotal = colorIndividualRank.get(group);
@@ -556,17 +555,7 @@ public class Presenter {
         view.getResetSelectionMenuItem().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-
-                //unselects all vertices
-                for (ViewVertex vv : viewVertices.values()) {
-                    if (vv.isSelected()) {
-                        vv.setSelected();
-                    }
-                }
-                seleGraph = new UndirectedSparseGraph<>();
-                viewVerticesSelection = new HashMap<>();
-                updateSelectionInformation();
-                resetTab();
+                resetSelection();
             }
         });
 
@@ -820,6 +809,7 @@ public class Presenter {
             }
         });
 
+        countSelected.bind(view.getSelectedContigs().sizeProperty());
     }
 
     private void determineCurrentTab() {
@@ -901,14 +891,38 @@ public class Presenter {
         view.getInnerViewObjects().getChildren().clear();
         viewVertices = new HashMap<>();
         seleGraph = new UndirectedSparseGraph<>();
+        view.initNewScrollPane();
         view.removeAllFromInfoTable();
+        view.getShowLegendMenuItem().setDisable(true);
+        view.getLegendTableView().setPrefWidth(0);
+        view.getLegendItems().clear();
+        view.getImportTaxonomyMenuItem().setDisable(true);
+        view.getImportCoverageMenuItem().setDisable(true);
+        view.getNodeSizeDefaultRadioButton().setSelected(true);
+        view.getNodeSizeCoverageRadioButton().setDisable(true);
+        view.getColoringDefaultRadioButton().setSelected(true);
+        view.getColoringCoverageRadioButton().setDisable(true);
+        view.getColoringTaxonomyRadioButton().setDisable(true);
+        view.getColoringRankRadioButton().setDisable(true);
+        view.getOrderByNodeNumbersRadioButton().setSelected(true);
     }
 
     private void resetTab(){
         view.getInnerViewObjectsSele().getChildren().clear();
-
     }
 
+    private void resetSelection (){
+        for (ViewVertex vv : viewVertices.values()) {
+            if (vv.isSelected()) {
+                vv.setSelected();
+            }
+        }
+        seleGraph = new UndirectedSparseGraph<>();
+        viewVerticesSelection = new HashMap<>();
+        updateSelectionInformation();
+        view.setSelectionTextField(countSelected.intValue());
+        resetTab();
+    }
     /*
     private void makeTooltip(ViewVertex viewVertex) {
         Tooltip tp = new Tooltip(viewVertex.getID());
@@ -927,7 +941,7 @@ public class Presenter {
             viewVertex.setSelected();
             updateSelectionGraph(viewVertex);
             view.getSelectionMenu().setDisable(false);
-            view.setSelectionTextfield(seleGraph.getVertexCount(),seleGraph.getEdgeCount(),0);
+            view.setSelectionTextField(countSelected.intValue());
         });
     }
 
@@ -938,8 +952,6 @@ public class Presenter {
                 if (!seleGraph.containsVertex(v)) {
                     System.out.println("addded test: " + viewVertex.getID());
                     seleGraph.addVertex(v);
-                    countSelected += 1;
-                    view.setselectionTextfield(String.valueOf(countSelected));
                     view.addToInfoTable(v);
                     for(MyEdge edge : this.model.getGraph().getInEdges(v)){
                         if (seleGraph.containsVertex(edge.getFirst()) && seleGraph.containsVertex(edge.getSecond())) {
@@ -950,8 +962,6 @@ public class Presenter {
                 } else if (seleGraph.containsVertex(v)) {
                     System.out.println("deleted test: " + viewVertex.getID());
                     seleGraph.removeVertex(v);
-                    countSelected -= 1;
-                    view.setselectionTextfield(String.valueOf(countSelected));
                     view.removeFromInfoTable(v.getID());
                     for(MyEdge edge : this.model.getGraph().getInEdges(v)){
                         seleGraph.removeEdge(edge);
@@ -963,6 +973,7 @@ public class Presenter {
         //  seleGraph.removeEdge(edge);
         //}
         }
+        view.setSelectionTextField(countSelected.intValue());
     }
 
 
@@ -994,6 +1005,7 @@ public class Presenter {
         view.getScrollPane().addEventFilter(MouseEvent.MOUSE_PRESSED,new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
+                resetSelection();
                 view.initSelectionRectangle(0,0);
                 view.getSelectionRectangle().setStroke(Color.BLACK);
                 view.getSelectionRectangle().setTranslateX(event.getX());
@@ -1132,10 +1144,10 @@ public class Presenter {
 
     }
 
-    private void setMenuSettingsMain(){
-        view.getColoringGroup().selectToggle((Toggle)menuSettingsMain.get("ColorGroup"));
-        view.getOrderGroup().selectToggle((Toggle)menuSettingsMain.get("OrderGroup"));
-        view.getNodeSizeGroup().selectToggle((Toggle)menuSettingsMain.get("NodeSizeGroup"));
+    private void setMenuSettingsMain() {
+        view.getColoringGroup().selectToggle((Toggle) menuSettingsMain.get("ColorGroup"));
+        view.getOrderGroup().selectToggle((Toggle) menuSettingsMain.get("OrderGroup"));
+        view.getNodeSizeGroup().selectToggle((Toggle) menuSettingsMain.get("NodeSizeGroup"));
 
         view.getLegendItems().clear();
         view.getLegendItems().addAll((ObservableList<LegendItem>) menuSettingsMain.get("LegendItems"));
@@ -1149,6 +1161,9 @@ public class Presenter {
         //having trouble with repulsion/attraction spinner
         //view.getLayoutRepulsionMultiplierSpinner().setValueFactory((SpinnerValueFactory)menuSettingsMain.get("RepulsionMultiplier"));
         //view.getLayoutAttractionMultiplierSpinner().setValueFactory((SpinnerValueFactory)menuSettingsMain.get("AttractionMultiplier"));
+    }
+    public Map<Integer, String> getTaxIDRGBCode() {
+        return taxIDRGBCode;
     }
 }
 

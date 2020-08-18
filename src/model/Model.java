@@ -319,39 +319,15 @@ public class Model {
         return count;
     }
 
-    public Map<Integer, String> createColor(Integer taxaCount, TreeSet<Integer> taxaID) {
-//        int r = 5, g = 5, b = 5, rgbBorderHigh = 255;
+    public Map<Integer, String> createColor(TreeSet<Integer> taxaID) {
         int[] rgbNumbers;
         double alpha = 1;
         Map<Integer, String> taxIDRGBCode = new HashMap<>();
-
 //        https://www.farb-tabelle.de/en/table-of-color.htm#white
-
-
-//        int temp1 = ((taxaCount + 9) / 10) * 10;
-//        int iterationStepsPerColor = temp1 / 3;
-//        int stepSizePerColor = rgbBorderHigh / (iterationStepsPerColor + 1);
-
         for (Object i : taxaID) {
             String rgbCodeTaxa = "";
             rgbNumbers = randomNumberColoring();
             rgbCodeTaxa = rgbNumbers[0] + "t" + rgbNumbers[1] + "t" + rgbNumbers[2] + "t" + alpha;
-//            if (counter <= iterationStepsPerColor) {
-////                r += stepSizePerColor;
-////                alpha -= stepSizePerColor/100.0;
-//                rgbNumbers = randomNumberColoring();
-//                rgbCodeTaxa = rgbNumbers[1] + "t" + rgbNumbers[1] + "t" + rgbNumbers[1] + "t" + alpha;
-//            } else if (counter > iterationStepsPerColor && counter <= iterationStepsPerColor * 2) {
-////                g += stepSizePerColor;
-////                alpha -= stepSizePerColor/100.0;
-////                r = 125;
-//                rgbCodeTaxa = r + "t" + g + "t" + b + "t" + alpha;
-//            } else {
-////                b += stepSizePerColor;
-////                alpha -= stepSizePerColor/100.0;
-//                rgbCodeTaxa = r + "t" + g + "t" + b + "t" + alpha;
-////                randomTest();
-//            }
             taxIDRGBCode.put((int) i, rgbCodeTaxa);
         }
         return taxIDRGBCode;
@@ -375,7 +351,13 @@ public class Model {
         int highestValue = 230;
         int[] rgbNumbers = new int[3];
         for (int i = 1; i <= rgbNumbers.length; i ++) {
-            rgbNumbers[i - 1] = (int) (lowestValue + Math.random() * ((highestValue - lowestValue) + 1));
+            int temp = (int) (lowestValue + Math.random() * ((highestValue - lowestValue) + 1));
+            if (temp > 59 && temp < 76 || temp > 103 && temp < 117 || temp > 231 && temp < 245 ) {
+                temp = (int) (lowestValue + Math.random() * ((highestValue - lowestValue) + 1));
+            }
+            else {
+                rgbNumbers[i - 1] = temp;
+            }
         }
         return rgbNumbers;
     }

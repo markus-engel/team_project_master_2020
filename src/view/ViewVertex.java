@@ -30,8 +30,8 @@ public class ViewVertex extends Group {
         this.selected = false;
         this.setTranslateX(x);
         this.setTranslateY(y);
-        circle.setFill(Color.CYAN);
-        circle.setStroke(Color.CYAN);
+        circle.setFill(Color.rgb(67, 110, 238));
+        circle.setStroke(Color.rgb(67, 110, 238));
         this.getChildren().add(circle);
     }
 
@@ -41,8 +41,8 @@ public class ViewVertex extends Group {
         this.selected = false;
         this.setTranslateX(x);
         this.setTranslateY(y);
-        circle.setFill(Color.CYAN);
-        circle.setStroke(Color.CYAN);
+        circle.setFill(Color.rgb(67, 110, 238));
+        circle.setStroke(Color.rgb(67, 110, 238));
         this.getChildren().add(circle);
 
         this.circle.fillProperty().bind(viewVertex.getCircle().fillProperty());
