@@ -1166,12 +1166,16 @@ public class Presenter {
         File f =  new File("config.properties");
         if(f.isFile() && f.canRead()) {
             String[] paths = getRecentPaths().split(",");
+            boolean isAlreadyRecentFile = false;
+            Set<String> pathSet = new TreeSet<>();
             for (String path : paths) {
-                MenuItem recentFile = new MenuItem(path);
-                if (!view.getOpenRecentFileMenu().getItems().contains(recentFile)) {
-                    setOpenRecentFileEventHandler(recentFile);
-                    view.getOpenRecentFileMenu().getItems().add(recentFile);
-                }
+                pathSet.add(path);
+            }
+            view.getOpenRecentFileMenu().getItems().clear();
+            for(String s : pathSet){
+                MenuItem recentFile = new MenuItem(s);
+                setOpenRecentFileEventHandler(recentFile);
+                view.getOpenRecentFileMenu().getItems().add(recentFile);
             }
         }
     }
