@@ -260,6 +260,8 @@ public class PresenterPlot {
         sChart.getData().add(series);
         viewPlot.setGcPlot(sChart, tab);
 
+        sChart.setLegendVisible(false);
+
         if (coloringMethode.equals("default")) {
             for (XYChart.Series<Number, Number> s : sChart.getData()) {
                 for (XYChart.Data<Number, Number> d : s.getData()) {
