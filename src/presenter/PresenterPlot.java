@@ -11,11 +11,13 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import model.Model;
 import model.graph.MyEdge;
 import model.graph.MyVertex;
 import model.io.ContigProperty;
 import model.io.Node;
+import view.LegendItem;
 import view.ViewPlot;
 import view.ViewVertex;
 
@@ -250,7 +252,7 @@ public class PresenterPlot {
             coverage = (double) v.getProperty(ContigProperty.COVERAGE);
             gc = (double) v.getProperty(ContigProperty.GC);
             taxID = ((Node) v.getProperty(ContigProperty.TAXONOMY)).getId();
-            String id = v.getID() + "-" + taxID;
+            String id = v.getID() + ">" + taxID;
             series.getData().add(new XYChart.Data<>(gc, coverage, id));
         }
 
@@ -278,12 +280,17 @@ public class PresenterPlot {
                             + "y: " + Math.round((Double) d.getYValue())));
                     d.getNode().setScaleY(circleSize);
                     d.getNode().setScaleX(circleSize);
-                    String taxIDActualString = ((String) d.getExtraValue()).split("-")[1];
+                    String taxIDActualString = ((String) d.getExtraValue()).split(">")[1];
 
-                    if (!taxIDActualString.isEmpty()) {
+                    if (!taxIDActualString.equals("-100")) {
                         String rgb = taxIDRGBCode.get(Integer.parseInt(taxIDActualString));
                         String[] rgbCodes = rgb.split("t");
                         String colorCode = "rgb(" + rgbCodes[0] + "," + rgbCodes[1] + "," + rgbCodes[2] + ");";
+                        d.getNode().setStyle("-fx-background-color: #860061, " + colorCode);
+                    }
+                    else {
+                        System.out.println(taxIDActualString);
+                        String colorCode = "rgb(" + 0 + "," + 255 + "," + 0 + ");";
                         d.getNode().setStyle("-fx-background-color: #860061, " + colorCode);
                     }
                 }
@@ -298,23 +305,17 @@ public class PresenterPlot {
                             + "y: " + Math.round((Double) d.getYValue())));
                     d.getNode().setScaleY(circleSize);
                     d.getNode().setScaleX(circleSize);
-                    String vertexIDActualString = ((String) d.getExtraValue()).split("-")[0];
+                    String vertexIDActualString = ((String) d.getExtraValue()).split(">")[0];
 
                     if (!vertexIDActualString.isEmpty()) {
                         for (Object i : gcContent.keySet()) {
                             if ((vertexIDActualString).equals(i)) {
                                 if (gcContent.get(i) < 0.5) {
-                                    Double C = gcContent.get(i) * (1 - gcContent.get(i));
-                                    Double m = gcContent.get(i) - C;
-                                    Double X = C * (1 - (Math.abs((120 / 60) % 2 - 1)));
-                                    String colorCode = "rgb(" + ((X + m) * 255) + "," + ((C + m) * 255) + "," + ((0 + m) * 255) + ");";
+                                    String colorCode = "hsb(" + 120 + "," + ((1 - gcContent.get(i)) * 100) + "%," + ((0.49 + gcContent.get(i)) * 100) + "%);";
                                     d.getNode().setStyle("-fx-background-color: #860061, " + colorCode);
                                 }
                                 else if (gcContent.get(i) >= 0.5) {
-                                    Double C = 1 * gcContent.get(i);
-                                    Double m = 1 - C;
-                                    Double X = C * (1 - (Math.abs((0 / 60) % 2 - 1)));
-                                    String colorCode = "rgb(" + ((C + m) * 255) + "," + ((X + m) * 255) + "," + ((0 + m) * 255) + ");";
+                                    String colorCode = "hsb(" + 0 + "," + (gcContent.get(i) * 100) + "%," + (1 * 100) + "%);";
                                     d.getNode().setStyle("-fx-background-color: #860061, " + colorCode);
                                 }
                             }
@@ -333,23 +334,17 @@ public class PresenterPlot {
                             + "y: " + Math.round((Double) d.getYValue())));
                     d.getNode().setScaleY(circleSize);
                     d.getNode().setScaleX(circleSize);
-                    String vertexIDActualString = ((String) d.getExtraValue()).split("-")[0];
+                    String vertexIDActualString = ((String) d.getExtraValue()).split(">")[0];
 
                     if (!vertexIDActualString.isEmpty()) {
                         for (Object i : coverageColor.keySet()) {
                             if ((vertexIDActualString).equals(i)) {
                                 if (coverageColor.get(i) < 0.5) {
-                                    Double C = coverageColor.get(i) * (1 - coverageColor.get(i));
-                                    Double m = coverageColor.get(i) - C;
-                                    Double X = C * (1 - (Math.abs((120 / 60) % 2 - 1)));
-                                    String colorCode = "rgb(" + ((X + m) * 255) + "," + ((C + m) * 255) + "," + ((0 + m) * 255) + ");";
+                                    String colorCode = "hsb(" + 120 + "," + ((1 - coverageColor.get(i)) * 100) + "%," + ((0.49 + coverageColor.get(i)) * 100) + "%);";
                                     d.getNode().setStyle("-fx-background-color: #860061, " + colorCode);
                                 }
                                 else if (coverageColor.get(i) >= 0.5) {
-                                    Double C = 1 * coverageColor.get(i);
-                                    Double m = 1 - C;
-                                    Double X = C * (1 - (Math.abs((0 / 60) % 2 - 1)));
-                                    String colorCode = "rgb(" + ((C + m) * 255) + "," + ((X + m) * 255) + "," + ((0 + m) * 255) + ");";
+                                    String colorCode = "hsb(" + 0 + "," + (coverageColor.get(i) * 100) + "%," + (1 * 100) + "%);";
                                     d.getNode().setStyle("-fx-background-color: #860061, " + colorCode);
                                 }
                             }
