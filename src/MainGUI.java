@@ -20,7 +20,7 @@ public class MainGUI extends Application {
         Model model = new Model();
         Presenter presenter = new Presenter(model,view);
 
-        stage.setTitle("Long-read assembly visualization");
+        stage.setTitle("Contig Assembly Vizard");
         stage.setScene(new Scene(root, 1000,650));
         stage.show();
     }
