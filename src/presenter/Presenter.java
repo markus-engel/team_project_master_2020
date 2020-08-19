@@ -56,18 +56,18 @@ public class Presenter {
     private Map<Integer, String> taxIDRGBCode;
     private Map<Object, Double> gcContent;
     Map<String, String> colorIndividualRank;
-    Map<Object, Double> coverageColor;
+    private Map<Object, Double> coverageColor;
     Map<String, List<String>> contigsOrderedByChosenRank;
     Map<String, ViewVertex> viewVertices = new HashMap<>();  //Hashmap of view vertex objects
     Map<String, ViewVertex> viewVerticesSelection = new HashMap<>();  //Hashmap of view vertex objects
     public final Dimension MAX_WINDOW_DIMENSION = new Dimension(775, 500); //gets passed to model to center layouts, gets passed to view to control size of window
-    UndirectedSparseGraph<MyVertex,MyEdge> seleGraph = new UndirectedSparseGraph<>();
+    private UndirectedSparseGraph<MyVertex,MyEdge> seleGraph = new UndirectedSparseGraph<>();
     IntegerProperty countSelected = new SimpleIntegerProperty();
     UndirectedSparseGraph<MyVertex, MyEdge> currentGraph;
     Map<String, ViewVertex> currentViewVertices;
     Boolean rankBool = false, taxonomyBool = false, gcBool = false, coverageBool = false;
     Map<String, Object> menuSettingsMain = new HashMap<>(); //hashMap holding colourGroup, OrderGroup, NodeGroup
-    private Boolean taxonomyFileLoaded = false, gcContentReady = false;
+    private Boolean taxonomyFileLoaded = false, gcContentReady = false, coverageReadyBool = false;
 
     public Presenter(Model model, View view) {
         this.model = model;
@@ -190,6 +190,8 @@ public class Presenter {
                     view.getNodeSizeCoverageRadioButton().setDisable(false);
                     view.getColoringCoverageRadioButton().setDisable(false);
                     view.getColoringTransparencyRadioButton().setDisable(false);
+                    coverageColor = model.heatmapColorsCovarge();
+                    coverageReadyBool = true;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -680,7 +682,6 @@ public class Presenter {
                 determineCurrentTab();
                 if (!currentViewVertices.isEmpty()) {
                     view.getLegendItems().clear();
-                    coverageColor = model.heatmapColorsCovarge();
                     for (ViewVertex v : currentViewVertices.values()) {
                         for (Object j : coverageColor.keySet()) {
                             if (v.getID().equals(j)) {
@@ -1217,12 +1218,24 @@ public class Presenter {
         return gcContent;
     }
 
+    public Map<Object, Double> getCoverageColor () {
+        return coverageColor;
+    }
+
+    public UndirectedSparseGraph<MyVertex, MyEdge> getSelectionGraph () {
+        return seleGraph;
+    }
+
     public Boolean getTaxonomyFileLoaded () {
         return taxonomyFileLoaded;
     }
 
     public Boolean getGcContentReady () {
         return gcContentReady;
+    }
+
+    public Boolean getCoverageReadyBool () {
+        return coverageReadyBool;
     }
 
 
