@@ -227,6 +227,9 @@ public class View {
     private TableView<LegendItem> legendTableView;
 
     @FXML
+    private TableView.TableViewSelectionModel<LegendItem> defaultSelectionModel;
+
+    @FXML
     private TableColumn<LegendItem, Circle> colourCol;
 
     @FXML
@@ -470,11 +473,16 @@ public class View {
         return legendTableView;
     }
 
+    public TableView.TableViewSelectionModel<LegendItem> getDefaultSelectionModel(){
+        return defaultSelectionModel;
+    }
+
     public TableColumn<LegendItem,String> getLabelCol() { return labelCol; }
 
     public ObservableList<LegendItem> getLegendItems(){
         if (legendItems==null){
             legendItems = FXCollections.observableArrayList();
+            defaultSelectionModel = legendTableView.getSelectionModel();
         }
         return legendItems;
     }

@@ -225,6 +225,7 @@ public class Presenter {
                     visualizeSelectionGraph(seleGraph, view.getInnerViewObjectsSele().getChildren(), view.getInnerViewObjectsSele());
                     view.getScrollPaneSele().setDisable(false);
                     view.makeScrollPaneZoomable(view.getScrollPaneSele());
+                    view.getLegendTableView().setSelectionModel(null);
                 }
             }
         });
@@ -234,6 +235,7 @@ public class Presenter {
             public void handle(Event event) {
                 if (view.getTabMain().isSelected()) {
                     setMenuSettingsMain();
+                    view.getLegendTableView().setSelectionModel(view.getDefaultSelectionModel());
                 }
             }
         });
@@ -807,6 +809,37 @@ public class Presenter {
         });
 
         countSelected.bind(view.getSelectedContigs().sizeProperty());
+
+        view.getLegendTableView().getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (view.getLegendTableView().getSelectionModel().getSelectedItem() != null) {
+                determineCurrentTab();
+                resetSelection();
+                TableView.TableViewSelectionModel selectionModel = view.getLegendTableView().getSelectionModel();
+                ObservableList<LegendItem> selectedRows = selectionModel.getSelectedItems();
+
+                for (LegendItem legendItem : selectedRows) {
+                    for (MyVertex mv : currentGraph.getVertices()) {
+                        if (mv.getProperty(ContigProperty.TAXONOMY) instanceof Node) {
+                            Node node = (Node) mv.getProperty(ContigProperty.TAXONOMY);
+                            if (legendItem.getLabel().equals(node.getScientificName())) {
+                                ViewVertex vv = currentViewVertices.get(mv.getID());
+                                vv.setSelected();
+                                updateSelectionGraph(vv);
+                            } else {
+                                while (node.getAncestor() != null) {
+                                    node = node.getAncestor();
+                                    if (legendItem.getLabel().equals(node.getScientificName())) {
+                                        ViewVertex vv = currentViewVertices.get(mv.getID());
+                                        vv.setSelected();
+                                        updateSelectionGraph(vv);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
     }
 
     private void openFile(String path){
