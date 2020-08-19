@@ -39,10 +39,9 @@ import model.io.Node;
 import view.*;
 
 import javax.imageio.ImageIO;
+import javax.print.DocFlavor;
 import java.awt.*;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.List;
@@ -69,11 +68,12 @@ public class Presenter {
     Map<String, Object> menuSettingsMain = new HashMap<>(); //hashMap holding colourGroup, OrderGroup, NodeGroup
     private Boolean taxonomyFileLoaded = false, gcContentReady = false, coverageReadyBool = false;
 
-    public Presenter(Model model, View view) {
+    public Presenter(Model model, View view) throws IOException {
         this.model = model;
         this.view = view;
         this.self = this;
         setUpBindings();
+        addRecentFiles();
     }
 
     public Presenter() { // second constructor needed for selection presenter to extend
@@ -103,52 +103,8 @@ public class Presenter {
                 FileChooser fc = new FileChooser();
                 fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("GFA Files", "*.gfa"));
                 File f = fc.showOpenDialog(null);
-
                 if (f != null) {
-                    view.getProgressIndicator().setVisible(true);
-                    view.getProgressIndicator().toFront();
-
-                    if (model.getGraph() != null) {
-                        reset();
-                        view.getProgressIndicator().toFront();
-                        view.getScrollPane().setDisable(true);
-                    }
-                    // parse gfa file to graph
-                    Task<Void> parseGraphTask = new Task<Void>() {
-                        @Override
-                        protected Void call() throws Exception {
-                            model.parseGFA(f.getAbsolutePath());
-                            model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), model.getGraph(), view.getOrderByContigLengthRadioButton().isSelected());
-                            view.getProgressIndicator().setVisible(false);
-                            return null;
-                        }
-                    };
-                    parseGraphTask.setOnSucceeded(e -> {
-                        visualizeGraph(model.getGraph(), view.getInnerViewObjects().getChildren(), view.getInnerViewObjects());
-                        view.getScrollPane().setDisable(false);
-                        view.makeScrollPaneZoomable(view.getScrollPane());
-                        applyDragSelectRectangleFunctionality();
-                        view.getImportTaxonomyMenuItem().setDisable(false);
-                        view.getImportCoverageMenuItem().setDisable(false);
-                        view.getCustomizeMenuItem().setDisable(false);
-                        view.getSelectAllMenuItem().setDisable(false);
-                        view.getResetSelectionMenuItem().setDisable(false);
-                        view.getSelectionMenu().setDisable(false);
-                        view.setSequenceCountTextField(model.getGraph().getVertexCount());
-                        view.setOverlapCountTextField(model.getGraph().getEdgeCount());
-                        view.getColoringGCcontentRadioButton().setDisable(false);
-                        MenuItem recentFile = new MenuItem(f.getAbsolutePath());
-                        gcContent = model.heatmapColorsGCContent();
-                        gcContentReady = true;
-                        if (!view.getOpenRecentFileMenu().getItems().contains(recentFile)){
-                            setOpenRecentFileEventHandler(recentFile);
-                            view.getOpenRecentFileMenu().getItems().add(recentFile);
-                        }
-                    });
-
-                    Thread parseGraphThread = new Thread(parseGraphTask);
-                    parseGraphThread.setDaemon(true);
-                    parseGraphThread.start();
+                    openFile(f.getAbsolutePath());
                 }
             }
         });
@@ -855,6 +811,54 @@ public class Presenter {
         countSelected.bind(view.getSelectedContigs().sizeProperty());
     }
 
+    private void openFile(String path){
+        view.getProgressIndicator().setVisible(true);
+        view.getProgressIndicator().toFront();
+
+        if (model.getGraph() != null) {
+            reset();
+            view.getProgressIndicator().toFront();
+            view.getScrollPane().setDisable(true);
+        }
+        // parse gfa file to graph
+        Task<Void> parseGraphTask = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                model.parseGFA(path);
+                model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), model.getGraph(), view.getOrderByContigLengthRadioButton().isSelected());
+                view.getProgressIndicator().setVisible(false);
+                return null;
+            }
+        };
+        parseGraphTask.setOnSucceeded(e -> {
+            visualizeGraph(model.getGraph(), view.getInnerViewObjects().getChildren(), view.getInnerViewObjects());
+            view.getScrollPane().setDisable(false);
+            view.makeScrollPaneZoomable(view.getScrollPane());
+            applyDragSelectRectangleFunctionality();
+            view.getImportTaxonomyMenuItem().setDisable(false);
+            view.getImportCoverageMenuItem().setDisable(false);
+            view.getCustomizeMenuItem().setDisable(false);
+            view.getSelectAllMenuItem().setDisable(false);
+            view.getResetSelectionMenuItem().setDisable(false);
+            view.getSelectionMenu().setDisable(false);
+            view.setSequenceCountTextField(model.getGraph().getVertexCount());
+            view.setOverlapCountTextField(model.getGraph().getEdgeCount());
+            view.getColoringGCcontentRadioButton().setDisable(false);
+            gcContent = model.heatmapColorsGCContent();
+            gcContentReady = true;
+            try {
+                setUpProperties(path);
+                addRecentFiles();
+            } catch (IOException fileNotFoundException) {
+                fileNotFoundException.printStackTrace();
+            }
+        });
+
+        Thread parseGraphThread = new Thread(parseGraphTask);
+        parseGraphThread.setDaemon(true);
+        parseGraphThread.start();
+    }
+
     private void determineCurrentTab() {
         //toggle between selectionTab and MainTab
         if (view.getTabSelection().isSelected()) {
@@ -1052,7 +1056,9 @@ public class Presenter {
         view.getScrollPane().addEventFilter(MouseEvent.MOUSE_PRESSED,new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                resetSelection();
+                if(!event.isControlDown()){
+                    resetSelection();
+                }
                 view.initSelectionRectangle(0,0);
                 view.getSelectionRectangle().setStroke(Color.BLACK);
                 view.getSelectionRectangle().setTranslateX(event.getX()/ view.getScaleProperty());
@@ -1090,35 +1096,56 @@ public class Presenter {
         menuItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                view.getProgressIndicator().setVisible(true);
-
-                if (model.getGraph() != null) {
-                    reset();
-                    view.getProgressIndicator().toFront();
-                    view.getScrollPane().setDisable(true);
-                }
-                //TODO: duplicated code, extract to a method (Caner)
-                // parse gfa file to graph
-                Task<Void> parseGraphTask = new Task<Void>() {
-                    @Override
-                    protected Void call() throws Exception {
-                        model.parseGFA(menuItem.getText());
-                        model.applyLayout(new Dimension(MAX_WINDOW_DIMENSION.width, MAX_WINDOW_DIMENSION.height), model.getGraph(), view.getOrderByContigLengthRadioButton().isSelected());
-                        return null;
-                    }
-                };
-                parseGraphTask.setOnSucceeded(e -> {
-                    visualizeGraph(model.getGraph(), view.getInnerViewObjects().getChildren(), view.getInnerViewObjects());
-                    view.getScrollPane().setDisable(false);
-                    view.makeScrollPaneZoomable(view.getScrollPane());
-                    view.getProgressIndicator().setVisible(false);
-                });
-
-                Thread parseGraphThread = new Thread(parseGraphTask);
-                parseGraphThread.setDaemon(true);
-                parseGraphThread.start();
+                openFile(menuItem.getText());
             }
         });
+    }
+
+    private void setUpProperties(String path) throws IOException {
+        Properties prop = new Properties();
+        File f = new File("config.properties");
+        if(f.isFile() && f.canRead()){
+            InputStream is = new FileInputStream("config.properties");
+            prop.load(is);
+            String[] paths = prop.getProperty("path").split(",");
+            boolean containsPath = false;
+            for(String p : paths){
+                if(p.equals(path)){
+                    containsPath = true;
+                    System.out.println("YES");
+                }
+            }
+            if(!containsPath){
+                OutputStream os = new FileOutputStream("config.properties");
+                prop.setProperty("path",prop.getProperty("path")+","+path);
+                prop.store(os,null);
+            }
+        } else {
+            OutputStream os = new FileOutputStream("config.properties");
+            prop.setProperty("path", path);
+            prop.store(os, null);
+        }
+    }
+
+    private void addRecentFiles() throws IOException {
+        File f =  new File("config.properties");
+        if(f.isFile() && f.canRead()) {
+            String[] paths = getRecentPaths().split(",");
+            for (String path : paths) {
+                MenuItem recentFile = new MenuItem(path);
+                if (!view.getOpenRecentFileMenu().getItems().contains(recentFile)) {
+                    setOpenRecentFileEventHandler(recentFile);
+                    view.getOpenRecentFileMenu().getItems().add(recentFile);
+                }
+            }
+        }
+    }
+
+    private String getRecentPaths() throws IOException {
+        Properties prop = new Properties();
+        InputStream is = new FileInputStream("config.properties");
+        prop.load(is);
+        return prop.getProperty("path");
     }
 
     public void updateSelectionInformation() {
