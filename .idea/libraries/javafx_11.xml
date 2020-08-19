@@ -1,0 +1,37 @@
+<component name="libraryTable">
+  <library name="javafx.11">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/mylib/javafx-sdk-11.0.2/lib" />
+    </CLASSES>
+    <JAVADOC />
+    <NATIVE>
+      <root url="file://$PROJECT_DIR$/mylib/javafx-sdk-11.0.2/lib" />
+    </NATIVE>
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/mylib/javafx-sdk-11.0.2/lib/src 2/javafx.base" />
+      <root url="file://$PROJECT_DIR$/mylib/javafx-sdk-11.0.2/lib/src 2/javafx.controls" />
+      <root url="file://$PROJECT_DIR$/mylib/javafx-sdk-11.0.2/lib/src 2/javafx.fxml" />
+      <root url="file://$PROJECT_DIR$/mylib/javafx-sdk-11.0.2/lib/src 2/javafx.graphics" />
+      <root url="file://$PROJECT_DIR$/mylib/javafx-sdk-11.0.2/lib/src 2/javafx.media" />
+      <root url="file://$PROJECT_DIR$/mylib/javafx-sdk-11.0.2/lib/src 2/javafx.swing" />
+      <root url="file://$PROJECT_DIR$/mylib/javafx-sdk-11.0.2/lib/src 2/javafx.web" />
+      <root url="file://$PROJECT_DIR$/mylib/javafx-sdk-11.0.2/lib/src 3/javafx.base" />
+      <root url="file://$PROJECT_DIR$/mylib/javafx-sdk-11.0.2/lib/src 3/javafx.controls" />
+      <root url="file://$PROJECT_DIR$/mylib/javafx-sdk-11.0.2/lib/src 3/javafx.fxml" />
+      <root url="file://$PROJECT_DIR$/mylib/javafx-sdk-11.0.2/lib/src 3/javafx.graphics" />
+      <root url="file://$PROJECT_DIR$/mylib/javafx-sdk-11.0.2/lib/src 3/javafx.media" />
+      <root url="file://$PROJECT_DIR$/mylib/javafx-sdk-11.0.2/lib/src 3/javafx.swing" />
+      <root url="file://$PROJECT_DIR$/mylib/javafx-sdk-11.0.2/lib/src 3/javafx.web" />
+      <root url="file://$PROJECT_DIR$/mylib/javafx-sdk-11.0.2/lib/src/javafx.base" />
+      <root url="file://$PROJECT_DIR$/mylib/javafx-sdk-11.0.2/lib/src/javafx.controls" />
+      <root url="file://$PROJECT_DIR$/mylib/javafx-sdk-11.0.2/lib/src/javafx.fxml" />
+      <root url="file://$PROJECT_DIR$/mylib/javafx-sdk-11.0.2/lib/src/javafx.graphics" />
+      <root url="file://$PROJECT_DIR$/mylib/javafx-sdk-11.0.2/lib/src/javafx.media" />
+      <root url="file://$PROJECT_DIR$/mylib/javafx-sdk-11.0.2/lib/src/javafx.swing" />
+      <root url="file://$PROJECT_DIR$/mylib/javafx-sdk-11.0.2/lib/src/javafx.web" />
+      <root url="file://$PROJECT_DIR$/mylib/javafx-sdk-11.0.2/lib" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/mylib/javafx-sdk-11.0.2/lib" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/mylib/javafx-sdk-11.0.2/lib" recursive="false" type="SOURCES" />
+  </library>
+</component>
