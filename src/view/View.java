@@ -372,8 +372,8 @@ public class View {
         return orderByContigLengthRadioButton;
     }
 
-    public void setTaxaCountTextField(String size) {
-        taxaCountTextfield.setText(String.valueOf(size));
+    public void setTaxaCountTextField(int taxaCount) {
+        taxaCountTextfield.setText("Taxa: " + taxaCount);
     }
 
     // Number of Vertices

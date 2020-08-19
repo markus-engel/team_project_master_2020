@@ -117,7 +117,7 @@ public class Presenter {
                 if (f != null) try {
                     model.parseTaxId(f.getAbsolutePath());
                     for (ViewVertex vv : viewVertices.values()) Tooltip.install(vv, new Tooltip(createTooltip(vv)));
-                    view.setTaxaCountTextField("Taxa: " + model.getTaxaCount());
+                    view.setTaxaCountTextField(model.getTaxaCount());
                     view.getColoringTaxonomyRadioButton().setDisable(false);
 //                    view.getColoringTaxonomyChoiceBox().setDisable(false);
                     view.getColoringRankRadioButton().setDisable(false);
@@ -723,20 +723,18 @@ public class Presenter {
                     vv.setSize(5);
                 }
                 view.getNodeSizeManualSlider().setValue(5);
+                view.getNodeSizeScaleChoiceBox().setValue("linear scale");
             }
         });
         view.getNodeSizeManualSlider().setOnMouseReleased(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 determineCurrentTab();
-                if (!currentViewVertices.isEmpty() & view.getNodeSizeScaleChoiceBox().getValue().equals("linear scale"))
+                if (!currentViewVertices.isEmpty()) {
                     for (ViewVertex vv : currentViewVertices.values()) {
                         vv.setSize(view.getNodeSizeManualSlider().getValue());
                     }
-                else if (!currentViewVertices.isEmpty() & view.getNodeSizeScaleChoiceBox().getValue().equals("logarithmic scale"))
-                    for (ViewVertex vv : currentViewVertices.values()) {
-                        vv.setSize(Math.log(view.getNodeSizeManualSlider().getValue()));
-                    }
+                }
             }
         });
 
@@ -954,6 +952,10 @@ public class Presenter {
         view.getColoringTaxonomyRadioButton().setDisable(true);
         view.getColoringRankRadioButton().setDisable(true);
         view.getOrderByNodeNumbersRadioButton().setSelected(true);
+        view.setSelectionTextField(countSelected.intValue());
+        view.setSequenceCountTextField(0);
+        view.setOverlapCountTextField(0);
+        view.setTaxaCountTextField(0);
     }
 
     private void resetTab(){
