@@ -6,6 +6,7 @@ package presenter;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Side;
 import javafx.scene.chart.*;
 import javafx.scene.control.Tab;
 import javafx.scene.control.Tooltip;
@@ -24,6 +25,7 @@ import view.ViewVertex;
 import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 public class PresenterPlot {
 
@@ -259,6 +261,8 @@ public class PresenterPlot {
         sChart.getData().add(series);
         viewPlot.setGcPlot(sChart, tab);
 
+        sChart.setLegendVisible(false);
+
         if (coloringMethode.equals("default")) {
             for (XYChart.Series<Number, Number> s : sChart.getData()) {
                 for (XYChart.Data<Number, Number> d : s.getData()) {
@@ -267,7 +271,8 @@ public class PresenterPlot {
                             + "y: " + Math.round((Double) d.getYValue())));
                     d.getNode().setScaleY(circleSize);
                     d.getNode().setScaleX(circleSize);
-                    d.getNode().setStyle("-fx-background-color: #860061, orange;");
+                    String colorCode = "rgb(" + 67 + "," + 110 + "," + 238 + ");";
+                    d.getNode().setStyle("-fx-background-color: #860061, " + colorCode);
                 }
             }
         }
@@ -355,34 +360,110 @@ public class PresenterPlot {
         }
     }
 
-    public void plotContigLengthDistribution(UndirectedSparseGraph<MyVertex,MyEdge> graph){
-        TreeMap<Integer, Integer> cls = new TreeMap<Integer, Integer>();
+    public int getMaxLengthPlot(UndirectedSparseGraph<MyVertex,MyEdge> graph){
+        int maxLength = 0;
         for(MyVertex v : graph.getVertices()){
             int curLength = (int)(double)v.getProperty(ContigProperty.LENGTH);
-            if(cls.containsKey(curLength)){
-                cls.put(curLength, cls.get(curLength + 1));
+            if(curLength>maxLength){
+                maxLength=curLength;
             }
-            else{
-                cls.put(curLength, 1);
+        }
+        return maxLength;
+    }
+
+    public void plotContigLengthDistribution(UndirectedSparseGraph<MyVertex,MyEdge> graph){
+        int maxLength = getMaxLengthPlot(graph);
+        int maxCounter = 0;
+
+        int maxLegend = maxLength;
+        System.out.println(maxLength);
+        NumberAxis yaxis = new NumberAxis();
+        CategoryAxis xaxis = new CategoryAxis();
+        yaxis.setLabel("Number of Contigs");
+        xaxis.setLabel("Percentage of Maximun Contig length: " + maxLegend + "bp");
+
+        double iq0 = (double)maxLength * 0.1;
+        int iq0Counter = 0;
+        double iq1 = (double)maxLength * 0.2;
+        int iq1Counter = 0;
+        double iq2 = (double)maxLength * 0.3;
+        int iq2Counter = 0;
+        double iq3 = (double)maxLength * 0.4;
+        int iq3Counter = 0;
+        double iq4 = (double)maxLength * 0.5;
+        int iq4Counter = 0;
+        double iq5 = (double)maxLength * 0.6;
+        int iq5Counter = 0;
+        double iq6 = (double)maxLength * 0.7;
+        int iq6Counter = 0;
+        double iq7 = (double)maxLength * 0.8;
+        int iq7Counter = 0;
+        double iq8 = (double)maxLength * 0.9;
+        int iq8Counter = 0;
+        double iq9 = (double)maxLength * 1.0;
+        int iq9Counter = 0;
+
+        for(MyVertex v : graph.getVertices()){
+            int curLength = (int)(double)v.getProperty(ContigProperty.LENGTH);
+            if(curLength<iq0){
+                iq0Counter +=1;
+            }
+            if(curLength<iq1 && curLength>iq0){
+                iq1Counter +=1;
+            }
+            if(curLength<iq2 && curLength>iq1){
+                iq2Counter +=1;
+            }
+            if(curLength<iq3 && curLength>iq2){
+                iq3Counter +=1;
+            }
+            if(curLength<iq4 && curLength>iq3){
+                iq4Counter +=1;
+            }
+            if(curLength<iq5 && curLength>iq4){
+                iq5Counter +=1;
+            }
+            if(curLength<iq6 && curLength>iq5){
+                iq6Counter +=1;
+            }
+            if(curLength<iq7 && curLength>iq6){
+                iq7Counter +=1;
+            }
+            if(curLength<iq8 && curLength>iq0){
+                iq8Counter +=1;
+            }
+            if(curLength<iq9 && curLength>iq8){
+                iq9Counter +=1;
             }
         }
 
-        NumberAxis yaxis = new NumberAxis(0.0, 5000, 200);
-        CategoryAxis xaxis = new CategoryAxis();
-        yaxis.setLabel("Number of Contigs");
-        xaxis.setLabel("Length in bp");
-
+        if(maxCounter<iq0Counter){maxCounter=iq0Counter;}
+        if(maxCounter<iq1Counter){maxCounter=iq1Counter;}
+        if(maxCounter<iq2Counter){maxCounter=iq2Counter;}
+        if(maxCounter<iq3Counter){maxCounter=iq3Counter;}
+        if(maxCounter<iq4Counter){maxCounter=iq4Counter;}
+        if(maxCounter<iq5Counter){maxCounter=iq5Counter;}
+        if(maxCounter<iq6Counter){maxCounter=iq6Counter;}
+        if(maxCounter<iq7Counter){maxCounter=iq7Counter;}
+        if(maxCounter<iq8Counter){maxCounter=iq8Counter;}
+        if(maxCounter<iq9Counter){maxCounter=iq9Counter;}
 
         BarChart<String, Number> bc = new BarChart<String, Number>(xaxis, yaxis);
         bc.setTitle("Distribution of Contig Lengths");
 
         XYChart.Series<String, Number> series = new XYChart.Series<>();
-        for(Map.Entry<Integer,Integer> entry : cls.entrySet()){
-            series.getData().add(new XYChart.Data<String, Number>(String.valueOf(entry.getKey()), entry.getValue()));
-//            System.out.printf(String.valueOf(entry.getKey()) + "  " + entry.getValue() + " ");
-        }
+        series.getData().add(new XYChart.Data<String, Number>("10%", iq0Counter));
+        series.getData().add(new XYChart.Data<String, Number>("20%", iq1Counter));
+        series.getData().add(new XYChart.Data<String, Number>("30%", iq2Counter));
+        series.getData().add(new XYChart.Data<String, Number>("40%", iq3Counter));
+        series.getData().add(new XYChart.Data<String, Number>("50%", iq4Counter));
+        series.getData().add(new XYChart.Data<String, Number>("60%", iq5Counter));
+        series.getData().add(new XYChart.Data<String, Number>("70%", iq6Counter));
+        series.getData().add(new XYChart.Data<String, Number>("80%", iq7Counter));
+        series.getData().add(new XYChart.Data<String, Number>("90%", iq8Counter));
+        series.getData().add(new XYChart.Data<String, Number>("100%", iq9Counter));
 
-        //bc.getData().add(series);
+        bc.getData().add(series);
 
         viewPlot.setCDPlot(bc, viewPlot.getTabContigLengthDistribution());
     }
