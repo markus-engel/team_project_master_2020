@@ -6,6 +6,7 @@ package presenter;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Side;
 import javafx.scene.chart.*;
 import javafx.scene.control.Tab;
 import javafx.scene.control.Tooltip;
@@ -267,7 +268,8 @@ public class PresenterPlot {
                             + "y: " + Math.round((Double) d.getYValue())));
                     d.getNode().setScaleY(circleSize);
                     d.getNode().setScaleX(circleSize);
-                    d.getNode().setStyle("-fx-background-color: #860061, orange;");
+                    String colorCode = "rgb(" + 67 + "," + 110 + "," + 238 + ");";
+                    d.getNode().setStyle("-fx-background-color: #860061, " + colorCode);
                 }
             }
         }
